@@ -55,8 +55,21 @@ export default function RegisterPage() {
       return;
     }
     setPasswordError("");
-    // TODO: wire to auth API
-    console.log({ firstName, lastName, pseudo, email, password });
+    fetch("http://localhost:3000/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ firstName, lastName, pseudo, email, password }),
+    }).then(res => res.json()).then(data => {
+      if (data.error) {
+        alert(data.message);
+      } else {
+        alert("Registration successful");
+      }
+    }).catch(err => {
+      alert("An error occurred: " + err.message);
+    });
   }
 
   function handleBack() {

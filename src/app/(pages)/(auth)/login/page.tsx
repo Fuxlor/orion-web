@@ -28,8 +28,21 @@ export default function LoginPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // TODO: wire to auth
-    console.log({ email, password });
+    fetch("http://localhost:3000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    }).then(res => res.json()).then(data => {
+      if (data.error) {
+        alert(data.message);
+      } else {
+        alert("Login successful");
+      }
+    }).catch(err => {
+      alert("An error occurred: " + err.message);
+    });
   }
 
   function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
