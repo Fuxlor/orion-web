@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 
 const BULLET = "•";
-const STEPS = 2;
 
 function maskPassword(password: string): string {
   if (password.length === 0) return "";
@@ -28,6 +27,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const [error, setError] = useState("");
 
   function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPassword((prev) => passwordFromDisplay(prev, e.target.value));
@@ -55,20 +55,24 @@ export default function RegisterPage() {
       return;
     }
     setPasswordError("");
-    fetch("http://localhost:3000/api/auth/register", {
+    fetch("http://localhost:3001/api/auth/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ firstName, lastName, pseudo, email, password }),
     }).then(res => res.json()).then(data => {
+      console.log(data);
       if (data.error) {
-        alert(data.message);
+        setError(data.message);
       } else {
-        alert("Registration successful");
+        setError("");
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        window.location.href = "/dashboard";
       }
     }).catch(err => {
-      alert("An error occurred: " + err.message);
+      setError("An error occurred: " + err.message);
     });
   }
 
@@ -202,6 +206,12 @@ export default function RegisterPage() {
                 </p>
               )}
             </>
+          )}
+          
+          {error && (
+            <p className="text-sm text-red-400 m-0 -mt-2" role="alert">
+              {error}
+            </p>
           )}
 
           <div className="flex gap-3 mt-2">

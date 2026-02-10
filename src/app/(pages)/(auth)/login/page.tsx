@@ -13,22 +13,19 @@ function maskPassword(password: string): string {
 function passwordFromDisplay(prevPassword: string, display: string): string {
   const prevLen = prevPassword.length;
   const newLen = display.length;
-  if (newLen > prevLen) {
-    return prevPassword + display.slice(prevLen);
-  }
-  if (newLen < prevLen) {
-    return prevPassword.slice(0, newLen);
-  }
+  if (newLen > prevLen) return prevPassword + display.slice(prevLen);
+  if (newLen < prevLen) return prevPassword.slice(0, newLen);
   return prevPassword.slice(0, -1) + display.slice(-1);
 }
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    fetch("http://localhost:3000/api/auth/login", {
+    fetch("http://localhost:3001/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -36,18 +33,20 @@ export default function LoginPage() {
       body: JSON.stringify({ email, password }),
     }).then(res => res.json()).then(data => {
       if (data.error) {
-        alert(data.message);
+        setError(data.message);
       } else {
-        alert("Login successful");
+        setError("");
+        localStorage.setItem("accessToken", data.accessToken);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        window.location.href = "/dashboard";
       }
     }).catch(err => {
-      alert("An error occurred: " + err.message);
+      setError("An error occurred: " + err.message);
     });
   }
 
   function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const display = e.target.value;
-    setPassword((prev) => passwordFromDisplay(prev, display));
+    setPassword((prev) => passwordFromDisplay(prev, e.target.value));
   }
 
   return (
@@ -89,6 +88,12 @@ export default function LoginPage() {
             required
             className="w-full font-mono"
           />
+
+          {error && (
+            <p className="text-sm text-red-400 m-0 -mt-2" role="alert">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
