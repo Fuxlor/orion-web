@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { User } from "@/types";
-import { ProjectProvider } from "@/contexts/project-context";
+import { ProjectProvider } from "@/contexts/projectContext";
 import Header from "./header";
 import Navbar from "./navbar";
 
@@ -58,7 +58,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
         <Header user={user} />
         <div className="flex flex-1 min-h-0">
           <Navbar />
-          <main className="flex-1 overflow-auto p-6">{children}</main>
+          <main className="flex-1 overflow-auto p-6 bg-[var(--page-bg)]">{children}</main>
         </div>
       </div>
     </ProjectProvider>

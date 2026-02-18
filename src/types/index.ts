@@ -14,3 +14,18 @@ export interface Project {
   name: string;
   label: string;
 }
+
+export interface LogSource {
+  id: string;
+  name: string;
+  label: string;
+}
+
+export interface LogEntry {
+  id: string;
+  timestamp: Date;
+  message: string;
+  level: string;
+  source: string;
+  project: string;
+}

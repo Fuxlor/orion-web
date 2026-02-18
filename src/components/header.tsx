@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { User } from "@/types";
-import { useProject } from "@/contexts/project-context";
+import { useProject } from "@/contexts/projectContext";
 import { MOCK_PROJECTS } from "@/lib/projects";
 
 function Logo() {

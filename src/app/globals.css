@@ -3,17 +3,18 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  /* Orion brand colors – use for inputs, buttons, accents site-wide */
+  /* Orion – dark monitoring theme */
   --primary: #02f194;
   --primary-hover: #02d883;
-  --primary-muted: rgba(2, 241, 148, 0.15);
-  --surface: #211e25;
-  --surface-elevated: #2a2730;
-  --surface-input: #1e1b22;
-  --border: #3d3942;
+  --primary-muted: rgba(2, 241, 148, 0.12);
+  --surface: #161a24;
+  --surface-elevated: #1c2130;
+  --surface-input: #0f1219;
+  --border: #252b3b;
   --border-focus: #02f194;
-  --text-secondary: #e5e7eb;
-  --text-muted: #9ca3af;
+  --page-bg: #0d0f16;
+  --text-secondary: #e8eaef;
+  --text-muted: #8b92a4;
 }
 
 @theme inline {
@@ -29,8 +30,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #08090e;
+    --foreground: #e8eaef;
+    --page-bg: #0d0f16;
   }
 }
 
@@ -57,7 +59,7 @@ textarea {
 
 input::placeholder,
 textarea::placeholder {
-  color: #6b6570;
+  color: #5a6175;
 }
 
 input:focus,

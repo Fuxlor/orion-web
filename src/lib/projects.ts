@@ -1,4 +1,4 @@
-import { Project } from "@/types";
+import { Project, LogSource } from "@/types";
 
 // Placeholder – replace with API fetch when available
 export const MOCK_PROJECTS: Project[] = [
@@ -15,3 +15,10 @@ export function getProjectFromPathname(pathname: string): string | null {
 export function getProjectByName(name: string): Project | undefined {
   return MOCK_PROJECTS.find((p) => p.name === name);
 }
+
+// Placeholder – log sources per project; replace with API fetch when available
+export const MOCK_LOG_SOURCES: LogSource[] = [
+  { id: "1", name: "production", label: "Production" },
+  { id: "2", name: "staging", label: "Staging" },
+  { id: "3", name: "development", label: "Development" },
+];

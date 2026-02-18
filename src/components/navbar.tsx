@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { getProjectFromPathname } from "@/lib/projects";
+import { useState } from "react";
+import { getProjectFromPathname, MOCK_LOG_SOURCES } from "@/lib/projects";
 
 function NavIcon({ children, active }: { children: React.ReactNode; active?: boolean }) {
   return (
@@ -31,12 +32,6 @@ const icons = {
       <rect x="3" y="16" width="7" height="5" rx="1" />
     </svg>
   ),
-  source: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <polyline points="16 18 22 12 16 6" />
-      <polyline points="8 6 2 12 8 18" />
-    </svg>
-  ),
   logs: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -54,6 +49,33 @@ const icons = {
     </svg>
   ),
 };
+
+function ChevronRight({ open }: { open: boolean }) {
+  return (
+    <svg
+      className={`w-4 h-4 text-[var(--text-muted)] transition-transform shrink-0 ${open ? "rotate-90" : ""}`}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M9 18l6-6-6-6" />
+    </svg>
+  );
+}
+
+function SubLink({ href, children, active }: { href: string; children: React.ReactNode; active?: boolean }) {
+  return (
+    <Link
+      href={href}
+      className={`block px-3 py-1.5 pl-11 rounded text-sm transition-colors truncate ${
+        active ? "text-[var(--primary)] font-medium" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+      }`}
+    >
+      {children}
+    </Link>
+  );
+}
 
 function NavLink({
   href,
@@ -81,9 +103,56 @@ function NavLink({
   );
 }
 
+function NavSectionWithLink({
+  href,
+  label,
+  icon,
+  open,
+  onToggle,
+  active,
+  children,
+}: {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  open: boolean;
+  onToggle: () => void;
+  active?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-0.5">
+      <div className="flex items-center gap-1 px-1 py-0.5">
+        <Link
+          href={href}
+          className={`flex flex-1 items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-colors min-w-0 ${
+            active
+              ? "bg-[var(--primary-muted)] text-[var(--primary)]"
+              : "text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white"
+          }`}
+        >
+          <NavIcon active={active}>{icon}</NavIcon>
+          <span className="truncate">{label}</span>
+        </Link>
+        <button
+          type="button"
+          onClick={onToggle}
+          className="p-1.5 rounded hover:bg-[var(--surface-input)] text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+          aria-label={open ? "Collapse" : "Expand"}
+        >
+          <ChevronRight open={open} />
+        </button>
+      </div>
+      {open && <div className="space-y-0.5">{children}</div>}
+    </div>
+  );
+}
+
 export default function Navbar() {
   const pathname = usePathname();
-  const projectId = getProjectFromPathname(pathname);
+  const projectSlug = getProjectFromPathname(pathname);
+  const [logsManuallyOpen, setLogsManuallyOpen] = useState(false);
+  const logsOpen = pathname.includes("/logs") || logsManuallyOpen;
 
   return (
     <nav className="w-56 shrink-0 h-full flex flex-col border-r border-[var(--border)] bg-[var(--surface-elevated)] overflow-y-auto">
@@ -92,7 +161,7 @@ export default function Navbar() {
           Overview
         </NavLink>
 
-        {projectId && (
+        {projectSlug && (
           <>
             <div className="pt-2 pb-1">
               <p className="px-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
@@ -100,30 +169,37 @@ export default function Navbar() {
               </p>
             </div>
             <NavLink
-              href={`/dashboard/projects/${projectId}`}
+              href={`/dashboard/projects/${projectSlug}`}
               icon={icons.dashboard}
-              active={pathname === `/dashboard/projects/${projectId}`}
+              active={pathname === `/dashboard/projects/${projectSlug}`}
             >
               Dashboard
             </NavLink>
-            <NavLink
-              href={`/dashboard/projects/${projectId}/sources`}
-              icon={icons.source}
-              active={pathname === `/dashboard/projects/${projectId}/sources`}
-            >
-              Log Sources
-            </NavLink>
-            <NavLink
-              href={`/dashboard/projects/${projectId}/logs`}
+            <NavSectionWithLink
+              href={`/dashboard/projects/${projectSlug}/logs`}
+              label="Logs"
               icon={icons.logs}
-              active={pathname === `/dashboard/projects/${projectId}/logs`}
+              open={logsOpen}
+              onToggle={() => setLogsManuallyOpen((o) => !o)}
+              active={
+                pathname === `/dashboard/projects/${projectSlug}/logs` ||
+                pathname.startsWith(`/dashboard/projects/${projectSlug}/logs/`)
+              }
             >
-              Logs
-            </NavLink>
+              {MOCK_LOG_SOURCES.map((s) => (
+                <SubLink
+                  key={s.id}
+                  href={`/dashboard/projects/${projectSlug}/logs/${s.name}`}
+                  active={pathname === `/dashboard/projects/${projectSlug}/logs/${s.name}`}
+                >
+                  {s.label}
+                </SubLink>
+              ))}
+            </NavSectionWithLink>
             <NavLink
-              href={`/dashboard/projects/${projectId}/alerts`}
+              href={`/dashboard/projects/${projectSlug}/alerts`}
               icon={icons.alert}
-              active={pathname === `/dashboard/projects/${projectId}/alerts`}
+              active={pathname === `/dashboard/projects/${projectSlug}/alerts`}
             >
               Alerts
             </NavLink>
