@@ -177,7 +177,7 @@ export default function Navbar() {
             >
               Dashboard
             </NavLink>
-            <NavSectionWithLink
+            {logSources.length > 0 && <><NavSectionWithLink
               href={`/dashboard/projects/${projectSlug}/logs`}
               label="Logs"
               icon={icons.logs}
@@ -204,7 +204,7 @@ export default function Navbar() {
               active={pathname === `/dashboard/projects/${projectSlug}/alerts`}
             >
               Alerts
-            </NavLink>
+            </NavLink></>}
           </>
         )}
       </div>
