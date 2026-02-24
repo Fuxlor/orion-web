@@ -1,24 +1,38 @@
 import { Project, LogSource } from "@/types";
-
-// Placeholder – replace with API fetch when available
-export const MOCK_PROJECTS: Project[] = [
-  { id: "1", name: "api-gateway", label: "API Gateway" },
-  { id: "2", name: "web-app", label: "Web App" },
-  { id: "3", name: "mobile-backend", label: "Mobile Backend" },
-];
+import { apiFetch } from "./api";
 
 export function getProjectFromPathname(pathname: string): string | null {
   const match = pathname.match(/^\/dashboard\/projects\/([^/]+)/);
   return match ? match[1] : null;
 }
 
-export function getProjectByName(name: string): Project | undefined {
-  return MOCK_PROJECTS.find((p) => p.name === name);
+function normalizeProject(p: { id: string | number; name: string; label: string }): Project {
+  return { id: String(p.id), name: p.name, label: p.label };
 }
 
-// Placeholder – log sources per project; replace with API fetch when available
-export const MOCK_LOG_SOURCES: LogSource[] = [
-  { id: "1", name: "production", label: "Production" },
-  { id: "2", name: "staging", label: "Staging" },
-  { id: "3", name: "development", label: "Development" },
-];
+function normalizeLogSource(s: { id: string | number; name: string; label: string }): LogSource {
+  return { id: String(s.id), name: s.name, label: s.label };
+}
+
+export async function fetchProjects(): Promise<Project[]> {
+  const res = await apiFetch("/api/projects");
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data) ? data.map(normalizeProject) : [];
+}
+
+export async function fetchProjectByName(name: string): Promise<Project | null> {
+  const res = await apiFetch(`/api/projects/${encodeURIComponent(name)}`);
+  if (!res.ok) return null;
+  const data = await res.json();
+  return data ? normalizeProject(data) : null;
+}
+
+export async function fetchLogSources(projectName: string): Promise<LogSource[]> {
+  const res = await apiFetch(
+    `/api/projects/${encodeURIComponent(projectName)}/log-sources`
+  );
+  if (!res.ok) return [];
+  const data = await res.json();
+  return Array.isArray(data) ? data.map(normalizeLogSource) : [];
+}

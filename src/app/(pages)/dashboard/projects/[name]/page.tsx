@@ -1,11 +1,15 @@
-import { MOCK_PROJECTS } from "@/lib/projects";
-import { notFound } from "next/navigation";
+"use client";
 
-export default async function ProjectDashboardPage({ params }: { params: Promise<{ name: string }> }) {
-  const { name } = await params;
-  const project = MOCK_PROJECTS.find((p) => p.name === name);
-  if (!project) {
-    notFound();
-  }
+import { notFound } from "next/navigation";
+import { useProject } from "@/contexts/projectContext";
+import { useProjects } from "@/contexts/projectsContext";
+
+export default function ProjectDashboardPage() {
+  const { project, projectSlug } = useProject();
+  const { loading } = useProjects();
+
+  if (loading) return <div className="text-[var(--text-muted)]">Loading…</div>;
+  if (projectSlug && !project) notFound();
+
   return <div>Project Dashboard</div>;
 }

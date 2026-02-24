@@ -1,6 +1,7 @@
 import { Metadata } from "next";
-import DashboardShell from "@/components/dashboardShell";
+import DashboardOrStandalone from "@/components/dashboardOrStandalone";
 import { LogsProvider } from "@/contexts/logsContext";
+import { ProjectsProvider } from "@/contexts/projectsContext";
 
 export const metadata: Metadata = {
   title: "Orion - Dashboard",
@@ -12,5 +13,11 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <LogsProvider><DashboardShell>{children}</DashboardShell></LogsProvider>;
+  return (
+    <LogsProvider>
+      <ProjectsProvider>
+        <DashboardOrStandalone>{children}</DashboardOrStandalone>
+      </ProjectsProvider>
+    </LogsProvider>
+  );
 }

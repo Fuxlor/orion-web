@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { User } from "@/types";
 import { ProjectProvider } from "@/contexts/projectContext";
+import { getApiUrl } from "@/lib/api";
 import Header from "./header";
 import Navbar from "./navbar";
 
@@ -30,7 +31,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       return;
     }
     if (!user && accessToken !== null) {
-      fetch("http://localhost:3001/api/auth/me", {
+      fetch(`${getApiUrl()}/api/auth/me`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       })
         .then((res) => res.json())

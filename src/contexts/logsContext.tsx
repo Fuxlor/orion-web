@@ -2,8 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { LogSource, LogEntry } from "@/types";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import { getApiUrl } from "@/lib/api";
 
 interface LogsContextValue {
   logSource: LogSource | null;
@@ -33,7 +32,7 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
 
     let cancelled = false;
 
-    fetch(`${API_URL}/api/ws/create`, {
+    fetch(`${getApiUrl()}/api/ws/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

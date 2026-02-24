@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { getProjectFromPathname, MOCK_LOG_SOURCES } from "@/lib/projects";
+import { getProjectFromPathname } from "@/lib/projects";
+import { useLogSources } from "@/hooks/useLogSources";
 
 function NavIcon({ children, active }: { children: React.ReactNode; active?: boolean }) {
   return (
@@ -151,6 +152,7 @@ function NavSectionWithLink({
 export default function Navbar() {
   const pathname = usePathname();
   const projectSlug = getProjectFromPathname(pathname);
+  const { logSources } = useLogSources(projectSlug);
   const [logsManuallyOpen, setLogsManuallyOpen] = useState(false);
   const logsOpen = pathname.includes("/logs") || logsManuallyOpen;
 
@@ -186,7 +188,7 @@ export default function Navbar() {
                 pathname.startsWith(`/dashboard/projects/${projectSlug}/logs/`)
               }
             >
-              {MOCK_LOG_SOURCES.map((s) => (
+              {logSources.map((s) => (
                 <SubLink
                   key={s.id}
                   href={`/dashboard/projects/${projectSlug}/logs/${s.name}`}

@@ -1,19 +1,24 @@
 "use client";
 
-import { use, useEffect } from "react";
-import { MOCK_PROJECTS } from "@/lib/projects";
+import { useEffect } from "react";
+import { notFound } from "next/navigation";
+import { useProject } from "@/contexts/projectContext";
+import { useProjects } from "@/contexts/projectsContext";
 import { useLogs } from "@/contexts/logsContext";
 import { LogSource } from "@/types";
 
-export default function ProjectLogsPage({ params }: { params: Promise<{ name: string }> }) {
-  const { name } = use(params);
-  const project = MOCK_PROJECTS.find((p) => p.name === name);
+export default function ProjectLogsPage() {
+  const { project, projectSlug } = useProject();
+  const { loading } = useProjects();
   const { logs, setLogSource, setLogSourceSlug } = useLogs();
 
   useEffect(() => {
     setLogSource({ id: "-1", name: "all", label: "All" } as LogSource);
     setLogSourceSlug("all");
   }, [setLogSource, setLogSourceSlug]);
+
+  if (loading) return <div className="text-[var(--text-muted)]">Loading…</div>;
+  if (projectSlug && !project) notFound();
 
   return (
     <div className="flex flex-col h-full gap-4">

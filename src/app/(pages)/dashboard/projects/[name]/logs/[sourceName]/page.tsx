@@ -1,21 +1,29 @@
+"use client";
 
-import { MOCK_PROJECTS, MOCK_LOG_SOURCES } from "@/lib/projects";
+import { notFound } from "next/navigation";
+import { useParams } from "next/navigation";
+import { useProject } from "@/contexts/projectContext";
+import { useProjects } from "@/contexts/projectsContext";
+import { useLogSources } from "@/hooks/useLogSources";
 
-export default async function SourceLogsPage({
-  params,
-}: {
-  params: Promise<{ name: string; sourceName: string }>;
-}) {
-  const { name, sourceName } = await params;
-  const project = MOCK_PROJECTS.find((p) => p.name === name);
-  const source = MOCK_LOG_SOURCES.find((s) => s.name === sourceName);
+export default function SourceLogsPage() {
+  const params = useParams<{ name: string; sourceName: string }>();
+  const { project, projectSlug } = useProject();
+  const { loading } = useProjects();
+  const { logSources } = useLogSources(projectSlug);
+
+  const source = logSources.find((s) => s.name === params.sourceName);
+
+  if (loading) return <div className="text-[var(--text-muted)]">Loading…</div>;
+  if (projectSlug && !project) notFound();
+
   return (
     <div>
       <h1 className="text-xl font-semibold text-white mb-2">
-        Logs — {project?.label} / {source?.label ?? sourceName}
+        Logs — {project?.label} / {source?.label ?? params.sourceName}
       </h1>
       <p className="text-[var(--text-secondary)]">
-        Logs from the {source?.label ?? sourceName} source.
+        Logs from the {source?.label ?? params.sourceName} source.
       </p>
     </div>
   );

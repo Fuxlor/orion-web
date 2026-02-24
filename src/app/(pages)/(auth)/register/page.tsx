@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { getApiUrl } from "@/lib/api";
 
 const BULLET = "•";
 
@@ -55,7 +56,7 @@ export default function RegisterPage() {
       return;
     }
     setPasswordError("");
-    fetch("http://localhost:3001/api/auth/register", {
+    fetch(`${getApiUrl()}/api/auth/register`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { User } from "@/types";
 import { useProject } from "@/contexts/projectContext";
-import { MOCK_PROJECTS } from "@/lib/projects";
+import { useProjects } from "@/contexts/projectsContext";
 
 function Logo() {
   return (
@@ -50,6 +50,15 @@ function SettingsIcon() {
   );
 }
 
+function PlusIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
+}
+
 function LayoutGridIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -67,6 +76,7 @@ interface HeaderProps {
 
 export default function Header({ user }: HeaderProps) {
   const { project } = useProject();
+  const { projects } = useProjects();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -110,12 +120,12 @@ export default function Header({ user }: HeaderProps) {
         <span>Orion</span>
       </Link>
 
-      {/* Project selector – envelops the project-scoped experience */}
-      <div className="relative flex-1 max-w-xs min-w-0" ref={projectDropdownRef}>
+      {/* Project selector + create button */}
+      <div className="relative flex flex-1 max-w-xs min-w-0 gap-0" ref={projectDropdownRef}>
         <button
           type="button"
           onClick={() => setProjectDropdownOpen((o) => !o)}
-          className="flex w-full items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface-input)] hover:border-[var(--primary)] transition-colors text-left"
+          className="flex flex-1 min-w-0 items-center gap-2 px-3 py-2 rounded-l-lg rounded-r-none border border-[var(--border)] border-r-0 bg-[var(--surface-input)] hover:border-[var(--primary)] transition-colors text-left"
           aria-expanded={projectDropdownOpen}
           aria-haspopup="listbox"
         >
@@ -125,6 +135,13 @@ export default function Header({ user }: HeaderProps) {
           </span>
           <ChevronDown className={`shrink-0 text-[var(--text-muted)] transition-transform ${projectDropdownOpen ? "rotate-180" : ""}`} />
         </button>
+        <Link
+          href="/dashboard/projects/new"
+          className="flex items-center justify-center w-10 shrink-0 py-2 rounded-r-lg rounded-l-none border border-[var(--primary)] bg-[var(--primary)] text-[var(--surface)] hover:bg-[var(--primary-hover)] transition-colors"
+          aria-label="New project"
+        >
+          <PlusIcon />
+        </Link>
         {projectDropdownOpen && (
           <div
             className="absolute left-0 right-0 top-full mt-2 py-1 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto"
@@ -139,7 +156,7 @@ export default function Header({ user }: HeaderProps) {
               Overview
             </Link>
             <div className="border-t border-[var(--border)] my-1" />
-            {MOCK_PROJECTS.map((p) => (
+            {projects.map((p) => (
               <Link
                 key={p.id}
                 href={`/dashboard/projects/${p.name}`}
