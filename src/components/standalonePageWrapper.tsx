@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { getApiUrl } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 export default function StandalonePageWrapper({
   children,
@@ -15,9 +15,7 @@ export default function StandalonePageWrapper({
       window.location.href = "/login";
       return;
     }
-    fetch(`${getApiUrl()}/api/auth/me`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    apiFetch("/api/auth/me")
       .then((res) => res.json())
       .then((data) => {
         if (data.error) {

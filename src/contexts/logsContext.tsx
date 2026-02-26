@@ -2,43 +2,36 @@
 
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { LogSource, LogEntry } from "@/types";
-import { getApiUrl } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 interface LogsContextValue {
-  logSource: LogSource | null;
-  logSourceSlug: string | null;
-  logSocket: WebSocket | null;
+  source: LogSource | null;
+  sourceName: string | null;
+  socket: WebSocket | null;
   logs: LogEntry[] | null;
-  setLogSource: (logSource: LogSource) => void;
-  setLogSourceSlug: (logSourceSlug: string) => void;
-  setLogSocket: (logSocket: WebSocket) => void;
+  setSource: (source: LogSource) => void;
+  setSourceName: (sourceName: string) => void;
+  setSocket: (socket: WebSocket) => void;
   setLogs: (logs: LogEntry[]) => void;
 }
 
 const LogsContext = createContext<LogsContextValue | null>(null);
 
 export function LogsProvider({ children }: { children: React.ReactNode }) {
-  const [logSource, setLogSource] = useState<LogSource | null>(null);
-  const [logSourceSlug, setLogSourceSlug] = useState<string | null>(null);
-  const [logSocket, setLogSocket] = useState<WebSocket | null>(null);
+  const [source, setSource] = useState<LogSource | null>(null);
+  const [sourceName, setSourceName] = useState<string | null>(null);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [logs, setLogs] = useState<LogEntry[] | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    if (!logSource) return;
-
-    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-    if (!token) return;
+    if (!source) return;
 
     let cancelled = false;
 
-    fetch(`${getApiUrl()}/api/ws/create`, {
+    apiFetch("/api/ws/create", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({ sourceName: logSource.name }),
+      body: JSON.stringify({ sourceName: source.name }),
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to create WebSocket");
@@ -65,7 +58,7 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
             // ignore parse errors
           }
         };
-        queueMicrotask(() => setLogSocket(socket));
+        queueMicrotask(() => setSocket(socket));
       })
       .catch(() => {
         if (!cancelled) setLogs([]);
@@ -77,13 +70,13 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
         socketRef.current.close();
         socketRef.current = null;
       }
-      queueMicrotask(() => setLogSocket(null));
+      queueMicrotask(() => setSocket(null));
       setLogs(null);
     };
-  }, [logSource]);
+  }, [source]);
 
   return (
-    <LogsContext.Provider value={{ logSource, logSourceSlug, logSocket, logs, setLogSource, setLogSourceSlug, setLogSocket, setLogs }}>
+    <LogsContext.Provider value={{ source, sourceName, socket, logs, setSource, setSourceName, setSocket, setLogs }}>
       {children}
     </LogsContext.Provider>
   );

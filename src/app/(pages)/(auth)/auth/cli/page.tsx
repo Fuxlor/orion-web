@@ -29,7 +29,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { getApiUrl } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 type PageState = "loading" | "success" | "error" | "no-state";
 
@@ -60,17 +60,13 @@ export default function CliAuthPage() {
         }
 
         // Cas : user connecté → on confirme l'auth CLI
-        confirmCliAuth(state, accessToken);
+        confirmCliAuth(state);
     }, [state]);
 
-    async function confirmCliAuth(state: string, accessToken: string) {
+    async function confirmCliAuth(state: string) {
         try {
-            const res = await fetch(`${getApiUrl()}/api/auth/cli/confirm`, {
+            const res = await apiFetch("/api/auth/cli/confirm", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${accessToken}`,
-                },
                 body: JSON.stringify({ state }),
             });
 

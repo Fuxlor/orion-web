@@ -16,9 +16,9 @@ export interface Project {
 }
 
 export interface LogSource {
-  id: string;
   name: string;
-  label: string;
+  description: string;
+  environment: string;
 }
 
 export interface LogEntry {

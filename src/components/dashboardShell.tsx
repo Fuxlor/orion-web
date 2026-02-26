@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { User } from "@/types";
+import { apiFetch } from "@/lib/api";
 import { ProjectProvider } from "@/contexts/projectContext";
-import { getApiUrl } from "@/lib/api";
 import Header from "./header";
 import Navbar from "./navbar";
 
@@ -31,9 +31,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       return;
     }
     if (!user && accessToken !== null) {
-      fetch(`${getApiUrl()}/api/auth/me`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      })
+      apiFetch("/api/auth/me")
         .then((res) => res.json())
         .then((data) => {
           if (data.error) {

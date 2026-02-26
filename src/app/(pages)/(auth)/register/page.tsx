@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { getApiUrl } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 const BULLET = "•";
 
@@ -56,11 +56,8 @@ export default function RegisterPage() {
       return;
     }
     setPasswordError("");
-    fetch(`${getApiUrl()}/api/auth/register`, {
+    apiFetch("/api/auth/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ firstName, lastName, pseudo, email, password }),
     }).then(res => res.json()).then(data => {
       console.log(data);
@@ -99,13 +96,12 @@ export default function RegisterPage() {
           {[1, 2].map((s) => (
             <div
               key={s}
-              className={`h-1.5 rounded-full transition-all ${
-                s === step
-                  ? "w-6 bg-[var(--primary)]"
-                  : s < step
-                    ? "w-1.5 bg-[var(--primary)]"
-                    : "w-1.5 bg-[var(--border)]"
-              }`}
+              className={`h-1.5 rounded-full transition-all ${s === step
+                ? "w-6 bg-[var(--primary)]"
+                : s < step
+                  ? "w-1.5 bg-[var(--primary)]"
+                  : "w-1.5 bg-[var(--border)]"
+                }`}
               aria-hidden
             />
           ))}
@@ -208,7 +204,7 @@ export default function RegisterPage() {
               )}
             </>
           )}
-          
+
           {error && (
             <p className="text-sm text-red-400 m-0 -mt-2" role="alert">
               {error}

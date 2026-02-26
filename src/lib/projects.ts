@@ -1,5 +1,5 @@
 import { Project, LogSource } from "@/types";
-import { apiFetch } from "./api";
+import { apiFetch } from "@/lib/api";
 
 export function getProjectFromPathname(pathname: string): string | null {
   const match = pathname.match(/^\/dashboard\/projects\/([^/]+)/);
@@ -15,24 +15,19 @@ function normalizeLogSource(s: { id: string | number; name: string; label: strin
 }
 
 export async function fetchProjects(): Promise<Project[]> {
-  const res = await apiFetch("/api/projects");
+  const res = await apiFetch("/api/projects", {
+    method: "GET",
+  });
   if (!res.ok) return [];
   const data = await res.json();
   return Array.isArray(data) ? data.map(normalizeProject) : [];
 }
 
 export async function fetchProjectByName(name: string): Promise<Project | null> {
-  const res = await apiFetch(`/api/projects/${encodeURIComponent(name)}`);
+  const res = await apiFetch(`/api/projects/${encodeURIComponent(name)}`, {
+    method: "GET",
+  });
   if (!res.ok) return null;
   const data = await res.json();
   return data ? normalizeProject(data) : null;
-}
-
-export async function fetchLogSources(projectName: string): Promise<LogSource[]> {
-  const res = await apiFetch(
-    `/api/projects/${encodeURIComponent(projectName)}/log-sources`
-  );
-  if (!res.ok) return [];
-  const data = await res.json();
-  return Array.isArray(data) ? data.map(normalizeLogSource) : [];
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { getApiUrl } from "@/lib/api";
+import { apiFetch } from "@/lib/api";
 
 const BULLET = "•";
 
@@ -26,11 +26,8 @@ export default function LoginPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    fetch(`${getApiUrl()}/api/auth/login`, {
+    apiFetch("/api/auth/login", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ email, password }),
     }).then(res => res.json()).then(data => {
       if (data.error) {

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { apiFetch } from "@/lib/api";
 import { useProjects } from "@/contexts/projectsContext";
+import { apiFetch } from "@/lib/api";
 
 function normalizeName(raw: string): string {
   return raw
@@ -46,7 +46,6 @@ export default function NewProjectPage() {
     if (!email) return;
     apiFetch("/api/projects/validate-email", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),
     })
       .then((res) => res.json())
@@ -77,7 +76,6 @@ export default function NewProjectPage() {
     setSubmitting(true);
     apiFetch("/api/projects", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: normalizedName,
         label: label.trim(),

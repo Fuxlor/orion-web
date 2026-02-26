@@ -3,8 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { getProjectFromPathname } from "@/lib/projects";
-import { useLogSources } from "@/hooks/useLogSources";
+import { useProject } from "@/contexts/projectContext";
 
 function NavIcon({ children, active }: { children: React.ReactNode; active?: boolean }) {
   return (
@@ -69,9 +68,8 @@ function SubLink({ href, children, active }: { href: string; children: React.Rea
   return (
     <Link
       href={href}
-      className={`block px-3 py-1.5 pl-11 rounded text-sm transition-colors truncate ${
-        active ? "text-[var(--primary)] font-medium" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
-      }`}
+      className={`block px-3 py-1.5 pl-11 rounded text-sm transition-colors truncate ${active ? "text-[var(--primary)] font-medium" : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
+        }`}
     >
       {children}
     </Link>
@@ -92,11 +90,10 @@ function NavLink({
   return (
     <Link
       href={href}
-      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-        active
-          ? "bg-[var(--primary-muted)] text-[var(--primary)]"
-          : "text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white"
-      }`}
+      className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${active
+        ? "bg-[var(--primary-muted)] text-[var(--primary)]"
+        : "text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white"
+        }`}
     >
       <NavIcon active={active}>{icon}</NavIcon>
       <span className="truncate">{children}</span>
@@ -126,11 +123,10 @@ function NavSectionWithLink({
       <div className="flex items-center gap-1 px-1 py-0.5">
         <Link
           href={href}
-          className={`flex flex-1 items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-colors min-w-0 ${
-            active
-              ? "bg-[var(--primary-muted)] text-[var(--primary)]"
-              : "text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white"
-          }`}
+          className={`flex flex-1 items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-colors min-w-0 ${active
+            ? "bg-[var(--primary-muted)] text-[var(--primary)]"
+            : "text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white"
+            }`}
         >
           <NavIcon active={active}>{icon}</NavIcon>
           <span className="truncate">{label}</span>
@@ -151,10 +147,9 @@ function NavSectionWithLink({
 
 export default function Navbar() {
   const pathname = usePathname();
-  const projectSlug = getProjectFromPathname(pathname);
-  const { logSources } = useLogSources(projectSlug);
   const [logsManuallyOpen, setLogsManuallyOpen] = useState(false);
   const logsOpen = pathname.includes("/logs") || logsManuallyOpen;
+  const { sources, projectSlug } = useProject();
 
   return (
     <nav className="w-56 shrink-0 h-full flex flex-col border-r border-[var(--border)] bg-[var(--surface-elevated)] overflow-y-auto">
@@ -177,7 +172,7 @@ export default function Navbar() {
             >
               Dashboard
             </NavLink>
-            {logSources.length > 0 && <><NavSectionWithLink
+            {sources?.length > 0 && <><NavSectionWithLink
               href={`/dashboard/projects/${projectSlug}/logs`}
               label="Logs"
               icon={icons.logs}
@@ -188,23 +183,23 @@ export default function Navbar() {
                 pathname.startsWith(`/dashboard/projects/${projectSlug}/logs/`)
               }
             >
-              {logSources.map((s) => (
+              {sources?.map((s) => (
                 <SubLink
-                  key={s.id}
+                  key={s.name}
                   href={`/dashboard/projects/${projectSlug}/logs/${s.name}`}
                   active={pathname === `/dashboard/projects/${projectSlug}/logs/${s.name}`}
                 >
-                  {s.label}
+                  {s.name}
                 </SubLink>
               ))}
             </NavSectionWithLink>
-            <NavLink
-              href={`/dashboard/projects/${projectSlug}/alerts`}
-              icon={icons.alert}
-              active={pathname === `/dashboard/projects/${projectSlug}/alerts`}
-            >
-              Alerts
-            </NavLink></>}
+              <NavLink
+                href={`/dashboard/projects/${projectSlug}/alerts`}
+                icon={icons.alert}
+                active={pathname === `/dashboard/projects/${projectSlug}/alerts`}
+              >
+                Alerts
+              </NavLink></>}
           </>
         )}
       </div>
