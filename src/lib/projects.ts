@@ -1,4 +1,4 @@
-import { Project, LogSource } from "@/types";
+import { Project } from "@/types";
 import { apiFetch } from "@/lib/api";
 
 export function getProjectFromPathname(pathname: string): string | null {
@@ -8,10 +8,6 @@ export function getProjectFromPathname(pathname: string): string | null {
 
 function normalizeProject(p: { id: string | number; name: string; label: string }): Project {
   return { id: String(p.id), name: p.name, label: p.label };
-}
-
-function normalizeLogSource(s: { id: string | number; name: string; label: string }): LogSource {
-  return { id: String(s.id), name: s.name, label: s.label };
 }
 
 export async function fetchProjects(): Promise<Project[]> {
