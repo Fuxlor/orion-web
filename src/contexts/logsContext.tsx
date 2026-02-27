@@ -9,10 +9,12 @@ interface LogsContextValue {
   sourceName: string | null;
   socket: WebSocket | null;
   logs: LogEntry[] | null;
+  projectName: string | null;
   setSource: (source: LogSource) => void;
   setSourceName: (sourceName: string) => void;
   setSocket: (socket: WebSocket) => void;
   setLogs: (logs: LogEntry[]) => void;
+  setProjectName: (projectName: string) => void;
 }
 
 const LogsContext = createContext<LogsContextValue | null>(null);
@@ -22,10 +24,25 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
   const [sourceName, setSourceName] = useState<string | null>(null);
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [logs, setLogs] = useState<LogEntry[] | null>(null);
+  const [projectName, setProjectName] = useState<string | null>(null);
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
     if (!source) return;
+
+    apiFetch(`/api/projects/${projectName}/sources/${source.name}/logs`, {
+      method: "GET",
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch logs");
+        return res.json();
+      })
+      .then((data) => {
+        setLogs(data);
+      })
+      .catch(() => {
+        setLogs([]);
+      });
 
     let cancelled = false;
 
@@ -76,7 +93,7 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
   }, [source]);
 
   return (
-    <LogsContext.Provider value={{ source, sourceName, socket, logs, setSource, setSourceName, setSocket, setLogs }}>
+    <LogsContext.Provider value={{ source, sourceName, socket, logs, projectName, setSource, setSourceName, setSocket, setLogs, setProjectName }}>
       {children}
     </LogsContext.Provider>
   );

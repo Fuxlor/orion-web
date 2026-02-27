@@ -13,12 +13,13 @@ export default function SourceLogsPage() {
   const params = useParams<{ name: string; sourceName: string }>();
   const { project, projectSlug } = useProject();
   const { loading } = useProjects();
-  const { logs, setSource } = useLogs();
+  const { logs, setSource, setProjectName } = useLogs();
   const { error } = useError();
 
   useEffect(() => {
     setSource({ name: params.sourceName, description: "", environment: "" } as LogSource);
-  }, [setSource, params.sourceName]);
+    setProjectName(params.name);
+  }, [setSource, params.sourceName, setProjectName, params.name]);
 
   if (loading) return <div className="text-[var(--text-muted)]">Loading…</div>;
   if (projectSlug && !project) notFound();
@@ -42,7 +43,7 @@ export default function SourceLogsPage() {
           ) : (
             logs?.map((log) => (
               <div key={log.id}>
-                <p>[{log.timestamp.toISOString()}] [{log.level}] [{log.source}] {log.message}</p>
+                <p>[{new Date(log.timestamp).toISOString()}] [{log.level}] [{log.source}] {log.message}</p>
               </div>
             ))
           )}
