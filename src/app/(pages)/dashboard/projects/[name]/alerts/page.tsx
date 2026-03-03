@@ -5,11 +5,11 @@ import { useProject } from "@/contexts/projectContext";
 import { useProjects } from "@/contexts/projectsContext";
 
 export default function ProjectAlertsPage() {
-  const { project, projectSlug } = useProject();
+  const { project, projectName } = useProject();
   const { loading } = useProjects();
 
   if (loading) return <div className="text-[var(--text-muted)]">Loading…</div>;
-  if (projectSlug && !project) notFound();
+  if (projectName && !project) notFound();
 
   return (
     <div>

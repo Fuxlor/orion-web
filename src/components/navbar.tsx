@@ -149,7 +149,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const [logsManuallyOpen, setLogsManuallyOpen] = useState(false);
   const logsOpen = pathname.includes("/logs") || logsManuallyOpen;
-  const { sources, projectSlug } = useProject();
+  const { sources, projectName } = useProject();
 
   return (
     <nav className="w-56 shrink-0 h-full flex flex-col border-r border-[var(--border)] bg-[var(--surface-elevated)] overflow-y-auto">
@@ -158,7 +158,7 @@ export default function Navbar() {
           Overview
         </NavLink>
 
-        {projectSlug && (
+        {projectName && (
           <>
             <div className="pt-2 pb-1">
               <p className="px-3 text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">
@@ -166,37 +166,37 @@ export default function Navbar() {
               </p>
             </div>
             <NavLink
-              href={`/dashboard/projects/${projectSlug}`}
+              href={`/dashboard/projects/${projectName}`}
               icon={icons.dashboard}
-              active={pathname === `/dashboard/projects/${projectSlug}`}
+              active={pathname === `/dashboard/projects/${projectName}`}
             >
               Dashboard
             </NavLink>
             {sources?.length > 0 && <><NavSectionWithLink
-              href={`/dashboard/projects/${projectSlug}/logs`}
+              href={`/dashboard/projects/${projectName}/logs`}
               label="Logs"
               icon={icons.logs}
               open={logsOpen}
               onToggle={() => setLogsManuallyOpen((o) => !o)}
               active={
-                pathname === `/dashboard/projects/${projectSlug}/logs` ||
-                pathname.startsWith(`/dashboard/projects/${projectSlug}/logs/`)
+                pathname === `/dashboard/projects/${projectName}/logs` ||
+                pathname.startsWith(`/dashboard/projects/${projectName}/logs/`)
               }
             >
               {sources?.map((s) => (
                 <SubLink
                   key={s.name}
-                  href={`/dashboard/projects/${projectSlug}/logs/${s.name}`}
-                  active={pathname === `/dashboard/projects/${projectSlug}/logs/${s.name}`}
+                  href={`/dashboard/projects/${projectName}/logs/${s.name}`}
+                  active={pathname === `/dashboard/projects/${projectName}/logs/${s.name}`}
                 >
                   {s.name}
                 </SubLink>
               ))}
             </NavSectionWithLink>
               <NavLink
-                href={`/dashboard/projects/${projectSlug}/alerts`}
+                href={`/dashboard/projects/${projectName}/alerts`}
                 icon={icons.alert}
-                active={pathname === `/dashboard/projects/${projectSlug}/alerts`}
+                active={pathname === `/dashboard/projects/${projectName}/alerts`}
               >
                 Alerts
               </NavLink></>}

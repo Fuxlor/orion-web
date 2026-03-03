@@ -81,6 +81,11 @@ export default function Header({ user }: HeaderProps) {
   const [projectDropdownOpen, setProjectDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const projectDropdownRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const projectLabel = project?.label ?? "Overview";
 
@@ -179,10 +184,10 @@ export default function Header({ user }: HeaderProps) {
           aria-haspopup="true"
         >
           <div className="w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--surface)] flex items-center justify-center text-sm font-semibold">
-            {initials}
+            {mounted ? initials : null}
           </div>
           <span className="text-sm text-[var(--text-secondary)] hidden sm:inline max-w-[140px] truncate">
-            {user?.pseudo ?? user?.email ?? "Account"}
+            {mounted ? (user?.pseudo ?? user?.email ?? "Account") : null}
           </span>
           <ChevronDown className={`text-[var(--text-muted)] transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
         </button>

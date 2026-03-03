@@ -11,18 +11,17 @@ import { LogSource } from "@/types";
 
 export default function SourceLogsPage() {
   const params = useParams<{ name: string; sourceName: string }>();
-  const { project, projectSlug } = useProject();
+  const { project, projectName } = useProject();
   const { loading } = useProjects();
-  const { logs, setSource, setProjectName } = useLogs();
+  const { logs, setSource } = useLogs();
   const { error } = useError();
 
   useEffect(() => {
     setSource({ name: params.sourceName, description: "", environment: "" } as LogSource);
-    setProjectName(params.name);
-  }, [setSource, params.sourceName, setProjectName, params.name]);
+  }, [setSource, params.sourceName]);
 
   if (loading) return <div className="text-[var(--text-muted)]">Loading…</div>;
-  if (projectSlug && !project) notFound();
+  if (projectName && !project) notFound();
 
   return (
     <div className="flex flex-col h-full gap-4">

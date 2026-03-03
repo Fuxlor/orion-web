@@ -9,7 +9,7 @@ import { LogSource } from "@/types";
 import { useError } from "@/contexts/errorContext";
 
 export default function ProjectLogsPage() {
-  const { project, projectSlug, sources } = useProject();
+  const { project, projectName, sources } = useProject();
   const { error } = useError();
   const { loading } = useProjects();
   const { logs, setSource } = useLogs();
@@ -19,7 +19,7 @@ export default function ProjectLogsPage() {
   }, [setSource]);
 
   if (loading) return <div className="text-[var(--text-muted)]">Loading…</div>;
-  if (projectSlug && !project) notFound();
+  if (projectName && !project) notFound();
 
   return (
     <div className="flex flex-col h-full gap-4">
@@ -58,7 +58,7 @@ export default function ProjectLogsPage() {
           ) : (
             logs?.map((log) => (
               <div key={log.id}>
-                <p>[{log.timestamp.toISOString()}] [{log.level}] [{log.source}] {log.message}</p>
+                <p>[{new Date(log.timestamp).toISOString()}] [{log.level}] [{log.source}] {log.message}</p>
               </div>
             ))
           )}
