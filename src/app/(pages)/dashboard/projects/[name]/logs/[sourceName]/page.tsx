@@ -32,6 +32,26 @@ export default function SourceLogsPage() {
         Logs from the {params.sourceName} source.
       </p>
 
+      {/* Stats row – little stats at top */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
+        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
+          <p className="text-xs text-[var(--text-muted)]">Total entries</p>
+          <p className="text-lg font-semibold text-white">{logs?.length || "-"}</p>
+        </div>
+        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
+          <p className="text-xs text-[var(--text-muted)]">Errors (24h)</p>
+          <p className="text-lg font-semibold text-white">{logs?.filter((log) => log.level === "error").length || "-"}</p>
+        </div>
+        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
+          <p className="text-xs text-[var(--text-muted)]">Warnings (24h)</p>
+          <p className="text-lg font-semibold text-white">{logs?.filter((log) => log.level === "warn").length || "-"}</p>
+        </div>
+        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
+          <p className="text-xs text-[var(--text-muted)]">Uptime (24h)</p>
+          <p className="text-lg font-semibold text-white">{"99%"}</p>
+        </div>
+      </div>
+
       <div className="flex-1 min-h-0 rounded-lg border border-[var(--border)] bg-[var(--surface-input)] font-mono text-sm overflow-auto">
         <div className="p-4 text-[var(--text-muted)]">
           {error ? (
