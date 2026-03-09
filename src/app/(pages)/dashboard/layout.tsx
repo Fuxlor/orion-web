@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import DashboardOrStandalone from "@/components/dashboardOrStandalone";
+import { DashboardOrStandalone } from "@/components/dashboard/index";
 import { LogsProvider } from "@/contexts/logsContext";
 import { ProjectsProvider } from "@/contexts/projectsContext";
 import { ErrorProvider } from "@/contexts/errorContext";
