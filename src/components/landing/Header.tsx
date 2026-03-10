@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,6 +14,10 @@ export function Header() {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem("accessToken"));
   }, []);
 
   return (
@@ -32,12 +37,20 @@ export function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/login" className="text-sm font-medium text-white hover:text-[var(--primary)] transition-colors hidden md:block">
-            Login
-          </Link>
-          <Link href="/register" className="btn-primary text-sm px-4 py-2">
-            Get Started
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/dashboard" className="btn-primary text-sm px-4 py-2">
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" className="text-sm font-medium text-white hover:text-[var(--primary)] transition-colors hidden md:block">
+                Login
+              </Link>
+              <Link href="/register" className="btn-primary text-sm px-4 py-2">
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

@@ -49,7 +49,7 @@ export default function LogCounters({ logCounts, chartData }: Props) {
   return (
     <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5">
       <p className="mb-4 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
-        Volume de logs
+        Logs' Volume
       </p>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {LEVEL_CONFIG.map(({ level, label, color, stroke }) => (

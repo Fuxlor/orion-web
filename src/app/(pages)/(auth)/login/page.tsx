@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 
 const BULLET = "•";
@@ -20,6 +21,7 @@ function passwordFromDisplay(prevPassword: string, display: string): string {
 }
 
 export default function LoginPage() {
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -36,7 +38,8 @@ export default function LoginPage() {
         setError("");
         localStorage.setItem("accessToken", data.accessToken);
         localStorage.setItem("user", JSON.stringify(data.user));
-        window.location.href = "/dashboard";
+        const next = searchParams.get("next");
+        window.location.href = next ?? "/dashboard";
       }
     }).catch(err => {
       setError("An error occurred: " + err.message);

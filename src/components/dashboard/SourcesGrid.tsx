@@ -5,7 +5,7 @@ interface Props {
 }
 
 function relativeTime(isoString: string | null): string {
-  if (!isoString) return "jamais";
+  if (!isoString) return "never";
   const diffMs = Date.now() - new Date(isoString).getTime();
   const diffSec = Math.floor(diffMs / 1000);
   if (diffSec < 60)  return `${diffSec}s`;
@@ -32,7 +32,7 @@ function StatusBadge({ status }: { status: 'UP' | 'DOWN' | null }) {
   }
   return (
     <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[11px] font-semibold text-[var(--text-muted)]">
-      INCONNU
+      UNKNOWN
     </span>
   );
 }
@@ -42,9 +42,9 @@ export default function SourcesGrid({ heartbeats }: Props) {
     return (
       <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5">
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
-          État des sources
+          Sources Status
         </p>
-        <p className="text-sm text-[var(--text-muted)]">Aucune source configurée.</p>
+        <p className="text-sm text-[var(--text-muted)]">No sources configured.</p>
       </div>
     );
   }
@@ -52,7 +52,7 @@ export default function SourcesGrid({ heartbeats }: Props) {
   return (
     <div>
       <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
-        État des sources
+        Sources Status
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {heartbeats.map((hb) => (
@@ -67,7 +67,7 @@ export default function SourcesGrid({ heartbeats }: Props) {
               <StatusBadge status={hb.status} />
             </div>
             <p className="text-xs text-[var(--text-muted)]">
-              Dernier ping : {relativeTime(hb.last_ping_at)} ago
+              Last ping: {relativeTime(hb.last_ping_at)} ago
             </p>
           </div>
         ))}

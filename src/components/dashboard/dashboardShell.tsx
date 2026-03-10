@@ -53,7 +53,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   return (
     <ProjectProvider>
-      <div className="flex h-screen flex-col bg-[var(--background)]">
+      <div className="flex h-screen flex-col bg-[var(--surface)]">
         <Header user={user} />
         <div className="flex flex-1 min-h-0">
           <Navbar />

@@ -23,11 +23,11 @@ export default function QuickShortcuts({ pinned, recent, removePinned, visitItem
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      {/* Récents */}
+      {/* Recent */}
       {recent.length > 0 && (
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
-            Récents
+            Recent
           </p>
           <div className="flex flex-col gap-1">
             {recent.map((item) => (
@@ -45,11 +45,11 @@ export default function QuickShortcuts({ pinned, recent, removePinned, visitItem
         </div>
       )}
 
-      {/* Épinglés */}
+      {/* Pinned */}
       {pinned.length > 0 && (
         <div>
           <p className="mb-2 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
-            Épinglés
+            Pinned
           </p>
           <div className="flex flex-col gap-1">
             {pinned.map((item) => (
@@ -67,7 +67,7 @@ export default function QuickShortcuts({ pinned, recent, removePinned, visitItem
                 <button
                   onClick={() => removePinned(item.id)}
                   className="ml-2 text-[var(--text-muted)] hover:text-red-400"
-                  aria-label="Désépingler"
+                  aria-label="Unpin"
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"/>

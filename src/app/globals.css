@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0d0f16;
+  --foreground: #e8eaef;
   /* Orion – dark monitoring theme */
   --primary: #02f194;
   --primary-hover: #02d883;

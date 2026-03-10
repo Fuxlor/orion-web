@@ -17,9 +17,9 @@ const LEVELS: { level: Level; color: string; label: string }[] = [
 function formatBucketLabel(iso: string, window: StatsWindow): string {
   const d = new Date(iso);
   if (window === '24h') {
-    return d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   }
-  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+  return d.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
 }
 
 function generateBuckets(window: StatsWindow): string[] {
@@ -106,12 +106,12 @@ export default function ActivityChart({ chartData, window }: Props) {
   return (
     <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5">
       <p className="mb-4 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
-        Activité des logs
+        Log Activity
       </p>
       <svg
         viewBox={`0 0 ${VW} ${VH}`}
         width="100%"
-        aria-label="Graphique d'activité des logs"
+        aria-label="Log activity chart"
       >
         {/* Grid lines */}
         {gridLines.map((val, i) => {
