@@ -69,7 +69,7 @@ export default function LoginPage() {
             onChange={(e) => setEmail(e.target.value)}
             autoComplete="email"
             required
-            className="w-full"
+            className="w-full text-[var(--text-secondary)]"
           />
 
           <label htmlFor="password" className="text-sm font-medium text-[var(--text-secondary)]">
@@ -84,7 +84,7 @@ export default function LoginPage() {
             value={maskPassword(password)}
             onChange={handlePasswordChange}
             required
-            className="w-full font-mono"
+            className="w-full font-mono text-[var(--text-secondary)]"
           />
 
           {error && (
