@@ -2,7 +2,6 @@ const API_URL = "http://localhost:3001";
 
 /** Returns the base API URL. */
 export function getApiUrl(): string {
-    console.log("API URL:", API_URL);
     return API_URL;
 }
 

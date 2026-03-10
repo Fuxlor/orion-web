@@ -60,7 +60,6 @@ export default function RegisterPage() {
       method: "POST",
       body: JSON.stringify({ firstName, lastName, pseudo, email, password }),
     }).then(res => res.json()).then(data => {
-      console.log(data);
       if (data.error) {
         setError(data.message);
       } else {
