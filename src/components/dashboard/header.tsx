@@ -1,27 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image"
 import { useState, useRef, useEffect } from "react";
 import { User } from "@/types";
 import { useProject } from "@/contexts/projectContext";
 import { useProjects } from "@/contexts/projectsContext";
-
-function Logo() {
-  return (
-    <svg
-      width="28"
-      height="28"
-      viewBox="0 0 32 32"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="shrink-0"
-    >
-      <circle cx="16" cy="16" r="14" stroke="var(--primary)" strokeWidth="2" fill="none" />
-      <circle cx="16" cy="16" r="6" fill="var(--primary)" opacity="0.6" />
-      <circle cx="16" cy="8" r="2" fill="var(--primary)" />
-    </svg>
-  );
-}
 
 function ChevronDown({ className }: { className?: string }) {
   return (
@@ -121,7 +105,7 @@ export default function Header({ user }: HeaderProps) {
         href="/dashboard"
         className="flex items-center gap-2 text-white font-semibold text-lg tracking-tight hover:opacity-90 transition-opacity shrink-0"
       >
-        <Logo />
+        <Image src="/orion-nobg.png" alt="Orion Logo" width={48} height={48} />
         <span>Orion</span>
       </Link>
 
