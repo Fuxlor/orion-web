@@ -15,7 +15,7 @@ function NavIcon({ children, active }: { children: React.ReactNode; active?: boo
   );
 }
 
-const icons = {
+const icons: Record<string, React.ReactNode> = {
   overview: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="3" y="3" width="7" height="9" rx="1" />
@@ -46,6 +46,14 @@ const icons = {
       <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
       <line x1="12" y1="9" x2="12" y2="13" />
       <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  ),
+  servers: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <rect x="2" y="2" width="20" height="8" rx="2" />
+      <rect x="2" y="14" width="20" height="8" rx="2" />
+      <line x1="6" y1="6" x2="6.01" y2="6" />
+      <line x1="6" y1="18" x2="6.01" y2="18" />
     </svg>
   ),
 };
@@ -148,8 +156,10 @@ function NavSectionWithLink({
 export default function Navbar() {
   const pathname = usePathname();
   const [logsManuallyOpen, setLogsManuallyOpen] = useState(false);
+  const [serversManuallyOpen, setServersManuallyOpen] = useState(false);
   const logsOpen = pathname.includes("/logs") || logsManuallyOpen;
-  const { sources, projectName } = useProject();
+  const serversOpen = pathname.includes("/servers") || serversManuallyOpen;
+  const { sources, servers, projectName } = useProject();
 
   return (
     <nav className="w-56 shrink-0 h-full flex flex-col border-r border-[var(--border)] bg-[var(--surface-elevated)] overflow-y-auto">
@@ -193,6 +203,29 @@ export default function Navbar() {
                 </SubLink>
               ))}
             </NavSectionWithLink>
+              {servers?.length > 0 && (
+                <NavSectionWithLink
+                  href={`/dashboard/projects/${projectName}/servers`}
+                  label="Servers"
+                  icon={icons.servers}
+                  open={serversOpen}
+                  onToggle={() => setServersManuallyOpen((o) => !o)}
+                  active={
+                    pathname === `/dashboard/projects/${projectName}/servers` ||
+                    pathname.startsWith(`/dashboard/projects/${projectName}/servers/`)
+                  }
+                >
+                  {servers.map((srv) => (
+                    <SubLink
+                      key={srv.hostname}
+                      href={`/dashboard/projects/${projectName}/servers/${encodeURIComponent(srv.hostname)}`}
+                      active={pathname === `/dashboard/projects/${projectName}/servers/${encodeURIComponent(srv.hostname)}`}
+                    >
+                      {srv.hostname}
+                    </SubLink>
+                  ))}
+                </NavSectionWithLink>
+              )}
               <NavLink
                 href={`/dashboard/projects/${projectName}/alerts`}
                 icon={icons.alert}

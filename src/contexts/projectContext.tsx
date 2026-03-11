@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { LogSource, Project } from "@/types";
+import { LogSource, Project, ServerSummary } from "@/types";
 import { getProjectFromPathname } from "@/lib/projects";
 import { apiFetch } from "@/lib/api";
 import { useError } from "./errorContext";
@@ -13,6 +13,7 @@ interface ProjectContextValue {
   projectName: string | null;
   project: Project | null;
   sources: LogSource[];
+  servers: ServerSummary[];
 }
 
 const ProjectContext = createContext<ProjectContextValue | null>(null);
@@ -27,6 +28,7 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     : null;
 
   const [sources, setSources] = useState<LogSource[]>([]);
+  const [servers, setServers] = useState<ServerSummary[]>([]);
 
   useEffect(() => {
     if (projectName) {
@@ -43,11 +45,18 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
         .catch(err => {
           setError("An error occurred: " + err.message);
         });
+
+      apiFetch(`/api/projects/${projectName}/servers`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) setServers(data.servers ?? []);
+        })
+        .catch(() => {});
     }
   }, [projectName]);
 
   return (
-    <ProjectContext.Provider value={{ projectName, project, sources }}>
+    <ProjectContext.Provider value={{ projectName, project, sources, servers }}>
       {children}
     </ProjectContext.Provider>
   );

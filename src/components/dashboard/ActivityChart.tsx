@@ -8,8 +8,8 @@ interface Props {
 type Level = 'info' | 'warn' | 'error' | 'debug';
 
 const LEVELS: { level: Level; color: string; label: string }[] = [
-  { level: 'info',  color: '#60a5fa', label: 'Info' },
-  { level: 'warn',  color: '#facc15', label: 'Warn' },
+  { level: 'info', color: '#60a5fa', label: 'Info' },
+  { level: 'warn', color: '#facc15', label: 'Warn' },
   { level: 'error', color: '#f87171', label: 'Error' },
   { level: 'debug', color: '#9ca3af', label: 'Debug' },
 ];
@@ -73,8 +73,8 @@ export default function ActivityChart({ chartData, window }: Props) {
     return {
       key,
       bucket_start: key,
-      info:  found?.info  ?? 0,
-      warn:  found?.warn  ?? 0,
+      info: found?.info ?? 0,
+      warn: found?.warn ?? 0,
       error: found?.error ?? 0,
       debug: found?.debug ?? 0,
     };
@@ -102,6 +102,8 @@ export default function ActivityChart({ chartData, window }: Props) {
 
   // X-axis labels: first, middle, last
   const labelIndices = [0, Math.floor(merged.length / 2), merged.length - 1];
+
+  return (<></>)
 
   return (
     <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5">

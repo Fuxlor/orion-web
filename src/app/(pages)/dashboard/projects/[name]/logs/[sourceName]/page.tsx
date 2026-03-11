@@ -6,8 +6,10 @@ import { useProject } from "@/contexts/projectContext";
 import { useProjects } from "@/contexts/projectsContext";
 import { useLogs } from "@/contexts/logsContext";
 import { useError } from "@/contexts/errorContext";
+import { useSourceStats } from "@/hooks/useSourceStats";
 import { useEffect, useRef, useState } from "react";
 import { LogSource } from "@/types";
+import ActivityChart from "@/components/dashboard/ActivityChart";
 
 export default function SourceLogsPage() {
   const params = useParams<{ name: string; sourceName: string }>();
@@ -15,6 +17,7 @@ export default function SourceLogsPage() {
   const { loading } = useProjects();
   const { logs, setSource } = useLogs();
   const { error } = useError();
+  const { stats } = useSourceStats(params.name, params.sourceName, '24h');
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isAutoScroll, setIsAutoScroll] = useState(true);
@@ -49,34 +52,48 @@ export default function SourceLogsPage() {
   if (loading) return <div className="text-[var(--text-muted)]">Loading…</div>;
   if (projectName && !project) notFound();
 
+  const uptimeDisplay = stats?.uptime_percent != null
+    ? `${stats.uptime_percent}%`
+    : "—";
+
   return (
     <div className="flex flex-col h-full gap-4">
       <h1 className="text-xl font-semibold text-white mb-2">
         Logs — {project?.label} / {params.sourceName}
       </h1>
-      <p className="text-[var(--text-secondary)]">
-        Logs from the {params.sourceName} source.
-      </p>
 
-      {/* Stats row – little stats at top */}
+      {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
         <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
-          <p className="text-xs text-[var(--text-muted)]">Total entries</p>
-          <p className="text-lg font-semibold text-white">{logs?.length || "-"}</p>
+          <p className="text-xs text-[var(--text-muted)]">Total (24h)</p>
+          <p className="text-lg font-semibold  text-[var(--primary)]">
+            {stats?.log_counts.total ?? logs?.length ?? "—"}
+          </p>
         </div>
         <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
           <p className="text-xs text-[var(--text-muted)]">Errors (24h)</p>
-          <p className="text-lg font-semibold text-white">{logs?.filter((log) => log.level === "error").length || "-"}</p>
+          <p className="text-lg font-semibold  text-[var(--primary)]">
+            {stats?.log_counts.error ?? "—"}
+          </p>
         </div>
         <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
           <p className="text-xs text-[var(--text-muted)]">Warnings (24h)</p>
-          <p className="text-lg font-semibold text-white">{logs?.filter((log) => log.level === "warn").length || "-"}</p>
+          <p className="text-lg font-semibold  text-[var(--primary)]">
+            {stats?.log_counts.warn ?? "—"}
+          </p>
         </div>
         <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
           <p className="text-xs text-[var(--text-muted)]">Uptime (24h)</p>
-          <p className="text-lg font-semibold text-white">{"99%"}</p>
+          <p className="text-lg font-semibold text-[var(--primary)]">{uptimeDisplay}</p>
         </div>
       </div>
+
+      {/* Compact activity chart */}
+      {stats?.chart_data && stats.chart_data.length > 0 && (
+        <div className="shrink-0 overflow-hidden">
+          <ActivityChart chartData={stats.chart_data} window="24h" />
+        </div>
+      )}
 
       <div className="flex-1 min-h-0 relative">
         <div
