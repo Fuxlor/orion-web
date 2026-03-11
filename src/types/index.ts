@@ -111,6 +111,39 @@ export interface SourceStats {
   } | null;
 }
 
+export interface AlertChannel {
+  id?: number;
+  type: 'email' | 'webhook';
+  target: string;
+}
+
+export interface AlertRule {
+  id: number;
+  name: string;
+  level: string;
+  threshold: number;
+  window_seconds: number;
+  source_id: number | null;
+  source_name: string | null;
+  enabled: boolean;
+  created_at: string;
+  channels: AlertChannel[];
+}
+
+export interface Alert {
+  id: number;
+  rule_name: string | null;
+  source_name: string | null;
+  server_hostname: string | null;
+  level: string;
+  message: string | null;
+  status: 'active' | 'silenced' | 'resolved';
+  silenced_until: string | null;
+  resolved_at: string | null;
+  resolved_by_pseudo: string | null;
+  created_at: string;
+}
+
 export interface PinnedItem {
   id: number;
   item_type: string;

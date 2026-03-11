@@ -11,17 +11,22 @@ export function getApiUrl(): string {
  *  - Automatically adds `Authorization: Bearer <token>` from localStorage when available
  *  - Sets `Content-Type: application/json` by default (can be overridden via `init.headers`)
  */
-export function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
+export function apiFetch(path: string, init: RequestInit = {}, removeContentTypeHeader?: boolean): Promise<Response> {
     const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
 
     const headers: Record<string, string> = {
-        "Content-Type": "application/json",
         ...(init.headers as Record<string, string> | undefined),
     };
+
+    if (removeContentTypeHeader !== true) {
+        headers['Content-type'] = 'application/json'
+    }
 
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
     }
+
+    console.log(init, headers)
 
     return fetch(`${API_URL}${path}`, {
         ...init,
