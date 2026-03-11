@@ -77,6 +77,8 @@ export default function ActivityChart({ chartData, window }: Props) {
       warn: found?.warn ?? 0,
       error: found?.error ?? 0,
       debug: found?.debug ?? 0,
+      verbose: found?.verbose ?? 0,
+      trace: found?.trace ?? 0,
     };
   });
 
@@ -88,7 +90,7 @@ export default function ActivityChart({ chartData, window }: Props) {
   const chartW = VW - LEFT - 4;
   const chartH = VH - BOTTOM - 8;
 
-  const totals = merged.map((b) => b.info + b.warn + b.error + b.debug);
+  const totals = merged.map((b) => b.info + b.warn + b.error + b.debug + b.verbose + b.trace);
   const maxVal = Math.max(...totals, 1);
 
   // Grid lines

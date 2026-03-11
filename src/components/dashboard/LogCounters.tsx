@@ -1,7 +1,7 @@
 import { ChartBucket } from "@/types";
 
 interface Props {
-  logCounts: { info: number; warn: number; error: number; debug: number; verbose: number; trace: number; total: number };
+  logCounts: { info: number; warn: number; error: number; debug: number; verbose?: number; trace?: number; total: number };
   chartData: ChartBucket[];
 }
 
@@ -55,7 +55,7 @@ export default function LogCounters({ logCounts, chartData }: Props) {
       </p>
       <div className="grid gap-4 auto-cols-max grid-flow-col justify-between">
         {LEVEL_CONFIG.map(({ level, label, color, stroke }) => (
-          logCounts[level] > 0 && (
+          logCounts[level] && logCounts[level] > 0 && (
             <div key={level} className="flex items-center justify-start gap-2">
               <div>
                 <p className="text-xs text-[var(--text-muted)]">{label}</p>
