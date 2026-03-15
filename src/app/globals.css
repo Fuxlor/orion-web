@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
-:root {
+/* Default (dark) theme */
+:root,
+[data-theme="dark"] {
   --background: #0d0f16;
   --foreground: #e8eaef;
   /* Orion – dark monitoring theme */
@@ -17,6 +19,23 @@
   --text-muted: #8b92a4;
 }
 
+/* Light theme */
+[data-theme="light"] {
+  --background: #f5f7fa;
+  --foreground: #1a1d26;
+  --primary: #02c97a;
+  --primary-hover: #02b36c;
+  --primary-muted: rgba(2, 201, 122, 0.12);
+  --surface: #f5f7fa;
+  --surface-elevated: #ffffff;
+  --surface-input: #eef1f6;
+  --border: #dde1ec;
+  --border-focus: #02c97a;
+  --page-bg: #f5f7fa;
+  --text-secondary: #1a1d26;
+  --text-muted: #6b7280;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -29,7 +48,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme]) {
     --background: #08090e;
     --foreground: #e8eaef;
     --page-bg: #0d0f16;

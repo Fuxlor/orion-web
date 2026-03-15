@@ -5,6 +5,10 @@ export interface User {
   first_name: string;
   last_name: string;
   pseudo: string;
+  avatar_url?: string | null;
+  theme: string;
+  totp_enabled: boolean;
+  notifications_email: boolean;
   created_at: Date;
   updated_at: Date;
 }

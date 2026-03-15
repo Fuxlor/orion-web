@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
+import { ThemeProvider } from "@/contexts/themeContext";
 
 export const metadata: Metadata = {
   title: "Orion | The Modern Logging Stack",
@@ -32,7 +33,9 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" sizes="any" />
       </head>
       <body>
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

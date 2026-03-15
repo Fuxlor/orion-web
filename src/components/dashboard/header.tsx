@@ -6,6 +6,7 @@ import { useState, useRef, useEffect } from "react";
 import { User } from "@/types";
 import { useProject } from "@/contexts/projectContext";
 import { useProjects } from "@/contexts/projectsContext";
+import UserAvatar from "@/components/UserAvatar";
 
 function ChevronDown({ className }: { className?: string }) {
   return (
@@ -167,9 +168,7 @@ export default function Header({ user }: HeaderProps) {
           aria-expanded={dropdownOpen}
           aria-haspopup="true"
         >
-          <div className="w-8 h-8 rounded-full bg-[var(--primary)] text-[var(--surface)] flex items-center justify-center text-sm font-semibold">
-            {mounted ? initials : null}
-          </div>
+          {mounted && <UserAvatar user={user} size={32} />}
           <span className="text-sm text-[var(--text-secondary)] hidden sm:inline max-w-[140px] truncate">
             {mounted ? (user?.pseudo ?? user?.email ?? "Account") : null}
           </span>
@@ -183,7 +182,7 @@ export default function Header({ user }: HeaderProps) {
               <p className="text-xs text-[var(--text-muted)] truncate">{user?.email}</p>
             </div>
             <Link
-              href="/dashboard/settings"
+              href="/settings"
               className="flex items-center gap-2 px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white transition-colors"
               onClick={() => setDropdownOpen(false)}
             >
