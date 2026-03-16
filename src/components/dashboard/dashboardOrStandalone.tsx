@@ -1,8 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import DashboardShell from "./dashboardShell";
-import StandalonePageWrapper from "./standalonePageWrapper";
+import { StandalonePageWrapper, DashboardShell } from "./index";
 
 export default function DashboardOrStandalone({
   children,

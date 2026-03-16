@@ -1,7 +1,7 @@
-import Navbar from "./navbar";
-import Header from "./header";
-import DashboardShell from "./dashboardShell";
-import DashboardOrStandalone from "./dashboardOrStandalone";
-import StandalonePageWrapper from "./standalonePageWrapper";
+import Navbar from "./Navbar";
+import Header from "./Header";
+import DashboardShell from "./DashboardShell";
+import DashboardOrStandalone from "./DashboardOrStandalone";
+import StandalonePageWrapper from "./StandalonePageWrapper";
 
 export { Navbar, Header, DashboardShell, DashboardOrStandalone, StandalonePageWrapper };

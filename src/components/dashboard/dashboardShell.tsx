@@ -4,8 +4,7 @@ import { useState, useEffect } from "react";
 import { User } from "@/types";
 import { apiFetch } from "@/lib/api";
 import { ProjectProvider } from "@/contexts/projectContext";
-import Header from "./header";
-import Navbar from "./navbar";
+import { Header, Navbar } from "./index";
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {

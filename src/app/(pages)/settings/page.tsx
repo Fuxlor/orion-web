@@ -12,8 +12,9 @@ import ConnectionsTab from '@/components/settings/ConnectionsTab';
 import ProjectsTab from '@/components/settings/ProjectsTab';
 import AppearanceTab from '@/components/settings/AppearanceTab';
 import NotificationsTab from '@/components/settings/NotificationsTab';
+import BillingTab from '@/components/settings/BillingTab';
 
-type Tab = 'profile' | 'security' | 'connections' | 'projects' | 'appearance' | 'notifications';
+type Tab = 'profile' | 'security' | 'connections' | 'projects' | 'appearance' | 'notifications' | 'billing';
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   {
@@ -74,6 +75,16 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
         <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
         <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+      </svg>
+    ),
+  },
+  {
+    id: 'billing',
+    label: 'Billing',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+        <line x1="1" y1="10" x2="23" y2="10" />
       </svg>
     ),
   },
@@ -157,7 +168,10 @@ export default function SettingsPage() {
           {user && (
             <div className="px-3 py-3 mb-2 border-b border-[var(--border)]">
               <UserAvatar user={user} size={40} className="mb-2" />
-              <p className="text-sm font-medium text-[var(--text-secondary)] truncate">{user.pseudo}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-[var(--text-secondary)] truncate">{user.pseudo}</p>
+                {user?.plan && <p className="text-xs text-[var(--text-muted)] truncate">{user.plan.slice(0, 1).toUpperCase() + user.plan.slice(1)}</p>}
+              </div>
               <p className="text-xs text-[var(--text-muted)] truncate">{user.email}</p>
             </div>
           )}
@@ -167,8 +181,8 @@ export default function SettingsPage() {
               type="button"
               onClick={() => handleTabChange(tab.id)}
               className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors w-full text-left ${activeTab === tab.id
-                  ? 'bg-[var(--primary-muted)] text-[var(--primary)] font-medium'
-                  : 'text-[var(--text-muted)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-secondary)]'
+                ? 'bg-[var(--primary-muted)] text-[var(--primary)] font-medium'
+                : 'text-[var(--text-muted)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-secondary)]'
                 }`}
             >
               {tab.icon}
@@ -203,6 +217,9 @@ export default function SettingsPage() {
                 )}
                 {activeTab === 'notifications' && (
                   <NotificationsTab user={user} onUserUpdate={setUser} />
+                )}
+                {activeTab === 'billing' && (
+                  <BillingTab user={user} />
                 )}
               </>
             )}

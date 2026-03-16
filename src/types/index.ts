@@ -9,6 +9,8 @@ export interface User {
   theme: string;
   totp_enabled: boolean;
   notifications_email: boolean;
+  plan?: 'free' | 'pro' | 'enterprise';
+  subscription_status?: string | null;
   created_at: Date;
   updated_at: Date;
 }

@@ -26,8 +26,6 @@ export function apiFetch(path: string, init: RequestInit = {}, removeContentType
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    console.log(init, headers)
-
     return fetch(`${API_URL}${path}`, {
         ...init,
         headers,

@@ -88,12 +88,6 @@ export default function Header({ user }: HeaderProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const initials = user?.pseudo
-    ? user.pseudo.slice(0, 2).toUpperCase()
-    : user?.first_name && user?.last_name
-      ? `${user.first_name[0]}${user.last_name[0]}`.toUpperCase()
-      : user?.email?.slice(0, 2).toUpperCase() ?? "?";
-
   function handleLogout() {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
@@ -178,7 +172,10 @@ export default function Header({ user }: HeaderProps) {
         {dropdownOpen && (
           <div className="absolute right-0 top-full mt-2 w-56 py-1 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg shadow-xl z-50">
             <div className="px-4 py-3 border-b border-[var(--border)]">
-              <p className="text-sm font-medium text-white truncate">{user?.pseudo ?? "User"}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-medium text-white truncate">{user?.pseudo ?? "User"}</p>
+                {user?.plan && <p className="text-xs text-[var(--text-muted)] truncate">{user.plan.slice(0, 1).toUpperCase() + user.plan.slice(1)}</p>}
+              </div>
               <p className="text-xs text-[var(--text-muted)] truncate">{user?.email}</p>
             </div>
             <Link
