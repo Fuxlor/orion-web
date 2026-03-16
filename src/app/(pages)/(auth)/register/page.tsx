@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 
@@ -29,6 +29,12 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) {
+      window.location.href = "/dashboard";
+    }
+  }, []);
 
   function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPassword((prev) => passwordFromDisplay(prev, e.target.value));

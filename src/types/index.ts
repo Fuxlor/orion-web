@@ -9,6 +9,7 @@ export interface User {
   theme: string;
   totp_enabled: boolean;
   notifications_email: boolean;
+  email_verified: boolean;
   plan?: 'free' | 'pro' | 'enterprise';
   subscription_status?: string | null;
   created_at: Date;
@@ -147,6 +148,43 @@ export interface Alert {
   silenced_until: string | null;
   resolved_at: string | null;
   resolved_by_pseudo: string | null;
+  created_at: string;
+}
+
+export interface ApiToken {
+  id: number;
+  name: string;
+  token_prefix: string;
+  permissions: string[];
+  last_used_at: string | null;
+  created_at: string;
+}
+
+export interface ProjectMember {
+  id: number | null;
+  user_id: number;
+  email: string;
+  pseudo: string;
+  role: string;
+  avatar_url?: string | null;
+  created_at: string;
+}
+
+export interface ProjectSettings {
+  name: string;
+  label: string;
+  created_at: string;
+  enabled_levels: string[];
+  role: 'owner' | 'member';
+  effective_permissions: string[];
+}
+
+export interface ProjectSource {
+  id: number;
+  name: string;
+  description: string;
+  environment: string;
+  server_hostname: string | null;
   created_at: string;
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { User } from "@/types";
 import { apiFetch } from "@/lib/api";
 import { ProjectProvider } from "@/contexts/projectContext";
@@ -22,6 +22,40 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     if (typeof window === "undefined") return null;
     return localStorage.getItem("accessToken");
   });
+
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [resendSent, setResendSent] = useState(false);
+  const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  function startCooldown(seconds: number) {
+    setResendCooldown(seconds);
+    if (cooldownRef.current) clearInterval(cooldownRef.current);
+    cooldownRef.current = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(cooldownRef.current!);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  }
+
+  async function handleResend() {
+    if (resendCooldown > 0) return;
+    const res = await apiFetch("/api/auth/resend-verification", { method: "POST" }, true);
+    const data = await res.json();
+    if (res.status === 429) {
+      startCooldown(data.retryAfter ?? 60);
+    } else if (res.ok) {
+      setResendSent(true);
+      startCooldown(60);
+    }
+  }
+
+  useEffect(() => {
+    return () => { if (cooldownRef.current) clearInterval(cooldownRef.current); };
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -54,6 +88,25 @@ export default function DashboardShell({ children }: { children: React.ReactNode
     <ProjectProvider>
       <div className="flex h-screen flex-col bg-[var(--surface)]">
         <Header user={user} />
+        {user && !user.email_verified && (
+          <div style={{ backgroundColor: "rgba(2,241,148,0.08)", borderBottom: "1px solid rgba(2,241,148,0.2)" }}
+            className="flex items-center justify-center gap-3 px-4 py-2 text-sm">
+            <span style={{ color: "#02f194" }}>⚠</span>
+            <span style={{ color: "var(--text-secondary)" }}>
+              {resendSent
+                ? "Verification email sent! Check your inbox."
+                : "Please verify your email address. Check your inbox for a confirmation link."}
+              {" "}
+              <button
+                onClick={handleResend}
+                disabled={resendCooldown > 0}
+                style={{ color: resendCooldown > 0 ? "var(--text-muted)" : "var(--primary)", textDecoration: "underline", background: "none", border: "none", padding: 0, cursor: resendCooldown > 0 ? "default" : "pointer", fontSize: "inherit" }}
+              >
+                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend email"}
+              </button>
+            </span>
+          </div>
+        )}
         <div className="flex flex-1 min-h-0">
           <Navbar />
           <main className="flex-1 overflow-auto p-6 bg-[var(--page-bg)]">{children}</main>
