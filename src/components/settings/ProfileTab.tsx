@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { apiFetch } from '@/lib/api';
 import { User } from '@/types';
 import UserAvatar from '@/components/UserAvatar';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface Props {
   user: User;
@@ -13,6 +14,7 @@ interface Props {
 export default function ProfileTab({ user, onUserUpdate }: Props) {
   // Avatar upload
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showRemoveAvatarConfirm, setShowRemoveAvatarConfirm] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const [avatarLoading, setAvatarLoading] = useState(false);
   const [avatarError, setAvatarError] = useState<string | null>(null);
@@ -198,7 +200,7 @@ export default function ProfileTab({ user, onUserUpdate }: Props) {
               {user.avatar_url && (
                 <button
                   type="button"
-                  onClick={removeAvatar}
+                  onClick={() => setShowRemoveAvatarConfirm(true)}
                   disabled={avatarLoading}
                   className="text-sm text-red-400 hover:text-red-300 transition-colors disabled:opacity-50 hover:cursor-pointer"
                 >
@@ -302,6 +304,16 @@ export default function ProfileTab({ user, onUserUpdate }: Props) {
           </button>
         </form>
       </section>
+
+      {showRemoveAvatarConfirm && (
+        <ConfirmModal
+          title="Remove profile picture"
+          message="Your profile picture will be permanently removed."
+          confirmLabel="Remove"
+          onConfirm={() => { removeAvatar(); setShowRemoveAvatarConfirm(false); }}
+          onCancel={() => setShowRemoveAvatarConfirm(false)}
+        />
+      )}
     </div>
   );
 }

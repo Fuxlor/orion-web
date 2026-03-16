@@ -4,7 +4,7 @@ import { useState } from "react";
 import { apiFetch } from "@/lib/api";
 import { AlertRule, LogSource } from "@/types";
 import RuleModal from "./RuleModal";
-import ConfirmModal from "./ConfirmModal";
+import ConfirmModal from "@/components/ConfirmModal";
 
 const WINDOW_LABELS: Record<number, string> = {
   60: "1min",

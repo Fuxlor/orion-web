@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface ProjectRow {
   id: number;
@@ -16,6 +17,7 @@ interface ProjectRow {
 export default function ProjectsTab() {
   const [projects, setProjects] = useState<ProjectRow[]>([]);
   const [loading, setLoading] = useState(true);
+  const [archiveTarget, setArchiveTarget] = useState<ProjectRow | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<ProjectRow | null>(null);
   const [confirmName, setConfirmName] = useState('');
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -132,7 +134,7 @@ export default function ProjectsTab() {
                   ) : (
                     <button
                       type="button"
-                      onClick={() => archive(project)}
+                      onClick={() => setArchiveTarget(project)}
                       disabled={actionLoading === project.id}
                       className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
                     >
@@ -151,6 +153,16 @@ export default function ProjectsTab() {
             </div>
           ))}
         </div>
+      )}
+
+      {archiveTarget && (
+        <ConfirmModal
+          title="Archive project"
+          message={`"${archiveTarget.label}" will be hidden from your dashboard. You can restore it at any time.`}
+          confirmLabel="Archive"
+          onConfirm={() => { archive(archiveTarget); setArchiveTarget(null); }}
+          onCancel={() => setArchiveTarget(null)}
+        />
       )}
 
       {/* Delete confirmation modal */}

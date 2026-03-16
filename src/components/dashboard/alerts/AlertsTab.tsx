@@ -4,7 +4,7 @@ import { useState } from "react";
 import { apiFetch } from "@/lib/api";
 import { Alert } from "@/types";
 import SilenceMenu from "./SilenceMenu";
-import ConfirmModal from "./ConfirmModal";
+import ConfirmModal from "@/components/ConfirmModal";
 
 const LEVEL_COLORS: Record<string, string> = {
   error: "bg-[rgba(248,113,113,0.15)] text-red-400",

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api';
+import ConfirmModal from '@/components/ConfirmModal';
 
 interface Connection {
   id: number;
@@ -47,6 +48,7 @@ function ProviderIcon({ provider }: { provider: string }) {
 export default function ConnectionsTab() {
   const [connections, setConnections] = useState<Connection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [confirmDisconnect, setConfirmDisconnect] = useState<string | null>(null);
 
   useEffect(() => {
     apiFetch('/api/auth/connections')
@@ -56,8 +58,7 @@ export default function ConnectionsTab() {
       .finally(() => setLoading(false));
   }, []);
 
-  async function disconnect(provider: string) {
-    if (!confirm(`Disconnect ${provider}?`)) return;
+  async function doDisconnect(provider: string) {
     await apiFetch(`/api/auth/connections/${provider}`, { method: 'DELETE' });
     setConnections(prev => prev.filter(c => c.provider !== provider));
   }
@@ -96,7 +97,7 @@ export default function ConnectionsTab() {
               {conn ? (
                 <button
                   type="button"
-                  onClick={() => disconnect(p.id)}
+                  onClick={() => setConfirmDisconnect(p.id)}
                   className="text-sm text-red-400 hover:text-red-300 transition-colors ml-4 shrink-0"
                 >
                   Disconnect
@@ -119,6 +120,16 @@ export default function ConnectionsTab() {
       <p className="text-xs text-[var(--text-muted)]">
         OAuth sign-in flows (Connect) are coming soon.
       </p>
+
+      {confirmDisconnect && (
+        <ConfirmModal
+          title={`Disconnect ${PROVIDERS.find(p => p.id === confirmDisconnect)?.label ?? confirmDisconnect}`}
+          message="You will no longer be able to sign in with this account."
+          confirmLabel="Disconnect"
+          onConfirm={() => { doDisconnect(confirmDisconnect); setConfirmDisconnect(null); }}
+          onCancel={() => setConfirmDisconnect(null)}
+        />
+      )}
     </div>
   );
 }
