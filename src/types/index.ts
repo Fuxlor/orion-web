@@ -34,7 +34,21 @@ export interface LogEntry {
   message: string;
   level: string;
   source: string;
+  server?: string | null;
   project: string;
+  metadata?: Record<string, unknown> | null;
+  tags?: string[];
+}
+
+export interface RetentionSetting {
+  level: string;
+  retention_days: number;
+}
+
+export interface RetentionData {
+  settings: RetentionSetting[];
+  max_retention_days: number;
+  plan: string;
 }
 
 export type StatsWindow = '24h' | '7d' | '30d';

@@ -12,12 +12,14 @@ import SourcesTab from "@/components/project-settings/SourcesTab";
 import MembersTab from "@/components/project-settings/MembersTab";
 import ApiTokensTab from "@/components/project-settings/ApiTokensTab";
 import DangerZoneTab from "@/components/project-settings/DangerZoneTab";
+import RetentionTab from "@/components/project-settings/RetentionTab";
 
-type SettingsTab = "general" | "log-levels" | "sources" | "members" | "api-tokens" | "danger";
+type SettingsTab = "general" | "log-levels" | "retention" | "sources" | "members" | "api-tokens" | "danger";
 
 const ALL_TABS: { id: SettingsTab; label: string }[] = [
   { id: "general", label: "General" },
   { id: "log-levels", label: "Log Levels" },
+  { id: "retention", label: "Retention" },
   { id: "sources", label: "Sources" },
   { id: "members", label: "Members" },
   { id: "api-tokens", label: "API Tokens" },
@@ -28,6 +30,7 @@ const ALL_TABS: { id: SettingsTab; label: string }[] = [
 const TAB_VIEW_PERMS: Record<SettingsTab, string | null> = {
   general: "settings:read",
   "log-levels": "settings:read",
+  retention: "settings:read",
   sources: "sources:read",
   members: "members:read",
   "api-tokens": "tokens:read",
@@ -154,6 +157,9 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
             can={can}
             onUpdate={(levels) => setSettings((s) => s ? { ...s, enabled_levels: levels } : s)}
           />
+        )}
+        {activeTab === "retention" && (
+          <RetentionTab projectName={projectName} can={can} />
         )}
         {activeTab === "sources" && (
           <SourcesTab projectName={projectName} can={can} />
