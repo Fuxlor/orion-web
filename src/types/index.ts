@@ -171,6 +171,7 @@ export interface ApiToken {
   name: string;
   token_prefix: string;
   permissions: string[];
+  source_name: string | null;
   last_used_at: string | null;
   created_at: string;
 }
