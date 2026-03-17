@@ -2,46 +2,25 @@
 
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api";
-import { ApiToken, ProjectSource } from "@/types";
+import { ApiToken, ProjectSource, User } from "@/types";
 import ConfirmModal from "@/components/ConfirmModal";
-
-const ALL_PERMISSIONS = [
-  { id: "logs:write", label: "logs:write", description: "Emit logs via SDK" },
-  { id: "logs:read", label: "logs:read", description: "Query / read logs" },
-  { id: "sources:read", label: "sources:read", description: "View sources list" },
-  { id: "sources:manage", label: "sources:manage", description: "Create / delete sources" },
-  { id: "members:read", label: "members:read", description: "View member list" },
-  { id: "members:manage", label: "members:manage", description: "Invite / remove members" },
-  { id: "tokens:read", label: "tokens:read", description: "View API token list" },
-  { id: "tokens:manage", label: "tokens:manage", description: "Create / revoke tokens" },
-  { id: "settings:read", label: "settings:read", description: "View project settings" },
-  { id: "settings:write", label: "settings:write", description: "Modify project settings" },
-  { id: "performance:write", label: "performance:write", description: "Emit performance metrics" },
-  { id: "heartbeat:write", label: "heartbeat:write", description: "Emit heartbeat events" },
-];
+import CreateTokenModal from "./modals/CreateTokenModal";
+import RotateTokenModal from "./modals/RotateTokenModal";
 
 interface Props {
   projectName: string;
   can: (perm: string) => boolean;
+  user: User;
 }
 
-export default function ApiTokensTab({ projectName, can }: Props) {
+export default function ApiTokensTab({ projectName, can, user }: Props) {
   const [tokens, setTokens] = useState<ApiToken[]>([]);
   const [sources, setSources] = useState<ProjectSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Create form
-  const [creating, setCreating] = useState(false);
-  const [newName, setNewName] = useState("");
-  const [newPerms, setNewPerms] = useState<string[]>(["logs:write", "logs:read"]);
-  const [newSource, setNewSource] = useState<string>("");
-  const [createError, setCreateError] = useState<string | null>(null);
-  const [createdToken, setCreatedToken] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
-
-  // Revoke
+  const [createOpen, setCreateOpen] = useState(false);
   const [revokeTarget, setRevokeTarget] = useState<ApiToken | null>(null);
+  const [rotateTarget, setRotateTarget] = useState<ApiToken | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -56,48 +35,6 @@ export default function ApiTokensTab({ projectName, can }: Props) {
       .catch(() => setError("Failed to load tokens"))
       .finally(() => setLoading(false));
   }, [projectName]);
-
-  function togglePerm(perm: string) {
-    setNewPerms((prev) =>
-      prev.includes(perm) ? prev.filter((p) => p !== perm) : [...prev, perm]
-    );
-  }
-
-  async function handleCreate() {
-    if (!newName.trim()) return;
-    setCreating(true);
-    setCreateError(null);
-    try {
-      const body: Record<string, unknown> = { name: newName.trim(), permissions: newPerms };
-      if (newSource) body.source = newSource;
-      const res = await apiFetch(`/api/projects/${projectName}/tokens`, {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
-      const d = await res.json();
-      if (!res.ok) throw new Error(d.error ?? "Failed to create token");
-      setCreatedToken(d.token);
-      setTokens((prev) => [
-        {
-          id: d.id,
-          name: d.name,
-          token_prefix: d.token_prefix,
-          permissions: d.permissions,
-          source_name: d.source_name ?? null,
-          last_used_at: null,
-          created_at: d.created_at,
-        },
-        ...prev,
-      ]);
-      setNewName("");
-      setNewPerms(["logs:write", "logs:read"]);
-      setNewSource("");
-    } catch (err) {
-      setCreateError(err instanceof Error ? err.message : "Failed to create token");
-    } finally {
-      setCreating(false);
-    }
-  }
 
   async function handleRevoke() {
     if (!revokeTarget) return;
@@ -116,13 +53,6 @@ export default function ApiTokensTab({ projectName, can }: Props) {
     }
   }
 
-  async function copyToken() {
-    if (!createdToken) return;
-    await navigator.clipboard.writeText(createdToken);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
   if (loading) return <p className="text-sm text-[var(--text-muted)]">Loading tokens…</p>;
 
   return (
@@ -133,47 +63,39 @@ export default function ApiTokensTab({ projectName, can }: Props) {
         </p>
       )}
 
-      {/* Created token banner */}
-      {createdToken && (
-        <div className="rounded-lg border border-[var(--primary)] bg-[var(--primary-muted)] p-4 space-y-3">
-          <div className="flex items-start justify-between gap-2">
-            <div>
-              <p className="text-sm font-medium text-[var(--primary)]">Token created — copy it now!</p>
-              <p className="text-xs text-[var(--text-muted)] mt-0.5">
-                This token will not be shown again.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setCreatedToken(null)}
-              className="text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors text-lg leading-none"
-              aria-label="Dismiss"
-            >
-              ×
-            </button>
-          </div>
-          <div className="flex items-center gap-2">
-            <code className="flex-1 rounded-lg bg-[var(--surface-input)] border border-[var(--border)] px-3 py-2 text-xs font-mono text-[var(--text-secondary)] break-all">
-              {createdToken}
-            </code>
-            <button
-              type="button"
-              onClick={copyToken}
-              className="shrink-0 rounded-lg border border-[var(--border)] px-3 py-2 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-input)]"
-            >
-              {copied ? "Copied!" : "Copy"}
-            </button>
-          </div>
-        </div>
-      )}
-
       {/* Token list */}
       {tokens.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-8 text-center">
-          <p className="text-sm text-[var(--text-muted)]">No API tokens yet.</p>
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)]">
+            <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">API Tokens</span>
+            {can("tokens:manage") && (
+              <button
+                type="button"
+                onClick={() => setCreateOpen(true)}
+                className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)]"
+              >
+                Create Token
+              </button>
+            )}
+          </div>
+          <div className="p-8 text-center">
+            <p className="text-sm text-[var(--text-muted)]">No API tokens yet.</p>
+          </div>
         </div>
       ) : (
         <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)]">
+            <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">API Tokens</span>
+            {can("tokens:manage") && (
+              <button
+                type="button"
+                onClick={() => setCreateOpen(true)}
+                className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)]"
+              >
+                Create Token
+              </button>
+            )}
+          </div>
           {tokens.map((token) => (
             <div key={token.id} className="px-4 py-3 border-b border-[var(--border)] last:border-0 space-y-1.5">
               <div className="flex items-start justify-between gap-2">
@@ -201,13 +123,22 @@ export default function ApiTokensTab({ projectName, can }: Props) {
                   </div>
                 </div>
                 {can("tokens:manage") && (
-                  <button
-                    type="button"
-                    onClick={() => setRevokeTarget(token)}
-                    className="shrink-0 text-xs text-red-400 hover:text-red-300 transition-colors"
-                  >
-                    Revoke
-                  </button>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setRotateTarget(token)}
+                      className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+                    >
+                      Rotate
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRevokeTarget(token)}
+                      className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                    >
+                      Revoke
+                    </button>
+                  </div>
                 )}
               </div>
               <p className="text-xs text-[var(--text-muted)]">
@@ -221,72 +152,13 @@ export default function ApiTokensTab({ projectName, can }: Props) {
         </div>
       )}
 
-      {/* Create token form */}
-      {can("tokens:manage") && (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5 space-y-4">
-          <h2 className="text-sm font-medium text-[var(--text-secondary)]">Create API Token</h2>
-
-          <div className="space-y-1">
-            <label className="text-xs text-[var(--text-muted)]">Token name</label>
-            <input
-              type="text"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              placeholder="e.g. Production SDK"
-              className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--primary-muted)]"
-            />
-          </div>
-
-          {sources.length > 0 && (
-            <div className="space-y-1">
-              <label className="text-xs text-[var(--text-muted)]">Bind to source <span className="text-[var(--text-muted)]">(optional — required for SDK tokens)</span></label>
-              <select
-                value={newSource}
-                onChange={(e) => setNewSource(e.target.value)}
-                className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--primary-muted)]"
-              >
-                <option value="">— No source binding —</option>
-                {sources.map((s) => (
-                  <option key={s.name} value={s.name}>{s.name}</option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className="space-y-2">
-            <p className="text-xs text-[var(--text-muted)]">Permissions</p>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {ALL_PERMISSIONS.map((perm) => (
-                <label
-                  key={perm.id}
-                  className="flex items-start gap-2.5 cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2.5 hover:border-[var(--border-focus)] transition-colors"
-                >
-                  <input
-                    type="checkbox"
-                    checked={newPerms.includes(perm.id)}
-                    onChange={() => togglePerm(perm.id)}
-                    className="mt-0.5 accent-[var(--primary)]"
-                  />
-                  <div>
-                    <p className="text-xs font-mono text-[var(--text-secondary)]">{perm.label}</p>
-                    <p className="text-xs text-[var(--text-muted)]">{perm.description}</p>
-                  </div>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {createError && <p className="text-xs text-red-400">{createError}</p>}
-
-          <button
-            type="button"
-            onClick={handleCreate}
-            disabled={creating || !newName.trim()}
-            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)] disabled:opacity-50"
-          >
-            {creating ? "Creating…" : "Create Token"}
-          </button>
-        </div>
+      {createOpen && (
+        <CreateTokenModal
+          projectName={projectName}
+          sources={sources}
+          onCreated={(token) => setTokens((prev) => [token, ...prev])}
+          onClose={() => setCreateOpen(false)}
+        />
       )}
 
       {revokeTarget && (
@@ -296,6 +168,20 @@ export default function ApiTokensTab({ projectName, can }: Props) {
           confirmLabel="Revoke Token"
           onConfirm={handleRevoke}
           onCancel={() => setRevokeTarget(null)}
+        />
+      )}
+
+      {rotateTarget && (
+        <RotateTokenModal
+          token={rotateTarget}
+          projectName={projectName}
+          user={user}
+          onRotated={(newPrefix) => {
+            setTokens((prev) =>
+              prev.map((t) => t.id === rotateTarget.id ? { ...t, token_prefix: newPrefix } : t)
+            );
+          }}
+          onClose={() => setRotateTarget(null)}
         />
       )}
     </div>

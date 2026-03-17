@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { useProject } from "@/contexts/projectContext";
 import { useProjects } from "@/contexts/projectsContext";
 import { apiFetch } from "@/lib/api";
-import { ProjectSettings } from "@/types";
+import { ProjectSettings, User } from "@/types";
 import GeneralTab from "@/components/project-settings/GeneralTab";
 import LogLevelsTab from "@/components/project-settings/LogLevelsTab";
 import SourcesTab from "@/components/project-settings/SourcesTab";
@@ -46,6 +46,7 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
   const { loading: projectsLoading } = useProjects();
 
   const [settings, setSettings] = useState<ProjectSettings | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<SettingsTab>("general");
@@ -56,13 +57,18 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
   }, []);
 
   useEffect(() => {
-    apiFetch(`/api/projects/${projectName}/settings`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.ok) {
-          setSettings(d as ProjectSettings & { ok: boolean });
+    Promise.all([
+      apiFetch(`/api/projects/${projectName}/settings`).then((r) => r.json()),
+      apiFetch("/api/auth/me").then((r) => r.json()),
+    ])
+      .then(([settingsData, userData]) => {
+        if (settingsData.ok) {
+          setSettings(settingsData as ProjectSettings & { ok: boolean });
         } else {
-          setFetchError(d.error ?? "Failed to load settings");
+          setFetchError(settingsData.error ?? "Failed to load settings");
+        }
+        if (userData && !userData.error) {
+          setUser(userData);
         }
       })
       .catch(() => setFetchError("Failed to load settings"))
@@ -173,14 +179,14 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
             can={can}
           />
         )}
-        {activeTab === "api-tokens" && (
-          <ApiTokensTab projectName={projectName} can={can} />
+        {activeTab === "api-tokens" && user && (
+          <ApiTokensTab projectName={projectName} can={can} user={user} />
         )}
         {activeTab === "audit" && isOwner && (
           <AuditTab projectName={projectName} />
         )}
-        {activeTab === "danger" && isOwner && (
-          <DangerZoneTab projectName={projectName} settings={settings} />
+        {activeTab === "danger" && isOwner && user && (
+          <DangerZoneTab projectName={projectName} settings={settings} user={user} />
         )}
       </div>
     </div>

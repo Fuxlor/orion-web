@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRetentionSettings } from "@/hooks/useRetentionSettings";
-import type { RetentionSetting } from "@/types";
+import RetentionModal from "./modals/RetentionModal";
 
 const LEVEL_COLORS: Record<string, string> = {
   info: "text-blue-400",
@@ -26,30 +26,7 @@ interface Props {
 
 export default function RetentionTab({ projectName, can }: Props) {
   const { data, loading, saving, error, update } = useRetentionSettings(projectName);
-  const [localSettings, setLocalSettings] = useState<RetentionSetting[]>([]);
-  const [saveError, setSaveError] = useState<string | null>(null);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (data) setLocalSettings(data.settings.map(s => ({ ...s })));
-  }, [data]);
-
-  const handleChange = (level: string, days: number) => {
-    setLocalSettings(prev => prev.map(s => s.level === level ? { ...s, retention_days: days } : s));
-    setSaved(false);
-    setSaveError(null);
-  };
-
-  const handleSave = async () => {
-    setSaveError(null);
-    try {
-      await update(localSettings);
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } catch (err) {
-      setSaveError((err as Error).message);
-    }
-  };
+  const [editOpen, setEditOpen] = useState(false);
 
   const canWrite = can("settings:write");
 
@@ -81,70 +58,52 @@ export default function RetentionTab({ projectName, can }: Props) {
 
       {/* Settings table */}
       <div className="rounded-lg border border-[var(--border)] overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)] bg-[var(--surface-elevated)]">
+          <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Retention per level</span>
+          {canWrite && (
+            <button
+              type="button"
+              onClick={() => setEditOpen(true)}
+              className="rounded-lg border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-input)]"
+            >
+              Edit Retention
+            </button>
+          )}
+        </div>
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-[var(--border)] bg-[var(--surface-elevated)]">
               <th className="px-4 py-2.5 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Level</th>
               <th className="px-4 py-2.5 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Retention (days)</th>
-              <th className="px-4 py-2.5 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider w-8"></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[var(--border)]">
-            {localSettings.map((s) => {
-              const exceedsMax = s.retention_days > maxDays;
-              return (
-                <tr key={s.level} className="bg-[var(--surface)]">
-                  <td className="px-4 py-3">
-                    <span className={`font-medium capitalize ${LEVEL_COLORS[s.level] ?? "text-white"}`}>
-                      {s.level}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <input
-                      type="number"
-                      min={1}
-                      max={maxDays}
-                      value={s.retention_days}
-                      onChange={e => handleChange(s.level, parseInt(e.target.value, 10) || 1)}
-                      disabled={!canWrite}
-                      className={`w-24 px-2 py-1 text-sm rounded-lg border bg-[var(--surface-input)] text-white focus:outline-none focus:border-[var(--border-focus)] transition-colors disabled:opacity-50 ${
-                        exceedsMax ? "border-red-500" : "border-[var(--border)]"
-                      }`}
-                    />
-                  </td>
-                  <td className="px-4 py-3">
-                    {exceedsMax && (
-                      <span title={`Exceeds your plan limit of ${maxDays} days`} className="text-red-400">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                          <rect x="3" y="11" width="18" height="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                        </svg>
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
+            {data.settings.map((s) => (
+              <tr key={s.level} className="bg-[var(--surface)]">
+                <td className="px-4 py-3">
+                  <span className={`font-medium capitalize ${LEVEL_COLORS[s.level] ?? "text-white"}`}>
+                    {s.level}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-sm text-[var(--text-secondary)]">
+                  {s.retention_days}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
 
-      {/* Footer */}
-      {canWrite && (
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleSave}
-            disabled={saving || localSettings.some(s => s.retention_days > maxDays)}
-            className="px-4 py-2 text-sm rounded-lg bg-[var(--primary)] text-[var(--surface)] font-medium hover:bg-[var(--primary-hover)] transition-colors disabled:opacity-50"
-          >
-            {saving ? "Saving…" : "Save retention settings"}
-          </button>
-          {saved && (
-            <span className="text-sm text-green-400">Saved!</span>
-          )}
-          {(saveError ?? error) && (
-            <span className="text-sm text-red-400">{saveError ?? error}</span>
-          )}
-        </div>
+      {error && <p className="text-sm text-red-400">{error}</p>}
+
+      {editOpen && (
+        <RetentionModal
+          data={data}
+          saving={saving}
+          externalError={error}
+          update={update}
+          onClose={() => setEditOpen(false)}
+        />
       )}
     </div>
   );

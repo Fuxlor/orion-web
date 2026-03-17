@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api";
 import { ProjectMember } from "@/types";
 import ConfirmModal from "@/components/ConfirmModal";
+import InviteMemberModal from "./modals/InviteMemberModal";
 
 interface Props {
   projectName: string;
@@ -28,9 +29,7 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
   const [members, setMembers] = useState<ProjectMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [inviting, setInviting] = useState(false);
-  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [removeTarget, setRemoveTarget] = useState<ProjectMember | null>(null);
   const [transferTarget, setTransferTarget] = useState<ProjectMember | null>(null);
 
@@ -44,26 +43,6 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
       .catch(() => setError("Failed to load members"))
       .finally(() => setLoading(false));
   }, [projectName]);
-
-  async function handleInvite() {
-    if (!inviteEmail.trim()) return;
-    setInviting(true);
-    setInviteError(null);
-    try {
-      const res = await apiFetch(`/api/projects/${projectName}/members`, {
-        method: "POST",
-        body: JSON.stringify({ email: inviteEmail.trim() }),
-      });
-      const d = await res.json();
-      if (!res.ok) throw new Error(d.error ?? "Failed to invite");
-      setMembers((prev) => [...prev, d.member]);
-      setInviteEmail("");
-    } catch (err) {
-      setInviteError(err instanceof Error ? err.message : "Failed to invite member");
-    } finally {
-      setInviting(false);
-    }
-  }
 
   async function handleRemove() {
     if (!removeTarget?.id) return;
@@ -110,7 +89,6 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
         const d = await res.json();
         throw new Error(d.error ?? "Failed to transfer ownership");
       }
-      // Refresh member list
       const refreshRes = await apiFetch(`/api/projects/${projectName}/members`);
       const refreshData = await refreshRes.json();
       if (refreshData.ok) setMembers(refreshData.members);
@@ -132,6 +110,18 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
 
       {/* Members list */}
       <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)]">
+          <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Members</span>
+          {can("members:manage") && (
+            <button
+              type="button"
+              onClick={() => setInviteOpen(true)}
+              className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)]"
+            >
+              Invite Member
+            </button>
+          )}
+        </div>
         {members.map((member) => (
           <div
             key={member.user_id}
@@ -188,33 +178,12 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
         ))}
       </div>
 
-      {/* Invite form */}
-      {can("members:manage") && (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5 space-y-3">
-          <h2 className="text-sm font-medium text-[var(--text-secondary)]">Invite Member</h2>
-          <p className="text-xs text-[var(--text-muted)]">
-            The user must already have an Orion account.
-          </p>
-          <div className="flex gap-2">
-            <input
-              type="email"
-              value={inviteEmail}
-              onChange={(e) => setInviteEmail(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleInvite()}
-              placeholder="user@example.com"
-              className="flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--primary-muted)]"
-            />
-            <button
-              type="button"
-              onClick={handleInvite}
-              disabled={inviting || !inviteEmail.trim()}
-              className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)] disabled:opacity-50"
-            >
-              {inviting ? "Inviting…" : "Invite"}
-            </button>
-          </div>
-          {inviteError && <p className="text-xs text-red-400">{inviteError}</p>}
-        </div>
+      {inviteOpen && (
+        <InviteMemberModal
+          projectName={projectName}
+          onInvited={(member) => setMembers((prev) => [...prev, member])}
+          onClose={() => setInviteOpen(false)}
+        />
       )}
 
       {removeTarget && (

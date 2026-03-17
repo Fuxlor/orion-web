@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { apiFetch } from "@/lib/api";
 import { ProjectSettings } from "@/types";
+import EditLabelModal from "./modals/EditLabelModal";
 
 interface Props {
   projectName: string;
@@ -13,61 +13,30 @@ interface Props {
 
 export default function GeneralTab({ projectName, settings, can, onUpdate }: Props) {
   const [label, setLabel] = useState(settings.label ?? "");
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  async function handleSave() {
-    setSaving(true);
-    setError(null);
-    setSuccess(false);
-    try {
-      const res = await apiFetch(`/api/projects/${projectName}/settings`, {
-        method: "PATCH",
-        body: JSON.stringify({ label }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Failed to save");
-      onUpdate(label);
-      setSuccess(true);
-      setTimeout(() => setSuccess(false), 2500);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
-    } finally {
-      setSaving(false);
-    }
-  }
+  const [editOpen, setEditOpen] = useState(false);
 
   return (
     <div className="space-y-6">
       {/* Label */}
-      <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5 space-y-4">
-        <h2 className="text-sm font-medium text-[var(--text-secondary)]">Project Label</h2>
-        <div className="space-y-1">
-          <label className="text-xs text-[var(--text-muted)]">Display name</label>
-          <input
-            type="text"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-            disabled={!can("settings:write")}
-            className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--primary-muted)] disabled:opacity-50"
-          />
-        </div>
-
-        {can("settings:write") && (
-          <div className="flex items-center gap-3">
+      <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-medium text-[var(--text-secondary)]">Project Label</h2>
+          {can("settings:write") && (
             <button
               type="button"
-              onClick={handleSave}
-              disabled={saving || label.trim() === settings.label}
-              className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)] disabled:opacity-50"
+              onClick={() => setEditOpen(true)}
+              className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-input)]"
             >
-              {saving ? "Saving…" : "Save"}
+              Edit
             </button>
-            {success && <span className="text-xs text-[var(--primary)]">Saved</span>}
-            {error && <span className="text-xs text-red-400">{error}</span>}
-          </div>
-        )}
+          )}
+        </div>
+        <div className="space-y-1">
+          <p className="text-xs text-[var(--text-muted)]">Display name</p>
+          <p className="rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)]">
+            {label || <span className="text-[var(--text-muted)] italic">No label set</span>}
+          </p>
+        </div>
       </div>
 
       {/* Slug + metadata */}
@@ -92,6 +61,18 @@ export default function GeneralTab({ projectName, settings, can, onUpdate }: Pro
           </div>
         </div>
       </div>
+
+      {editOpen && (
+        <EditLabelModal
+          projectName={projectName}
+          currentLabel={label}
+          onSaved={(newLabel) => {
+            setLabel(newLabel);
+            onUpdate(newLabel);
+          }}
+          onClose={() => setEditOpen(false)}
+        />
+      )}
     </div>
   );
 }
