@@ -16,6 +16,8 @@ const ALL_PERMISSIONS = [
   { id: "tokens:manage", label: "tokens:manage", description: "Create / revoke tokens" },
   { id: "settings:read", label: "settings:read", description: "View project settings" },
   { id: "settings:write", label: "settings:write", description: "Modify project settings" },
+  { id: "performance:write", label: "performance:write", description: "Emit performance metrics" },
+  { id: "heartbeat:write", label: "heartbeat:write", description: "Emit heartbeat events" },
 ];
 
 interface Props {
