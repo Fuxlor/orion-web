@@ -60,6 +60,10 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
   const [totpLoading, setTotpLoading] = useState(false);
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
 
+  // Email 2FA state
+  const [emailTwoFALoading, setEmailTwoFALoading] = useState(false);
+  const [emailTwoFAError, setEmailTwoFAError] = useState<string | null>(null);
+
   // Passkey state
   const [passkeys, setPasskeys] = useState<Passkey[]>([]);
   const [passkeysLoading, setPasskeysLoading] = useState(true);
@@ -155,6 +159,42 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
           localStorage.setItem('user', JSON.stringify({ ...user, totp_enabled: false }));
           setTotpStatus(null);
           setBackupCodes(null);
+        } catch {}
+      },
+      'Disable'
+    );
+  }
+
+  async function enableEmailTwoFA() {
+    setEmailTwoFAError(null);
+    setEmailTwoFALoading(true);
+    try {
+      const res = await apiFetch('/api/auth/2fa/email', { method: 'POST' });
+      if (res.ok) {
+        const updated = { ...user, email_2fa_enabled: true };
+        onUserUpdate(updated);
+        localStorage.setItem('user', JSON.stringify(updated));
+      } else {
+        const data = await res.json();
+        setEmailTwoFAError(data.error || 'Failed to enable email 2FA');
+      }
+    } catch {
+      setEmailTwoFAError('Network error');
+    } finally {
+      setEmailTwoFALoading(false);
+    }
+  }
+
+  function disableEmailTwoFA() {
+    openConfirm(
+      'Disable email 2FA',
+      'You will no longer receive a one-time code by email when signing in.',
+      async () => {
+        try {
+          await apiFetch('/api/auth/2fa/email', { method: 'DELETE' });
+          const updated = { ...user, email_2fa_enabled: false };
+          onUserUpdate(updated);
+          localStorage.setItem('user', JSON.stringify(updated));
         } catch {}
       },
       'Disable'
@@ -322,6 +362,50 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
             {totpStatus && <p className="text-sm text-[var(--text-muted)] mb-2">{totpStatus}</p>}
             <button type="button" onClick={startTotpSetup} disabled={totpLoading} className="btn-primary">
               {totpLoading ? 'Loading…' : 'Set up authenticator app'}
+            </button>
+          </div>
+        )}
+      </section>
+
+      <div className="border-t border-[var(--border)]" />
+
+      {/* Email 2FA */}
+      <section>
+        <h2 className="text-base font-semibold text-[var(--text-secondary)] mb-1">Email verification code</h2>
+        <p className="text-sm text-[var(--text-muted)] mb-4">
+          Receive a one-time code by email each time you sign in.
+          {user.totp_enabled && (
+            <span className="ml-1 text-[var(--text-muted)] italic">
+              (Disabled — authenticator app takes priority when TOTP is enabled)
+            </span>
+          )}
+        </p>
+        {user.email_2fa_enabled ? (
+          <div className="flex items-center gap-4">
+            <span className="inline-flex items-center gap-1.5 text-sm text-[var(--primary)] bg-[var(--primary-muted)] px-3 py-1 rounded-full font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[var(--primary)] inline-block" />
+              Enabled
+            </span>
+            <button
+              type="button"
+              onClick={disableEmailTwoFA}
+              className="text-sm text-red-400 hover:text-red-300 transition-colors"
+            >
+              Disable
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {emailTwoFAError && (
+              <p className="text-sm text-red-400">{emailTwoFAError}</p>
+            )}
+            <button
+              type="button"
+              onClick={enableEmailTwoFA}
+              disabled={emailTwoFALoading || user.totp_enabled}
+              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {emailTwoFALoading ? 'Enabling…' : 'Enable email 2FA'}
             </button>
           </div>
         )}

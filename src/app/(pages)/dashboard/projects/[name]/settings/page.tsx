@@ -13,8 +13,9 @@ import MembersTab from "@/components/project-settings/MembersTab";
 import ApiTokensTab from "@/components/project-settings/ApiTokensTab";
 import DangerZoneTab from "@/components/project-settings/DangerZoneTab";
 import RetentionTab from "@/components/project-settings/RetentionTab";
+import AuditTab from "@/components/project-settings/AuditTab";
 
-type SettingsTab = "general" | "log-levels" | "retention" | "sources" | "members" | "api-tokens" | "danger";
+type SettingsTab = "general" | "log-levels" | "retention" | "sources" | "members" | "api-tokens" | "audit" | "danger";
 
 const ALL_TABS: { id: SettingsTab; label: string }[] = [
   { id: "general", label: "General" },
@@ -23,6 +24,7 @@ const ALL_TABS: { id: SettingsTab; label: string }[] = [
   { id: "sources", label: "Sources" },
   { id: "members", label: "Members" },
   { id: "api-tokens", label: "API Tokens" },
+  { id: "audit", label: "Audit" },
   { id: "danger", label: "Danger Zone" },
 ];
 
@@ -34,6 +36,7 @@ const TAB_VIEW_PERMS: Record<SettingsTab, string | null> = {
   sources: "sources:read",
   members: "members:read",
   "api-tokens": "tokens:read",
+  audit: null, // owner-only checked separately
   danger: null, // owner-only checked separately
 };
 
@@ -97,7 +100,7 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
 
   function getAccessibleTabs(s: ProjectSettings) {
     return ALL_TABS.filter((tab) => {
-      if (tab.id === "danger") return s.role === "owner";
+      if (tab.id === "danger" || tab.id === "audit") return s.role === "owner";
       const req = TAB_VIEW_PERMS[tab.id];
       if (!req) return true;
       return s.effective_permissions.includes(req) || s.role === "owner";
@@ -172,6 +175,9 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
         )}
         {activeTab === "api-tokens" && (
           <ApiTokensTab projectName={projectName} can={can} />
+        )}
+        {activeTab === "audit" && isOwner && (
+          <AuditTab projectName={projectName} />
         )}
         {activeTab === "danger" && isOwner && (
           <DangerZoneTab projectName={projectName} settings={settings} />
