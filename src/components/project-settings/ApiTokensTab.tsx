@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api";
-import { ApiToken } from "@/types";
+import { ApiToken, ProjectSource } from "@/types";
 import ConfirmModal from "@/components/ConfirmModal";
 
 const ALL_PERMISSIONS = [
@@ -27,6 +27,7 @@ interface Props {
 
 export default function ApiTokensTab({ projectName, can }: Props) {
   const [tokens, setTokens] = useState<ApiToken[]>([]);
+  const [sources, setSources] = useState<ProjectSource[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,6 +35,7 @@ export default function ApiTokensTab({ projectName, can }: Props) {
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState("");
   const [newPerms, setNewPerms] = useState<string[]>(["logs:write", "logs:read"]);
+  const [newSource, setNewSource] = useState<string>("");
   const [createError, setCreateError] = useState<string | null>(null);
   const [createdToken, setCreatedToken] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -42,11 +44,14 @@ export default function ApiTokensTab({ projectName, can }: Props) {
   const [revokeTarget, setRevokeTarget] = useState<ApiToken | null>(null);
 
   useEffect(() => {
-    apiFetch(`/api/projects/${projectName}/tokens`)
-      .then((r) => r.json())
-      .then((d) => {
-        if (d.ok) setTokens(d.tokens);
-        else setError(d.error ?? "Failed to load tokens");
+    Promise.all([
+      apiFetch(`/api/projects/${projectName}/tokens`).then((r) => r.json()),
+      apiFetch(`/api/projects/${projectName}/sources`).then((r) => r.json()),
+    ])
+      .then(([tokensData, sourcesData]) => {
+        if (tokensData.ok) setTokens(tokensData.tokens);
+        else setError(tokensData.error ?? "Failed to load tokens");
+        if (Array.isArray(sourcesData)) setSources(sourcesData);
       })
       .catch(() => setError("Failed to load tokens"))
       .finally(() => setLoading(false));
@@ -63,20 +68,22 @@ export default function ApiTokensTab({ projectName, can }: Props) {
     setCreating(true);
     setCreateError(null);
     try {
+      const body: Record<string, unknown> = { name: newName.trim(), permissions: newPerms };
+      if (newSource) body.source = newSource;
       const res = await apiFetch(`/api/projects/${projectName}/tokens`, {
         method: "POST",
-        body: JSON.stringify({ name: newName.trim(), permissions: newPerms }),
+        body: JSON.stringify(body),
       });
       const d = await res.json();
       if (!res.ok) throw new Error(d.error ?? "Failed to create token");
       setCreatedToken(d.token);
-      // Add to list without the full token
       setTokens((prev) => [
         {
           id: d.id,
           name: d.name,
           token_prefix: d.token_prefix,
           permissions: d.permissions,
+          source_name: d.source_name ?? null,
           last_used_at: null,
           created_at: d.created_at,
         },
@@ -84,6 +91,7 @@ export default function ApiTokensTab({ projectName, can }: Props) {
       ]);
       setNewName("");
       setNewPerms(["logs:write", "logs:read"]);
+      setNewSource("");
     } catch (err) {
       setCreateError(err instanceof Error ? err.message : "Failed to create token");
     } finally {
@@ -170,11 +178,16 @@ export default function ApiTokensTab({ projectName, can }: Props) {
             <div key={token.id} className="px-4 py-3 border-b border-[var(--border)] last:border-0 space-y-1.5">
               <div className="flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-medium text-[var(--text-secondary)]">{token.name}</p>
                     <code className="text-xs font-mono text-[var(--text-muted)] bg-[var(--surface-input)] px-2 py-0.5 rounded border border-[var(--border)]">
                       {token.token_prefix}…
                     </code>
+                    {token.source_name && (
+                      <span className="text-xs bg-[var(--primary-muted)] text-[var(--primary)] border border-[var(--primary)]/30 px-2 py-0.5 rounded-full font-mono">
+                        {token.source_name}
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-wrap gap-1 mt-1.5">
                     {token.permissions.map((p) => (
@@ -223,6 +236,22 @@ export default function ApiTokensTab({ projectName, can }: Props) {
               className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--primary-muted)]"
             />
           </div>
+
+          {sources.length > 0 && (
+            <div className="space-y-1">
+              <label className="text-xs text-[var(--text-muted)]">Bind to source <span className="text-[var(--text-muted)]">(optional — required for SDK tokens)</span></label>
+              <select
+                value={newSource}
+                onChange={(e) => setNewSource(e.target.value)}
+                className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)] focus:border-[var(--border-focus)] focus:outline-none focus:ring-1 focus:ring-[var(--primary-muted)]"
+              >
+                <option value="">— No source binding —</option>
+                {sources.map((s) => (
+                  <option key={s.name} value={s.name}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="space-y-2">
             <p className="text-xs text-[var(--text-muted)]">Permissions</p>

@@ -8,6 +8,7 @@ export interface User {
   avatar_url?: string | null;
   theme: string;
   totp_enabled: boolean;
+  email_2fa_enabled: boolean;
   notifications_email: boolean;
   email_verified: boolean;
   plan?: 'free' | 'pro' | 'enterprise';
@@ -170,6 +171,7 @@ export interface ApiToken {
   name: string;
   token_prefix: string;
   permissions: string[];
+  source_name: string | null;
   last_used_at: string | null;
   created_at: string;
 }

@@ -28,6 +28,19 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [passkeyLoading, setPasskeyLoading] = useState(false);
 
+  // 2FA state
+  const [twoFARequired, setTwoFARequired] = useState(false);
+  const [twoFAMethod, setTwoFAMethod] = useState<"2fa_totp" | "2fa_email">("2fa_totp");
+  const [twoFASession, setTwoFASession] = useState("");
+  const [twoFACode, setTwoFACode] = useState("");
+
+  function finishLogin(data: { accessToken: string; user: unknown }) {
+    localStorage.setItem("accessToken", data.accessToken);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    const next = searchParams.get("next");
+    window.location.href = next ?? "/dashboard";
+  }
+
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     apiFetch("/api/auth/login", {
@@ -35,13 +48,32 @@ export default function LoginPage() {
       body: JSON.stringify({ email, password }),
     }).then(res => res.json()).then(data => {
       if (data.error) {
-        setError(data.message);
+        setError(data.error ?? data.message);
+      } else if (data.requires2FA) {
+        setError("");
+        setTwoFARequired(true);
+        setTwoFAMethod(data.method);
+        setTwoFASession(data.sessionToken);
       } else {
         setError("");
-        localStorage.setItem("accessToken", data.accessToken);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        const next = searchParams.get("next");
-        window.location.href = next ?? "/dashboard";
+        finishLogin(data);
+      }
+    }).catch(err => {
+      setError("An error occurred: " + err.message);
+    });
+  }
+
+  function handleVerify2FA(e: React.FormEvent) {
+    e.preventDefault();
+    apiFetch("/api/auth/2fa/verify", {
+      method: "POST",
+      body: JSON.stringify({ sessionToken: twoFASession, code: twoFACode }),
+    }).then(res => res.json()).then(data => {
+      if (data.error) {
+        setError(data.error);
+      } else {
+        setError("");
+        finishLogin(data);
       }
     }).catch(err => {
       setError("An error occurred: " + err.message);
@@ -86,6 +118,64 @@ export default function LoginPage() {
 
   function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPassword((prev) => passwordFromDisplay(prev, e.target.value));
+  }
+
+  if (twoFARequired) {
+    return (
+      <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-6">
+        <div className="w-full max-w-[24rem] bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl p-8 shadow-xl">
+          <h1 className="text-2xl font-bold text-white text-center tracking-tight m-0 mb-1">
+            Two-factor authentication
+          </h1>
+          <p className="text-[var(--text-muted)] text-sm text-center m-0 mb-7">
+            {twoFAMethod === "2fa_totp"
+              ? "Enter the 6-digit code from your authenticator app."
+              : "Enter the 6-digit code sent to your email."}
+          </p>
+
+          <form onSubmit={handleVerify2FA} className="flex flex-col gap-4">
+            <label htmlFor="2fa-code" className="text-sm font-medium text-[var(--text-secondary)]">
+              Verification code
+            </label>
+            <input
+              id="2fa-code"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]{6}"
+              maxLength={6}
+              placeholder="000000"
+              value={twoFACode}
+              onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, ""))}
+              autoComplete="one-time-code"
+              autoFocus
+              required
+              className="w-full font-mono text-center tracking-[0.5em] text-[var(--text-secondary)] text-lg"
+            />
+
+            {error && (
+              <p className="text-sm text-red-400 m-0 -mt-2" role="alert">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="w-full mt-2 py-3 px-5 rounded-lg font-semibold text-[var(--surface)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] transition-colors border-0 cursor-pointer text-base"
+            >
+              Verify
+            </button>
+          </form>
+
+          <button
+            type="button"
+            onClick={() => { setTwoFARequired(false); setError(""); setTwoFACode(""); }}
+            className="mt-4 w-full text-sm text-[var(--text-muted)] hover:text-white transition-colors text-center"
+          >
+            ← Back to sign in
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
