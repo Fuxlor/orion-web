@@ -127,7 +127,7 @@ export default function ProjectsTab() {
                       type="button"
                       onClick={() => restore(project)}
                       disabled={actionLoading === project.id}
-                      className="text-sm text-[var(--primary)] hover:opacity-80 transition-opacity"
+                      className="cursor-pointer text-sm text-[var(--primary)] hover:opacity-80 transition-opacity"
                     >
                       Restore
                     </button>
@@ -136,7 +136,7 @@ export default function ProjectsTab() {
                       type="button"
                       onClick={() => setArchiveTarget(project)}
                       disabled={actionLoading === project.id}
-                      className="text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
+                      className="cursor-pointer text-sm text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
                     >
                       Archive
                     </button>
@@ -144,7 +144,7 @@ export default function ProjectsTab() {
                   <button
                     type="button"
                     onClick={() => { setDeleteTarget(project); setConfirmName(''); setDeleteError(null); }}
-                    className="text-sm text-destructive hover:text-destructive/70 transition-colors"
+                    className="cursor-pointer text-sm text-destructive hover:text-destructive/70 transition-colors"
                   >
                     Delete
                   </button>

@@ -308,7 +308,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
             <button
               type="button"
               onClick={disableTotp}
-              className="text-sm text-red-400 hover:text-red-300 transition-colors"
+              className="cursor-pointer text-sm text-red-400 hover:text-red-300 transition-colors"
             >
               Disable 2FA
             </button>
@@ -333,10 +333,10 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
               />
               {totpError && <p className="text-sm text-red-400">{totpError}</p>}
               <div className="flex gap-2">
-                <button type="submit" disabled={totpLoading} className="btn-primary flex-1">
+                <button type="submit" disabled={totpLoading} className="cursor-pointer btn-primary flex-1">
                   {totpLoading ? 'Verifying…' : 'Verify & enable'}
                 </button>
-                <button type="button" onClick={() => setTotpSetupData(null)} className="px-4 py-2 text-sm border border-[var(--border)] rounded-lg hover:border-[var(--primary)] transition-colors">
+                <button type="button" onClick={() => setTotpSetupData(null)} className="cursor-pointer px-4 py-2 text-sm border border-[var(--border)] rounded-lg hover:border-[var(--primary)] transition-colors">
                   Cancel
                 </button>
               </div>
@@ -353,14 +353,14 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
                 <span key={code} className="text-[var(--text-secondary)]">{code}</span>
               ))}
             </div>
-            <button type="button" onClick={() => setBackupCodes(null)} className="btn-primary w-full">
+            <button type="button" onClick={() => setBackupCodes(null)} className="cursor-pointer btn-primary w-full">
               Done
             </button>
           </div>
         ) : (
           <div className="space-y-2">
             {totpStatus && <p className="text-sm text-[var(--text-muted)] mb-2">{totpStatus}</p>}
-            <button type="button" onClick={startTotpSetup} disabled={totpLoading} className="btn-primary">
+            <button type="button" onClick={startTotpSetup} disabled={totpLoading} className="cursor-pointer btn-primary">
               {totpLoading ? 'Loading…' : 'Set up authenticator app'}
             </button>
           </div>
@@ -389,7 +389,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
             <button
               type="button"
               onClick={disableEmailTwoFA}
-              className="text-sm text-red-400 hover:text-red-300 transition-colors"
+              className="cursor-pointer text-sm text-red-400 hover:text-red-300 transition-colors"
             >
               Disable
             </button>
@@ -442,7 +442,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
                 <button
                   type="button"
                   onClick={() => removePasskey(pk.id)}
-                  className="ml-4 shrink-0 text-sm text-red-400 hover:text-red-300 transition-colors"
+                  className="cursor-pointer ml-4 shrink-0 text-sm text-red-400 hover:text-red-300 transition-colors"
                 >
                   Remove
                 </button>
@@ -473,7 +473,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
             <button
               type="button"
               onClick={revokeOtherSessions}
-              className="text-sm text-red-400 hover:text-red-300 transition-colors"
+              className="cursor-pointer text-sm text-red-400 hover:text-red-300 transition-colors"
             >
               Sign out all others
             </button>
@@ -510,7 +510,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
                   <button
                     type="button"
                     onClick={() => revokeSession(session.id)}
-                    className="ml-4 shrink-0 text-sm text-red-400 hover:text-red-300 transition-colors"
+                    className="cursor-pointer ml-4 shrink-0 text-sm text-red-400 hover:text-red-300 transition-colors"
                   >
                     Revoke
                   </button>

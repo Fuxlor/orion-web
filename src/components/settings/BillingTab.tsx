@@ -100,7 +100,7 @@ export default function BillingTab({ user }: Props) {
                 type="button"
                 onClick={handlePortal}
                 disabled={portalLoading}
-                className="px-4 py-2 text-sm border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface)] transition-colors disabled:opacity-50"
+                className="cursor-pointer px-4 py-2 text-sm border border-[var(--border)] rounded-lg text-[var(--text-secondary)] hover:bg-[var(--surface)] transition-colors disabled:opacity-50"
               >
                 {portalLoading ? 'Redirecting…' : 'Manage billing'}
               </button>

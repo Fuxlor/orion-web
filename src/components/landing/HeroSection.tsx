@@ -8,7 +8,7 @@ export function HeroSection() {
   return (
     <section
       className="relative overflow-hidden"
-      style={{ minHeight: "88vh", display: "flex", alignItems: "center", justifyContent: "center" }}
+      style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}
     >
       {/* Background effects */}
       <div

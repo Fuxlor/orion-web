@@ -38,7 +38,7 @@ export function CTASection() {
               borderRadius: 12,
               padding: "16px 36px",
               fontSize: 16,
-              fontWeight: 800,
+              fontWeight: 600,
             }}
           >
             Get started for free <ArrowRight size={18} strokeWidth={2.5} />

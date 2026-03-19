@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export function Footer() {
   return (
@@ -7,7 +8,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex items-center gap-2 text-white font-bold text-lg tracking-tight">
             <div className="w-6 h-6 rounded bg-[var(--primary)] flex items-center justify-center">
-              <span className="text-[var(--surface)] font-black text-xs">O</span>
+              <Image src="/orion-nobg.png" alt="Orion" width={32} height={32} />
             </div>
             Orion
           </div>

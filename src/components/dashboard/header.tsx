@@ -183,93 +183,93 @@ export default function Header({ user }: HeaderProps) {
 
       {/* Right: user menu */}
       <div className="flex-1 flex justify-end">
-      <div className="relative shrink-0" ref={dropdownRef}>
-        <motion.button
-          type="button"
-          whileHover={{ backgroundColor: "rgba(255,255,255,0.06)" }}
-          whileTap={{ scale: 0.97 }}
-          onClick={() => setDropdownOpen((o) => !o)}
-          className="flex items-center gap-2 px-2.5 py-[5px] rounded-lg cursor-pointer"
-          aria-expanded={dropdownOpen}
-        >
-          {mounted && <UserAvatar user={user} size={26} />}
-          <span
-            className="text-[13px] font-medium hidden sm:inline max-w-[140px] truncate"
-            style={{ color: "white" }}
+        <div className="relative shrink-0" ref={dropdownRef}>
+          <motion.button
+            type="button"
+            whileHover={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setDropdownOpen((o) => !o)}
+            className="flex items-center gap-2 px-2.5 py-[5px] rounded-lg cursor-pointer"
+            aria-expanded={dropdownOpen}
           >
-            {mounted ? (user?.pseudo ?? user?.email ?? "Account") : null}
-          </span>
-          <ChevronDown
-            size={12}
-            className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-            style={{ color: "#6b7280" }}
-          />
-        </motion.button>
-
-        <AnimatePresence>
-          {dropdownOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -6, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -6, scale: 0.97 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-1.5 w-56 py-1 rounded-[10px] z-50 overflow-hidden"
-              style={{
-                backgroundColor: "#13161f",
-                border: "1px solid rgba(255,255,255,0.1)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
-              }}
+            {mounted && <UserAvatar user={user} size={26} />}
+            <span
+              className="text-[13px] font-medium hidden sm:inline max-w-[140px] truncate"
+              style={{ color: "white" }}
             >
-              <div
-                className="px-4 py-3"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+              {mounted ? (user?.pseudo ?? user?.email ?? "Account") : null}
+            </span>
+            <ChevronDown
+              size={12}
+              className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+              style={{ color: "#6b7280" }}
+            />
+          </motion.button>
+
+          <AnimatePresence>
+            {dropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                transition={{ duration: 0.15 }}
+                className="absolute right-0 top-full mt-1.5 w-56 py-1 rounded-[10px] z-50 overflow-hidden"
+                style={{
+                  backgroundColor: "#13161f",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
+                }}
               >
-                <div className="flex items-center gap-2">
-                  <p className="text-sm font-medium text-white truncate">
-                    {user?.pseudo ?? "User"}
-                  </p>
-                  {user?.plan && (
-                    <span
-                      className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-                      style={{
-                        backgroundColor: "rgba(2,241,148,0.12)",
-                        color: "var(--primary)",
-                      }}
-                    >
-                      {user.plan.slice(0, 1).toUpperCase() +
-                        user.plan.slice(1)}
-                    </span>
-                  )}
-                </div>
-                <p
-                  className="text-xs truncate mt-0.5"
-                  style={{ color: "#6b7280" }}
+                <div
+                  className="px-4 py-3"
+                  style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
                 >
-                  {user?.email}
-                </p>
-              </div>
-              <Link
-                href="/settings"
-                className="flex items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-white/5"
-                style={{ color: "#d1d5db" }}
-                onClick={() => setDropdownOpen(false)}
-              >
-                <Settings size={14} style={{ color: "#6b7280" }} />
-                Settings
-              </Link>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-white/5"
-                style={{ color: "#f87171" }}
-              >
-                <LogOut size={14} />
-                Sign out
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-white truncate">
+                      {user?.pseudo ?? "User"}
+                    </p>
+                    {user?.plan && (
+                      <span
+                        className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                        style={{
+                          backgroundColor: "rgba(2,241,148,0.12)",
+                          color: "var(--primary)",
+                        }}
+                      >
+                        {user.plan.slice(0, 1).toUpperCase() +
+                          user.plan.slice(1)}
+                      </span>
+                    )}
+                  </div>
+                  <p
+                    className="text-xs truncate mt-0.5"
+                    style={{ color: "#6b7280" }}
+                  >
+                    {user?.email}
+                  </p>
+                </div>
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-white/5"
+                  style={{ color: "#d1d5db" }}
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  <Settings size={14} style={{ color: "#6b7280" }} />
+                  Settings
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="cursor-pointer flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-white/5"
+                  style={{ color: "#f87171" }}
+                >
+                  <LogOut size={14} />
+                  Sign out
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </header>
   );
