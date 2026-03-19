@@ -64,39 +64,39 @@ export default function DangerZoneTab({ projectName, user }: Props) {
   return (
     <div className="space-y-4">
       {/* Archive */}
-      <div className="rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-5 space-y-3">
+      <div className="rounded-lg border border-[var(--status-warning)]/30 bg-[var(--status-warning)]/5 p-5 space-y-3">
         <div>
-          <h2 className="text-sm font-semibold text-yellow-400">Archive Project</h2>
+          <h2 className="text-sm font-semibold text-[var(--status-warning)]">Archive Project</h2>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
             The project will be hidden from your dashboard. All data is preserved for 1 year.
           </p>
         </div>
-        {archiveError && <p className="text-xs text-red-400">{archiveError}</p>}
+        {archiveError && <p className="text-xs text-destructive">{archiveError}</p>}
         <button
           type="button"
           onClick={() => setArchiveOpen(true)}
           disabled={archiving}
-          className="rounded-lg border border-yellow-500/40 bg-yellow-500/10 px-4 py-2 text-sm font-medium text-yellow-400 transition-colors hover:bg-yellow-500/20 disabled:opacity-50"
+          className="rounded-lg border border-[var(--status-warning)]/40 bg-[var(--status-warning)]/10 px-4 py-2 text-sm font-medium text-[var(--status-warning)] transition-colors hover:bg-[var(--status-warning)]/20 disabled:opacity-50"
         >
           {archiving ? "Archiving…" : "Archive Project"}
         </button>
       </div>
 
       {/* Delete */}
-      <div className="rounded-lg border border-red-500/30 bg-red-500/5 p-5 space-y-4">
+      <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-5 space-y-4">
         <div>
-          <h2 className="text-sm font-semibold text-red-400">Delete Project</h2>
+          <h2 className="text-sm font-semibold text-destructive">Delete Project</h2>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
             Permanently destroys the project and all associated data. This action{" "}
             <strong className="text-[var(--text-secondary)]">cannot be undone</strong>.
           </p>
         </div>
-        {deleteError && <p className="text-xs text-red-400">{deleteError}</p>}
+        {deleteError && <p className="text-xs text-destructive">{deleteError}</p>}
         <button
           type="button"
           onClick={() => setDeleteOpen(true)}
           disabled={deleting}
-          className="rounded-lg bg-red-500/90 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-500 disabled:opacity-40"
+          className="rounded-lg bg-destructive/90 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-destructive disabled:opacity-40"
         >
           {deleting ? "Deleting…" : "Delete Project Permanently"}
         </button>

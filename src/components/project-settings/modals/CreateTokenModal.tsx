@@ -92,7 +92,7 @@ export default function CreateTokenModal({ projectName, sources, onCreated, onCl
       onMouseDown={createdToken ? undefined : onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl max-h-[90vh] flex flex-col"
+        className="w-full max-w-2xl rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl max-h-[90vh] flex flex-col"
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}

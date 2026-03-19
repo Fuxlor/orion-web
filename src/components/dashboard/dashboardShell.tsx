@@ -86,30 +86,51 @@ export default function DashboardShell({ children }: { children: React.ReactNode
 
   return (
     <ProjectProvider>
-      <div className="flex h-screen flex-col bg-[var(--surface)]">
-        <Header user={user} />
-        {user && !user.email_verified && (
-          <div style={{ backgroundColor: "rgba(2,241,148,0.08)", borderBottom: "1px solid rgba(2,241,148,0.2)" }}
-            className="flex items-center justify-center gap-3 px-4 py-2 text-sm">
-            <span style={{ color: "#02f194" }}>⚠</span>
-            <span style={{ color: "var(--text-secondary)" }}>
-              {resendSent
-                ? "Verification email sent! Check your inbox."
-                : "Please verify your email address. Check your inbox for a confirmation link."}
-              {" "}
-              <button
-                onClick={handleResend}
-                disabled={resendCooldown > 0}
-                style={{ color: resendCooldown > 0 ? "var(--text-muted)" : "var(--primary)", textDecoration: "underline", background: "none", border: "none", padding: 0, cursor: resendCooldown > 0 ? "default" : "pointer", fontSize: "inherit" }}
-              >
-                {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend email"}
-              </button>
-            </span>
-          </div>
-        )}
-        <div className="flex flex-1 min-h-0">
-          <Navbar />
-          <main className="flex-1 overflow-auto p-6 bg-[var(--page-bg)]">{children}</main>
+      <div className="flex h-screen overflow-hidden" style={{ backgroundColor: "var(--background)" }}>
+        {/* Sidebar */}
+        <Navbar />
+
+        {/* Main column */}
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+          <Header user={user} />
+          {user && !user.email_verified && (
+            <div
+              className="flex items-center justify-center gap-3 px-4 py-2 text-sm shrink-0"
+              style={{
+                backgroundColor: "rgba(2,241,148,0.08)",
+                borderBottom: "1px solid rgba(2,241,148,0.2)",
+              }}
+            >
+              <span style={{ color: "#02f194" }}>⚠</span>
+              <span style={{ color: "var(--text-secondary)" }}>
+                {resendSent
+                  ? "Verification email sent! Check your inbox."
+                  : "Please verify your email address. Check your inbox for a confirmation link."}
+                {" "}
+                <button
+                  onClick={handleResend}
+                  disabled={resendCooldown > 0}
+                  style={{
+                    color: resendCooldown > 0 ? "var(--text-muted)" : "var(--primary)",
+                    textDecoration: "underline",
+                    background: "none",
+                    border: "none",
+                    padding: 0,
+                    cursor: resendCooldown > 0 ? "default" : "pointer",
+                    fontSize: "inherit",
+                  }}
+                >
+                  {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend email"}
+                </button>
+              </span>
+            </div>
+          )}
+          <main
+            className="flex-1 overflow-auto p-6"
+            style={{ backgroundColor: "var(--page-bg)" }}
+          >
+            {children}
+          </main>
         </div>
       </div>
     </ProjectProvider>

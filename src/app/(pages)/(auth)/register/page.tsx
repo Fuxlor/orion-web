@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "motion/react";
 import { apiFetch } from "@/lib/api";
 
 const BULLET = "•";
@@ -87,32 +88,54 @@ export default function RegisterPage() {
   const isStep1 = step === 1;
 
   return (
-    <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-6">
-      <div className="w-full max-w-[24rem] bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl p-8 shadow-xl">
-        <h1 className="text-2xl font-bold text-white text-center tracking-tight m-0 mb-1">
-          Orion
-        </h1>
-        <p className="text-[var(--text-muted)] text-sm text-center m-0 mb-2">
-          {isStep1 ? "Tell us about you" : "Create your account"}
-        </p>
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: "#0d0f16", backgroundImage: "radial-gradient(ellipse 60% 40% at 50% 80%, rgba(2,241,148,0.07) 0%, transparent 60%)" }}>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-[24rem] p-8 rounded-[18px] shadow-2xl"
+        style={{ backgroundColor: "#13161f", border: "1px solid rgba(255,255,255,0.07)" }}
+      >
+        {/* Brand */}
+        <div className="flex flex-col items-center mb-5">
+          <div className="flex items-center justify-center rounded-[12px] mb-3" style={{ width: 44, height: 44, backgroundColor: "#02f194" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="4" fill="#0d0f16" />
+              <circle cx="12" cy="12" r="9" stroke="#0d0f16" strokeWidth="2.5" fill="none" />
+              <circle cx="12" cy="3" r="1.5" fill="#0d0f16" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight m-0 mb-1">Create account</h1>
+          <p className="text-sm m-0" style={{ color: "#6b7280" }}>
+            {isStep1 ? "Tell us about you" : "Set up your credentials"}
+          </p>
+        </div>
 
         {/* Step indicator */}
         <div className="flex justify-center gap-2 mb-6">
           {[1, 2].map((s) => (
             <div
               key={s}
-              className={`h-1.5 rounded-full transition-all ${s === step
-                ? "w-6 bg-[var(--primary)]"
-                : s < step
-                  ? "w-1.5 bg-[var(--primary)]"
-                  : "w-1.5 bg-[var(--border)]"
-                }`}
+              className="h-1.5 rounded-full transition-all"
+              style={{
+                width: s === step ? 24 : 6,
+                backgroundColor: s <= step ? "#02f194" : "rgba(255,255,255,0.1)",
+              }}
               aria-hidden
             />
           ))}
         </div>
 
-        <form onSubmit={handleStepNext} className="flex flex-col gap-4">
+        <AnimatePresence mode="wait">
+        <motion.form
+          key={step}
+          initial={{ opacity: 0, x: isStep1 ? -16 : 16 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: isStep1 ? 16 : -16 }}
+          transition={{ duration: 0.2 }}
+          onSubmit={handleStepNext}
+          className="flex flex-col gap-4"
+        >
           {isStep1 ? (
             <>
               <label htmlFor="firstName" className="text-sm font-medium text-[var(--text-secondary)]">
@@ -221,24 +244,27 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={handleBack}
-                className="py-3 px-5 rounded-lg font-medium text-[var(--text-secondary)] bg-[var(--surface-input)] border border-[var(--border)] hover:border-[var(--text-muted)] transition-colors cursor-pointer text-base"
+                className="py-3 px-5 rounded-lg font-medium transition-colors cursor-pointer text-base"
+                style={{ color: "#9ba3af", backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}
               >
                 Back
               </button>
             )}
             <button
               type="submit"
-              className="flex-1 py-3 px-5 rounded-lg font-semibold text-[var(--surface)] bg-[var(--primary)] hover:bg-[var(--primary-hover)] transition-colors border-0 cursor-pointer text-base"
+              className="flex-1 py-3 px-5 rounded-lg font-semibold transition-colors border-0 cursor-pointer text-base"
+              style={{ backgroundColor: "#02f194", color: "#0d0f16" }}
             >
               {isStep1 ? "Next" : "Create account"}
             </button>
           </div>
-        </form>
+        </motion.form>
+        </AnimatePresence>
 
-        <p className="text-[var(--text-muted)] text-sm text-center m-0 mt-5">
-          Already have an account? <Link href="/login" className="text-[var(--primary)] underline hover:no-underline">Sign in</Link>
+        <p className="text-sm text-center m-0 mt-5" style={{ color: "#6b7280" }}>
+          Already have an account? <Link href="/login" className="hover:no-underline underline" style={{ color: "#02f194" }}>Sign in</Link>
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 }

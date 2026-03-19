@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { ChevronDown } from "lucide-react";
 
 const LOG_LEVELS = [
-  { value: "info", label: "Info", color: "text-blue-400" },
-  { value: "warn", label: "Warn", color: "text-yellow-400" },
-  { value: "error", label: "Error", color: "text-red-400" },
-  { value: "debug", label: "Debug", color: "text-gray-400" },
-  { value: "verbose", label: "Verbose", color: "text-violet-400" },
-  { value: "trace", label: "Trace", color: "text-green-300" },
+  { value: "info", label: "Info", color: "var(--level-info)", bg: "var(--level-info-bg)", border: "var(--level-info-border)" },
+  { value: "warn", label: "Warn", color: "var(--level-warn)", bg: "var(--level-warn-bg)", border: "var(--level-warn-border)" },
+  { value: "error", label: "Error", color: "var(--level-error)", bg: "var(--level-error-bg)", border: "var(--level-error-border)" },
+  { value: "debug", label: "Debug", color: "var(--level-debug)", bg: "var(--level-debug-bg)", border: "var(--level-debug-border)" },
+  { value: "verbose", label: "Verbose", color: "var(--level-verbose)", bg: "var(--level-verbose-bg)", border: "var(--level-verbose-border)" },
+  { value: "trace", label: "Trace", color: "var(--level-trace)", bg: "var(--level-trace-bg)", border: "var(--level-trace-border)" },
 ];
 
 interface FilterDropdownProps {
@@ -17,7 +18,6 @@ interface FilterDropdownProps {
   selected: string[];
   onChange: (selected: string[]) => void;
   colorMap?: Record<string, string>;
-  activeCount?: number;
 }
 
 function FilterDropdown({ label, options, selected, onChange, colorMap }: FilterDropdownProps) {
@@ -37,41 +37,71 @@ function FilterDropdown({ label, options, selected, onChange, colorMap }: Filter
   };
 
   const count = selected.length;
+  const isActive = count > 0;
 
   return (
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg border transition-colors ${
-          count > 0
-            ? "border-[var(--primary)] text-[var(--primary)] bg-[var(--primary-muted)]"
-            : "border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--border-focus)] hover:text-white"
-        }`}
+        className="flex items-center gap-1.5 cursor-pointer transition-all"
+        style={{
+          padding: "6px 12px",
+          borderRadius: 8,
+          border: `1px solid ${isActive ? "var(--level-info-border)" : "var(--border)"}`,
+          backgroundColor: isActive ? "var(--accent)" : "transparent",
+          fontSize: 12,
+          fontWeight: 600,
+          color: isActive ? "var(--primary)" : "var(--text-muted)",
+          fontFamily: "inherit",
+        }}
       >
         {label}
-        {count > 0 && (
-          <span className="bg-[var(--primary)] text-[var(--surface)] text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+        {isActive && (
+          <span
+            style={{
+              backgroundColor: "var(--primary)",
+              color: "var(--primary-foreground)",
+              fontSize: 10,
+              fontWeight: 700,
+              borderRadius: "50%",
+              width: 16,
+              height: 16,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             {count}
           </span>
         )}
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="m6 9 6 6 6-6" />
-        </svg>
+        <ChevronDown size={12} style={{ opacity: 0.6 }} />
       </button>
       {open && (
-        <div className="absolute top-full left-0 mt-1 z-50 min-w-[160px] rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xl py-1">
+        <div
+          className="absolute top-full left-0 mt-1 z-50 py-1"
+          style={{
+            minWidth: 160,
+            borderRadius: 10,
+            border: "1px solid var(--border)",
+            backgroundColor: "var(--card)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
+          }}
+        >
           {options.length === 0 && (
-            <p className="px-3 py-2 text-xs text-[var(--text-muted)]">No options</p>
+            <p className="px-3 py-2 text-xs" style={{ color: "var(--text-muted)" }}>No options</p>
           )}
           {options.map(opt => (
-            <label key={opt} className="flex items-center gap-2 px-3 py-1.5 hover:bg-[var(--border)] cursor-pointer text-sm transition-colors">
+            <label
+              key={opt}
+              className="flex items-center gap-2 px-3 py-1.5 cursor-pointer text-sm transition-colors hover:bg-white/5"
+            >
               <input
                 type="checkbox"
                 checked={selected.includes(opt)}
                 onChange={() => toggle(opt)}
                 className="accent-[var(--primary)]"
               />
-              <span className={colorMap?.[opt] ?? "text-white"}>{opt}</span>
+              <span style={{ color: colorMap?.[opt] ?? "var(--foreground)", fontSize: 12 }}>{opt}</span>
             </label>
           ))}
         </div>
@@ -140,18 +170,30 @@ export default function LogFilters({
           type="date"
           value={from}
           onChange={e => onFromChange(e.target.value)}
-          className={`px-2 py-1.5 text-sm rounded-lg border bg-[var(--surface-input)] focus:outline-none focus:border-[var(--border-focus)] transition-colors ${
-            from ? "border-[var(--primary)] text-white" : "border-[var(--border)] text-[var(--text-muted)]"
-          }`}
+          className="text-sm focus:outline-none transition-colors"
+          style={{
+            padding: "5px 10px",
+            borderRadius: 8,
+            border: `1px solid ${from ? "var(--level-info-border)" : "var(--border)"}`,
+            backgroundColor: from ? "var(--accent)" : "transparent",
+            color: from ? "var(--foreground)" : "var(--text-muted)",
+            fontSize: 12,
+          }}
         />
-        <span className="text-[var(--text-muted)] text-xs">→</span>
+        <span style={{ color: "var(--text-muted)", fontSize: 12 }}>→</span>
         <input
           type="date"
           value={to}
           onChange={e => onToChange(e.target.value)}
-          className={`px-2 py-1.5 text-sm rounded-lg border bg-[var(--surface-input)] focus:outline-none focus:border-[var(--border-focus)] transition-colors ${
-            to ? "border-[var(--primary)] text-white" : "border-[var(--border)] text-[var(--text-muted)]"
-          }`}
+          className="text-sm focus:outline-none transition-colors"
+          style={{
+            padding: "5px 10px",
+            borderRadius: 8,
+            border: `1px solid ${to ? "var(--level-info-border)" : "var(--border)"}`,
+            backgroundColor: to ? "var(--accent)" : "transparent",
+            color: to ? "var(--foreground)" : "var(--text-muted)",
+            fontSize: 12,
+          }}
         />
       </div>
 
@@ -167,7 +209,8 @@ export default function LogFilters({
       {isFiltered && (
         <button
           onClick={onClear}
-          className="text-xs text-[var(--text-muted)] hover:text-white underline transition-colors ml-1"
+          className="transition-colors"
+          style={{ fontSize: 12, color: "var(--text-muted)", textDecoration: "underline", background: "none", border: "none", cursor: "pointer", marginLeft: 4 }}
         >
           Clear all
         </button>

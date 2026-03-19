@@ -81,9 +81,9 @@ function CommandButton({ projectName, serverName, type, onSuccess }: {
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${isStop
-          ? "bg-[rgba(248,113,113,0.12)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]"
-          : "bg-[var(--primary-muted)] text-[var(--primary)] hover:opacity-80"
+      className={`hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${isStop
+        ? "bg-[rgba(248,113,113,0.12)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]"
+        : "bg-[var(--primary-muted)] text-[var(--primary)] hover:opacity-80"
         }`}
     >
       {sent ? "Sent!" : loading ? "…" : type === 'restart' ? "Restart" : "Stop"}
@@ -128,7 +128,7 @@ export default function ServerDetailPage() {
       {/* Uptime + Actions */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <UptimeBlock uptimePercent={server.uptime_percent ?? null} />
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
           <p className="mb-1 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
             Remote Commands
           </p>
@@ -160,7 +160,7 @@ export default function ServerDetailPage() {
         {server.sources.length === 0 ? (
           <p className="text-sm text-[var(--text-muted)]">No sources linked to this server.</p>
         ) : (
-          <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
+          <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-[var(--border)]">

@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Check, X } from 'lucide-react';
+import { Check } from 'lucide-react';
+import { motion } from 'motion/react';
 import { apiFetch } from '@/lib/api';
-import { fetchPlans, PlansConfig } from '@/lib/plans';
+import { fetchPlans, PlansConfig, PlanDisplay } from '@/lib/plans';
 
 export function PricingSection() {
   const [plans, setPlans] = useState<PlansConfig | null>(null);
@@ -27,84 +28,156 @@ export function PricingSection() {
     window.location.href = '/register';
   }
 
-  const d = plans?.display;
-  const skeletonCell = <td className="p-6"><div className="h-4 w-16 bg-[var(--border)] rounded animate-pulse" /></td>;
+  function getFeatures(d: PlanDisplay): string[] {
+    const features: string[] = [
+      `${d.logs} logs/month`,
+      `${d.retention} retention`,
+      `${d.storage} storage`,
+      `${d.sources} max sources`,
+    ];
+    if (d.alerts !== false) features.push(`Alerts: ${d.alerts}`);
+    features.push(d.support);
+    return features;
+  }
+
+  const PLAN_META: Record<string, { highlighted: boolean; cta: string; onCta: () => void }> = {
+    free: { highlighted: false, cta: 'Get started', onCta: handleStartFree },
+    pro: { highlighted: true, cta: 'Start free trial', onCta: handleGetPro },
+    enterprise: { highlighted: false, cta: 'Contact Us', onCta: () => { window.location.href = 'mailto:contact@orion.dev'; } },
+  };
+
+  const planOrder = ['free', 'pro', 'enterprise'];
 
   return (
-    <section id="pricing" className="py-24 bg-[var(--page-bg)] text-white">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Simple, transparent pricing</h2>
-          <p className="text-[var(--text-muted)] text-lg max-w-2xl mx-auto">
-            Start for free, upgrade when you need more power. No hidden limits.
-          </p>
-        </div>
+    <section
+      id="pricing"
+      style={{
+        borderTop: '1px solid rgba(255,255,255,0.05)',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        backgroundColor: 'rgba(255,255,255,0.01)',
+      }}
+      className="py-24"
+    >
+      <div className="max-w-5xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2
+            style={{
+              fontSize: 'clamp(28px, 4vw, 46px)',
+              fontWeight: 800,
+              letterSpacing: '-0.04em',
+              marginBottom: 12,
+              color: 'white',
+            }}
+          >
+            Simple, transparent pricing
+          </h2>
+          <p style={{ color: '#9ba3af', fontSize: 16 }}>No hidden fees. Cancel anytime.</p>
+        </motion.div>
 
-        <div className="overflow-x-auto rounded-2xl border border-[var(--border)] bg-[var(--surface-elevated)]">
-          <table className="w-full min-w-[800px] border-collapse text-left">
-            <thead>
-              <tr className="border-b border-[var(--border)] bg-[#0A0D14]">
-                <th className="p-6 w-1/4 font-medium text-[var(--text-muted)]">Features</th>
-                <th className="p-6 w-1/4">
-                  <div className="text-xl font-bold text-white mb-1">Standard</div>
-                  <div className="text-sm font-normal text-[var(--text-muted)]">Free</div>
-                </th>
-                <th className="p-6 w-1/4 relative bg-[var(--primary-muted)]/10 border-x border-[var(--primary-muted)] shadow-[inset_0_4px_0_0_var(--primary)]">
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--primary)] text-[var(--surface)] text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full whitespace-nowrap z-10">Most Popular</div>
-                  <div className="text-xl font-bold text-[var(--primary)] mb-1">Pro</div>
-                  <div className="text-sm font-normal text-[var(--text-muted)]">{d?.pro.price ?? '$10 / month'}</div>
-                </th>
-                <th className="p-6 w-1/4">
-                  <div className="text-xl font-bold text-white mb-1">Enterprise</div>
-                  <div className="text-sm font-normal text-[var(--text-muted)]">{d?.enterprise.price ?? 'Custom'}</div>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--border)] text-sm">
-              <tr>
-                <td className="p-6 text-[var(--text-secondary)] font-medium">Logs / month</td>
-                {d ? <td className="p-6 text-white font-medium">{d.free.logs}</td> : skeletonCell}
-                {d ? <td className="p-6 bg-[var(--primary-muted)]/5 border-x border-[var(--primary-muted)] text-white font-medium">{d.pro.logs}</td> : skeletonCell}
-                {d ? <td className="p-6 text-white font-medium">{d.enterprise.logs}</td> : skeletonCell}
-              </tr>
-              <tr>
-                <td className="p-6 text-[var(--text-secondary)] font-medium">Retention</td>
-                {d ? <td className="p-6">{d.free.retention}</td> : skeletonCell}
-                {d ? <td className="p-6 bg-[var(--primary-muted)]/5 border-x border-[var(--primary-muted)] font-medium text-[var(--primary)]">{d.pro.retention}</td> : skeletonCell}
-                {d ? <td className="p-6">{d.enterprise.retention}</td> : skeletonCell}
-              </tr>
-              <tr>
-                <td className="p-6 text-[var(--text-secondary)] font-medium">Storage</td>
-                {d ? <td className="p-6">{d.free.storage}</td> : skeletonCell}
-                {d ? <td className="p-6 bg-[var(--primary-muted)]/5 border-x border-[var(--primary-muted)]">{d.pro.storage}</td> : skeletonCell}
-                {d ? <td className="p-6">{d.enterprise.storage}</td> : skeletonCell}
-              </tr>
-              <tr>
-                <td className="p-6 text-[var(--text-secondary)] font-medium">Sources max</td>
-                {d ? <td className="p-6">{d.free.sources}</td> : skeletonCell}
-                {d ? <td className="p-6 bg-[var(--primary-muted)]/5 border-x border-[var(--primary-muted)]">{d.pro.sources}</td> : skeletonCell}
-                {d ? <td className="p-6">{d.enterprise.sources}</td> : skeletonCell}
-              </tr>
-              <tr>
-                <td className="p-6 text-[var(--text-secondary)] font-medium">Alerts</td>
-                <td className="p-6 flex"><X className="w-5 h-5 text-gray-500" /></td>
-                <td className="p-6 bg-[var(--primary-muted)]/5 border-x border-[var(--primary-muted)]"><div className="flex items-center gap-2"><Check className="w-5 h-5 text-[var(--primary)]" />{d?.pro.alerts || 'Yes'}</div></td>
-                <td className="p-6"><div className="flex items-center gap-2"><Check className="w-5 h-5 text-[var(--primary)]" />{d?.enterprise.alerts || 'Advanced'}</div></td>
-              </tr>
-              <tr>
-                <td className="p-6 text-[var(--text-secondary)] font-medium">Support</td>
-                {d ? <td className="p-6">{d.free.support}</td> : skeletonCell}
-                {d ? <td className="p-6 bg-[var(--primary-muted)]/5 border-x border-[var(--primary-muted)]">{d.pro.support}</td> : skeletonCell}
-                {d ? <td className="p-6">{d.enterprise.support}</td> : skeletonCell}
-              </tr>
-              <tr className="bg-[#0A0D14]">
-                <td className="p-6"></td>
-                <td className="p-6"><button onClick={handleStartFree} className="w-full py-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface)] text-sm font-medium transition-colors cursor-pointer">Start Free</button></td>
-                <td className="p-6 bg-[var(--primary-muted)]/5 border-x border-b border-[var(--primary-muted)]"><button onClick={handleGetPro} className="w-full py-2 rounded-lg bg-[var(--primary)] text-[var(--surface)] hover:bg-[var(--primary-hover)] text-sm font-bold transition-all hover:scale-105 cursor-pointer shadow-[0_0_15px_var(--primary-muted)]">Get Pro</button></td>
-                <td className="p-6"><a href="mailto:contact@orion.dev" className="block w-full py-2 rounded-lg border border-[var(--border)] hover:bg-[var(--surface)] text-sm font-medium transition-colors text-center cursor-pointer">Contact Us</a></td>
-              </tr>
-            </tbody>
-          </table>
+        <div className="grid md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          {!plans
+            ? planOrder.map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    backgroundColor: '#13161f',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                    borderRadius: 16,
+                    padding: 28,
+                    height: 340,
+                    animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite',
+                  }}
+                />
+              ))
+            : planOrder.map((key, i) => {
+                const d = plans.display[key];
+                if (!d) return null;
+                const meta = PLAN_META[key] ?? PLAN_META.free;
+                const features = getFeatures(d);
+                return (
+                  <motion.div
+                    key={key}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    whileHover={{ y: -5 }}
+                    style={{
+                      backgroundColor: meta.highlighted ? 'rgba(2,241,148,0.05)' : '#13161f',
+                      border: `1px solid ${meta.highlighted ? 'rgba(2,241,148,0.35)' : 'rgba(255,255,255,0.07)'}`,
+                      borderRadius: 16,
+                      padding: 28,
+                      position: 'relative',
+                    }}
+                  >
+                    {meta.highlighted && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: -12,
+                          left: '50%',
+                          transform: 'translateX(-50%)',
+                          backgroundColor: '#02f194',
+                          color: '#0d0f16',
+                          fontSize: 11,
+                          fontWeight: 800,
+                          padding: '3px 12px',
+                          borderRadius: 999,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        MOST POPULAR
+                      </div>
+                    )}
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ fontSize: 13, color: '#9ba3af', marginBottom: 6, textTransform: 'capitalize' }}>{key}</div>
+                      <div className="flex items-baseline gap-1">
+                        <span style={{ fontSize: 38, fontWeight: 900, color: 'white', letterSpacing: '-0.04em' }}>
+                          {d.price.split('/')[0].trim()}
+                        </span>
+                        {d.price.includes('/') && (
+                          <span style={{ color: '#9ba3af', fontSize: 14 }}>/{d.price.split('/')[1].trim()}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-2.5 mb-7">
+                      {features.map((f) => (
+                        <div key={f} className="flex items-center gap-2.5">
+                          <Check
+                            size={14}
+                            style={{ color: meta.highlighted ? '#02f194' : '#4b5563', flexShrink: 0 }}
+                          />
+                          <span style={{ fontSize: 13, color: '#d1d5db' }}>{f}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <motion.button
+                      whileHover={{ scale: 1.02, boxShadow: meta.highlighted ? '0 0 20px rgba(2,241,148,0.25)' : 'none' }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={meta.onCta}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        borderRadius: 10,
+                        border: 'none',
+                        fontSize: 14,
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        backgroundColor: meta.highlighted ? '#02f194' : 'rgba(255,255,255,0.07)',
+                        color: meta.highlighted ? '#0d0f16' : 'white',
+                        fontFamily: 'inherit',
+                      }}
+                    >
+                      {meta.cta}
+                    </motion.button>
+                  </motion.div>
+                );
+              })}
         </div>
       </div>
     </section>

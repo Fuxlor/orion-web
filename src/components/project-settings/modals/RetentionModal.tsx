@@ -67,7 +67,7 @@ export default function RetentionModal({ data, saving, externalError, update, on
       onMouseDown={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl max-h-[90vh] flex flex-col"
+        className="w-full max-w-lg rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl max-h-[90vh] flex flex-col"
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -98,7 +98,7 @@ export default function RetentionModal({ data, saving, externalError, update, on
           <div className="rounded-lg border border-[var(--border)] overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[var(--border)] bg-[var(--surface-elevated)]">
+                <tr className="border-b border-[var(--border)] bg-[var(--card)]">
                   <th className="px-4 py-2.5 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Level</th>
                   <th className="px-4 py-2.5 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Retention (days)</th>
                   <th className="px-4 py-2.5 w-8"></th>
@@ -121,9 +121,8 @@ export default function RetentionModal({ data, saving, externalError, update, on
                           max={maxDays}
                           value={s.retention_days}
                           onChange={(e) => handleChange(s.level, parseInt(e.target.value, 10) || 1)}
-                          className={`w-24 px-2 py-1 text-sm rounded-lg border bg-[var(--surface-input)] text-white focus:outline-none focus:border-[var(--border-focus)] transition-colors ${
-                            exceedsMax ? "border-red-500" : "border-[var(--border)]"
-                          }`}
+                          className={`w-24 px-2 py-1 text-sm rounded-lg border bg-[var(--surface-input)] text-white focus:outline-none focus:border-[var(--border-focus)] transition-colors ${exceedsMax ? "border-red-500" : "border-[var(--border)]"
+                            }`}
                         />
                       </td>
                       <td className="px-4 py-3">

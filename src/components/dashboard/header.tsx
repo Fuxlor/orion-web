@@ -1,59 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image"
 import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { LayoutGrid, Plus, ChevronDown, Settings, LogOut } from "lucide-react";
 import { User } from "@/types";
 import { useProject } from "@/contexts/projectContext";
 import { useProjects } from "@/contexts/projectsContext";
 import UserAvatar from "@/components/UserAvatar";
-
-function ChevronDown({ className }: { className?: string }) {
-  return (
-    <svg className={className} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M6 9l6 6 6-6" />
-    </svg>
-  );
-}
-
-function LogOutIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-      <polyline points="16 17 21 12 16 7" />
-      <line x1="21" y1="12" x2="9" y2="12" />
-    </svg>
-  );
-}
-
-function SettingsIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-    </svg>
-  );
-}
-
-function PlusIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="5" x2="12" y2="19" />
-      <line x1="5" y1="12" x2="19" y2="12" />
-    </svg>
-  );
-}
-
-function LayoutGridIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="3" width="7" height="7" rx="1" />
-      <rect x="14" y="14" width="7" height="7" rx="1" />
-      <rect x="3" y="14" width="7" height="7" rx="1" />
-    </svg>
-  );
-}
 
 interface HeaderProps {
   user: User | null;
@@ -80,7 +34,10 @@ export default function Header({ user }: HeaderProps) {
       if (dropdownRef.current && !dropdownRef.current.contains(target)) {
         setDropdownOpen(false);
       }
-      if (projectDropdownRef.current && !projectDropdownRef.current.contains(target)) {
+      if (
+        projectDropdownRef.current &&
+        !projectDropdownRef.current.contains(target)
+      ) {
         setProjectDropdownOpen(false);
       }
     }
@@ -95,107 +52,224 @@ export default function Header({ user }: HeaderProps) {
   }
 
   return (
-    <header className="h-14 border-b border-[var(--border)] bg-[var(--surface-elevated)] flex items-center justify-between px-4 shrink-0 gap-4">
-      <Link
-        href="/dashboard"
-        className="flex items-center gap-2 text-white font-semibold text-lg tracking-tight hover:opacity-90 transition-opacity shrink-0"
-      >
-        <Image src="/orion-nobg.png" alt="Orion Logo" width={48} height={48} />
-        <span>Orion</span>
-      </Link>
+    <header
+      className="h-12 flex items-center px-5 shrink-0 gap-4"
+      style={{
+        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        backgroundColor: "var(--surface)",
+      }}
+    >
+      {/* Left spacer */}
+      <div className="flex-1" />
 
-      {/* Project selector + create button */}
-      <div className="relative flex flex-1 max-w-xs min-w-0 gap-0" ref={projectDropdownRef}>
-        <button
-          type="button"
-          onClick={() => setProjectDropdownOpen((o) => !o)}
-          className="flex flex-1 min-w-0 items-center gap-2 px-3 py-2 rounded-l-lg rounded-r-none border border-[var(--border)] border-r-0 bg-[var(--surface-input)] hover:border-[var(--primary)] transition-colors text-left"
-          aria-expanded={projectDropdownOpen}
-          aria-haspopup="listbox"
-        >
-          <LayoutGridIcon />
-          <span className="flex-1 truncate text-sm font-medium text-[var(--text-secondary)]">
-            {projectLabel}
-          </span>
-          <ChevronDown className={`shrink-0 text-[var(--text-muted)] transition-transform ${projectDropdownOpen ? "rotate-180" : ""}`} />
-        </button>
-        <Link
-          href="/dashboard/projects/new"
-          className="flex items-center justify-center w-10 shrink-0 py-2 rounded-r-lg rounded-l-none border border-[var(--primary)] bg-[var(--primary)] text-[var(--surface)] hover:bg-[var(--primary-hover)] transition-colors"
-          aria-label="New project"
-        >
-          <PlusIcon />
-        </Link>
-        {projectDropdownOpen && (
-          <div
-            className="absolute left-0 right-0 top-full mt-2 py-1 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg shadow-xl z-50 max-h-64 overflow-y-auto"
-            role="listbox"
+      {/* Project selector (centered) */}
+      <div
+        className="flex items-center gap-2 min-w-0"
+        ref={projectDropdownRef}
+      >
+        <div className="relative flex min-w-0 gap-0">
+          <motion.button
+            type="button"
+            whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }}
+            whileTap={{ scale: 0.97 }}
+            onClick={() => setProjectDropdownOpen((o) => !o)}
+            className="flex flex-1 min-w-0 items-center gap-2 px-3 py-[6px] rounded-l-lg rounded-r-none text-[13px] font-medium text-left cursor-pointer"
+            style={{
+              backgroundColor: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRight: "none",
+              color: "white",
+            }}
+            aria-expanded={projectDropdownOpen}
           >
-            <Link
-              href="/dashboard"
-              className="flex items-center gap-2 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white transition-colors"
-              onClick={() => setProjectDropdownOpen(false)}
+            <LayoutGrid
+              size={13}
+              style={{ color: "var(--primary)", flexShrink: 0 }}
+            />
+            <span className="flex-1 truncate font-medium">{projectLabel}</span>
+            <ChevronDown
+              size={12}
+              className={`shrink-0 transition-transform ${projectDropdownOpen ? "rotate-180" : ""}`}
+              style={{ color: "#6b7280" }}
+            />
+          </motion.button>
+
+          <Link href="/dashboard/projects/new" aria-label="New project">
+            <motion.div
+              whileHover={{
+                scale: 1.08,
+                boxShadow: "0 0 16px rgba(2,241,148,0.4)",
+              }}
+              whileTap={{ scale: 0.9 }}
+              className="w-[30px] h-full flex items-center justify-center rounded-r-lg rounded-l-none"
+              style={{ backgroundColor: "var(--primary)" }}
             >
-              <LayoutGridIcon />
-              Overview
-            </Link>
-            <div className="border-t border-[var(--border)] my-1" />
-            {projects.map((p) => (
-              <Link
-                key={p.id}
-                href={`/dashboard/projects/${p.name}`}
-                className="flex items-center gap-2 px-4 py-2.5 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white transition-colors"
-                onClick={() => setProjectDropdownOpen(false)}
+              <Plus
+                size={15}
+                style={{ color: "#0d0f16" }}
+                strokeWidth={2.5}
+              />
+            </motion.div>
+          </Link>
+
+          <AnimatePresence>
+            {projectDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                transition={{ duration: 0.15 }}
+                className="absolute left-0 right-0 top-full mt-1.5 py-1 rounded-[10px] overflow-hidden z-50"
+                style={{
+                  backgroundColor: "#13161f",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
+                  minWidth: 200,
+                }}
               >
-                {p.label}
-              </Link>
-            ))}
-          </div>
-        )}
+                <p
+                  className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-widest"
+                  style={{ color: "#374151" }}
+                >
+                  Projects
+                </p>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-2 px-3 py-2 text-[13px] transition-colors hover:bg-white/5"
+                  style={{ color: "#d1d5db" }}
+                  onClick={() => setProjectDropdownOpen(false)}
+                >
+                  <LayoutGrid size={13} style={{ color: "#4b5563" }} />
+                  Overview
+                </Link>
+                <div
+                  className="my-1"
+                  style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+                />
+                {projects.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/dashboard/projects/${p.name}`}
+                    className="flex items-center gap-2 px-3 py-2 text-[13px] transition-colors hover:bg-white/5"
+                    style={{
+                      color:
+                        project?.name === p.name ? "var(--primary)" : "#d1d5db",
+                    }}
+                    onClick={() => setProjectDropdownOpen(false)}
+                  >
+                    <LayoutGrid
+                      size={13}
+                      style={{
+                        color:
+                          project?.name === p.name
+                            ? "var(--primary)"
+                            : "#4b5563",
+                      }}
+                    />
+                    {p.label}
+                    {project?.name === p.name && (
+                      <span
+                        className="ml-auto w-1.5 h-1.5 rounded-full"
+                        style={{ backgroundColor: "var(--primary)" }}
+                      />
+                    )}
+                  </Link>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
 
+      {/* Right: user menu */}
+      <div className="flex-1 flex justify-end">
       <div className="relative shrink-0" ref={dropdownRef}>
-        <button
+        <motion.button
           type="button"
+          whileHover={{ backgroundColor: "rgba(255,255,255,0.06)" }}
+          whileTap={{ scale: 0.97 }}
           onClick={() => setDropdownOpen((o) => !o)}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[var(--surface-input)] transition-colors border border-transparent hover:border-[var(--border)]"
+          className="flex items-center gap-2 px-2.5 py-[5px] rounded-lg cursor-pointer"
           aria-expanded={dropdownOpen}
-          aria-haspopup="true"
         >
-          {mounted && <UserAvatar user={user} size={32} />}
-          <span className="text-sm text-[var(--text-secondary)] hidden sm:inline max-w-[140px] truncate">
+          {mounted && <UserAvatar user={user} size={26} />}
+          <span
+            className="text-[13px] font-medium hidden sm:inline max-w-[140px] truncate"
+            style={{ color: "white" }}
+          >
             {mounted ? (user?.pseudo ?? user?.email ?? "Account") : null}
           </span>
-          <ChevronDown className={`text-[var(--text-muted)] transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
-        </button>
+          <ChevronDown
+            size={12}
+            className={`transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
+            style={{ color: "#6b7280" }}
+          />
+        </motion.button>
 
-        {dropdownOpen && (
-          <div className="absolute right-0 top-full mt-2 w-56 py-1 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg shadow-xl z-50">
-            <div className="px-4 py-3 border-b border-[var(--border)]">
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-medium text-white truncate">{user?.pseudo ?? "User"}</p>
-                {user?.plan && <p className="text-xs text-[var(--text-muted)] truncate">{user.plan.slice(0, 1).toUpperCase() + user.plan.slice(1)}</p>}
+        <AnimatePresence>
+          {dropdownOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -6, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.97 }}
+              transition={{ duration: 0.15 }}
+              className="absolute right-0 top-full mt-1.5 w-56 py-1 rounded-[10px] z-50 overflow-hidden"
+              style={{
+                backgroundColor: "#13161f",
+                border: "1px solid rgba(255,255,255,0.1)",
+                boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
+              }}
+            >
+              <div
+                className="px-4 py-3"
+                style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+              >
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium text-white truncate">
+                    {user?.pseudo ?? "User"}
+                  </p>
+                  {user?.plan && (
+                    <span
+                      className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+                      style={{
+                        backgroundColor: "rgba(2,241,148,0.12)",
+                        color: "var(--primary)",
+                      }}
+                    >
+                      {user.plan.slice(0, 1).toUpperCase() +
+                        user.plan.slice(1)}
+                    </span>
+                  )}
+                </div>
+                <p
+                  className="text-xs truncate mt-0.5"
+                  style={{ color: "#6b7280" }}
+                >
+                  {user?.email}
+                </p>
               </div>
-              <p className="text-xs text-[var(--text-muted)] truncate">{user?.email}</p>
-            </div>
-            <Link
-              href="/settings"
-              className="flex items-center gap-2 px-4 py-2 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-input)] hover:text-white transition-colors"
-              onClick={() => setDropdownOpen(false)}
-            >
-              <SettingsIcon />
-              Settings
-            </Link>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="flex w-full items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-[var(--surface-input)] hover:text-red-300 transition-colors"
-            >
-              <LogOutIcon />
-              Sign out
-            </button>
-          </div>
-        )}
+              <Link
+                href="/settings"
+                className="flex items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-white/5"
+                style={{ color: "#d1d5db" }}
+                onClick={() => setDropdownOpen(false)}
+              >
+                <Settings size={14} style={{ color: "#6b7280" }} />
+                Settings
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex w-full items-center gap-2 px-4 py-2 text-sm transition-colors hover:bg-white/5"
+                style={{ color: "#f87171" }}
+              >
+                <LogOut size={14} />
+                Sign out
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
       </div>
     </header>
   );

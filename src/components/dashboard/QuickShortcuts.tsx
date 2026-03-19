@@ -35,7 +35,7 @@ export default function QuickShortcuts({ pinned, recent, removePinned, visitItem
                 key={item.id}
                 href={itemHref(item)}
                 onClick={() => visitItem({ item_type: item.item_type, item_name: item.item_name, project_name: item.project_name })}
-                className="flex items-center justify-between rounded-md border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[var(--primary)] hover:text-white"
+                className="flex items-center justify-between rounded-md border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:border-[var(--primary)] hover:text-white"
               >
                 <span>{item.item_name}</span>
                 <span className="text-xs text-[var(--text-muted)]">{item.project_name}</span>
@@ -55,7 +55,7 @@ export default function QuickShortcuts({ pinned, recent, removePinned, visitItem
             {pinned.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between rounded-md border border-[var(--border)] bg-[var(--surface-elevated)] px-3 py-2"
+                className="flex items-center justify-between rounded-md border border-[var(--border)] bg-[var(--card)] px-3 py-2"
               >
                 <Link
                   href={itemHref(item)}
@@ -70,8 +70,8 @@ export default function QuickShortcuts({ pinned, recent, removePinned, visitItem
                   aria-label="Unpin"
                 >
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"/>
-                    <line x1="6" y1="6" x2="18" y2="18"/>
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
                 </button>
               </div>

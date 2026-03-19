@@ -7,18 +7,18 @@ import SilenceMenu from "./SilenceMenu";
 import ConfirmModal from "@/components/ConfirmModal";
 
 const LEVEL_COLORS: Record<string, string> = {
-  error: "bg-[rgba(248,113,113,0.15)] text-red-400",
-  warn: "bg-[rgba(250,204,21,0.15)] text-yellow-400",
-  info: "bg-[rgba(96,165,250,0.15)] text-blue-400",
-  debug: "bg-[rgba(167,139,250,0.15)] text-purple-400",
-  verbose: "bg-[rgba(139,146,164,0.15)] text-[var(--text-muted)]",
-  trace: "bg-[rgba(139,146,164,0.15)] text-[var(--text-muted)]",
+  error: "bg-[var(--level-error-bg)] text-[var(--level-error)]",
+  warn: "bg-[var(--level-warn-bg)] text-[var(--level-warn)]",
+  info: "bg-[var(--level-info-bg)] text-[var(--level-info)]",
+  debug: "bg-[var(--level-debug-bg)] text-[var(--level-debug)]",
+  verbose: "bg-[var(--level-verbose-bg)] text-[var(--level-verbose)]",
+  trace: "bg-[var(--level-trace-bg)] text-[var(--level-trace)]",
 };
 
 const STATUS_COLORS: Record<string, string> = {
   active: "bg-[var(--primary-muted)] text-[var(--primary)]",
-  silenced: "bg-[rgba(139,146,164,0.15)] text-[var(--text-muted)]",
-  resolved: "bg-[rgba(34,197,94,0.15)] text-green-400",
+  silenced: "bg-[var(--level-trace-bg)] text-[var(--text-muted)]",
+  resolved: "bg-[var(--status-success-bg)] text-[var(--status-success)]",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -95,14 +95,14 @@ export default function AlertsTab({ projectName, alerts, loading, onRefresh }: A
       {loading ? (
         <p className="text-sm text-[var(--text-muted)]">Loading…</p>
       ) : filtered.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-8 text-center">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-8 text-center">
           <p className="text-sm text-[var(--text-muted)]">No alerts yet</p>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-[var(--border)]">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[var(--border)] bg-[var(--surface-elevated)]">
+              <tr className="border-b border-[var(--border)] bg-[var(--card)]">
                 {["Level", "Message", "Source", "Server", "Triggered at", "Status", "Actions"].map((h) => (
                   <th key={h} className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
                     {h}
@@ -112,7 +112,7 @@ export default function AlertsTab({ projectName, alerts, loading, onRefresh }: A
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--surface)]">
               {filtered.map((alert) => (
-                <tr key={alert.id} className="transition-colors hover:bg-[var(--surface-elevated)]">
+                <tr key={alert.id} className="transition-colors hover:bg-[var(--card)]">
                   {/* Level */}
                   <td className="px-4 py-3">
                     <span className={`inline-block rounded px-2 py-0.5 text-xs font-medium ${LEVEL_COLORS[alert.level] ?? "text-[var(--text-muted)]"}`}>
@@ -192,7 +192,7 @@ export default function AlertsTab({ projectName, alerts, loading, onRefresh }: A
                       <button
                         type="button"
                         onClick={() => setDeleteTargetId(alert.id)}
-                        className="cursor-pointer rounded p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[rgba(248,113,113,0.12)] hover:text-red-400"
+                        className="cursor-pointer rounded p-1.5 text-[var(--text-muted)] transition-colors hover:bg-destructive/10 hover:text-destructive"
                         title="Delete"
                       >
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">

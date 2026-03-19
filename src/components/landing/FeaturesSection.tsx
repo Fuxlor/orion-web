@@ -1,50 +1,101 @@
-import { RadioReceiver, Settings, BellRing, Activity } from 'lucide-react';
+"use client";
+
+import { motion } from "motion/react";
+import { Zap, Shield, BarChart3 } from "lucide-react";
 
 const features = [
   {
-    icon: <RadioReceiver className="w-6 h-6 text-[var(--primary)]" />,
-    title: "Real-time multi-source collection",
-    description: "Stream logs from dozens of services instantly. Perfect for microservices architecture."
+    icon: <Zap size={20} />,
+    title: "Real-time Logging",
+    description:
+      "Capture every log event instantly with zero latency. Stream logs to your dashboard as they happen.",
+    color: "#02f194",
   },
   {
-    icon: <Settings className="w-6 h-6 text-[var(--primary)]" />,
-    title: "Simple SDK integration",
-    description: "Drop-in configuration for Express, Fastify, and plain Node.js apps in under 3 minutes."
+    icon: <Shield size={20} />,
+    title: "Error Monitoring",
+    description:
+      "Catch exceptions before your users do. Smart alerting with context, stack traces and frequency analysis.",
+    color: "#9241c8",
   },
   {
-    icon: <BellRing className="w-6 h-6 text-[var(--primary)]" />,
-    title: "Smart alerts & notifications",
-    description: "Get notified via Slack, Email or Webhook before your users even notice an error."
+    icon: <BarChart3 size={20} />,
+    title: "Performance Insights",
+    description:
+      "Track response times, CPU usage and memory consumption across all your Node.js services.",
+    color: "#02f194",
   },
-  {
-    icon: <Activity className="w-6 h-6 text-[var(--primary)]" />,
-    title: "Centralized monitoring dashboard",
-    description: "A beautiful, fast, and intuitive interface to query, filter, and analyze all your logs."
-  }
 ];
 
 export function FeaturesSection() {
   return (
-    <section id="features" className="py-24 bg-[var(--surface)] text-white relative">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight">Everything you need to monitor</h2>
-          <p className="text-[var(--text-muted)] text-lg max-w-2xl mx-auto">
-            Built by developers for developers. Don't waste time configuring complex logging stacks.
-          </p>
-        </div>
-        
-        <div className="grid md:grid-cols-2 gap-8">
-          {features.map((feature, i) => (
-            <div key={i} className="group p-8 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] hover:border-[var(--primary-muted)] transition-all hover:shadow-[0_0_30px_var(--primary-muted)]/10 text-left">
-              <div className="w-12 h-12 rounded-lg bg-[#0d0f16] border border-[var(--border)] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                {feature.icon}
-              </div>
-              <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-              <p className="text-[var(--text-muted)] leading-relaxed">{feature.description}</p>
+    <section id="features" className="max-w-6xl mx-auto px-6 py-24">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="text-center mb-16"
+      >
+        <h2
+          style={{
+            fontSize: "clamp(28px, 4vw, 46px)",
+            fontWeight: 800,
+            letterSpacing: "-0.04em",
+            marginBottom: 12,
+            color: "white",
+          }}
+        >
+          Everything you need to{" "}
+          <span style={{ color: "#02f194" }}>ship faster</span>
+        </h2>
+        <p style={{ color: "#9ba3af", fontSize: 16, maxWidth: 460, margin: "0 auto" }}>
+          Built for developers who care about reliability, performance and DX.
+        </p>
+      </motion.div>
+
+      <div className="grid md:grid-cols-3 gap-5">
+        {features.map((feat, i) => (
+          <motion.div
+            key={feat.title}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: i * 0.1 }}
+            whileHover={{
+              y: -5,
+              boxShadow: `0 20px 60px ${feat.color}14`,
+            }}
+            style={{
+              backgroundColor: "#13161f",
+              border: "1px solid rgba(255,255,255,0.07)",
+              borderRadius: 16,
+              padding: 28,
+            }}
+          >
+            <div
+              style={{
+                width: 46,
+                height: 46,
+                borderRadius: 12,
+                backgroundColor: `${feat.color}18`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 16,
+                color: feat.color,
+              }}
+            >
+              {feat.icon}
             </div>
-          ))}
-        </div>
+            <h3 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: "white" }}>
+              {feat.title}
+            </h3>
+            <p style={{ fontSize: 14, color: "#9ba3af", lineHeight: 1.75 }}>
+              {feat.description}
+            </p>
+          </motion.div>
+        ))}
       </div>
     </section>
   );

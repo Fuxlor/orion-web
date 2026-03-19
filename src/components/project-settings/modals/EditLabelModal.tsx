@@ -49,7 +49,7 @@ export default function EditLabelModal({ projectName, currentLabel, onSaved, onC
       onMouseDown={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl"
+        className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">

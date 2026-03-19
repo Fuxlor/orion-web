@@ -87,13 +87,13 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
     apiFetch('/api/auth/sessions')
       .then(r => r.json())
       .then(d => setSessions(d.sessions ?? []))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setSessionsLoading(false));
 
     apiFetch('/api/auth/passkey')
       .then(r => r.json())
       .then(d => setPasskeys(d.passkeys ?? []))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setPasskeysLoading(false));
   }, []);
 
@@ -159,7 +159,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
           localStorage.setItem('user', JSON.stringify({ ...user, totp_enabled: false }));
           setTotpStatus(null);
           setBackupCodes(null);
-        } catch {}
+        } catch { }
       },
       'Disable'
     );
@@ -195,7 +195,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
           const updated = { ...user, email_2fa_enabled: false };
           onUserUpdate(updated);
           localStorage.setItem('user', JSON.stringify(updated));
-        } catch {}
+        } catch { }
       },
       'Disable'
     );
@@ -250,7 +250,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
         setRenameModalId(null);
         setRenameModalName('');
       }
-    } catch {}
+    } catch { }
   }
 
   function removePasskey(id: number) {
@@ -261,7 +261,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
         try {
           await apiFetch(`/api/auth/passkey/${id}`, { method: 'DELETE' });
           setPasskeys(prev => prev.filter(p => p.id !== id));
-        } catch {}
+        } catch { }
       }
     );
   }
@@ -348,7 +348,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
             <p className="text-sm text-[var(--text-muted)]">
               Save these backup codes somewhere safe. Each can only be used once.
             </p>
-            <div className="bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg p-4 font-mono text-sm grid grid-cols-2 gap-2">
+            <div className="bg-[var(--card)] border border-[var(--border)] rounded-lg p-4 font-mono text-sm grid grid-cols-2 gap-2">
               {backupCodes.map(code => (
                 <span key={code} className="text-[var(--text-secondary)]">{code}</span>
               ))}
@@ -427,7 +427,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
             {passkeys.map(pk => (
               <div
                 key={pk.id}
-                className="flex items-center justify-between p-3 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg"
+                className="flex items-center justify-between p-3 bg-[var(--card)] border border-[var(--border)] rounded-lg"
               >
                 <div
                   className="flex-1 min-w-0 cursor-pointer group"
@@ -489,7 +489,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
             {sessions.map(session => (
               <div
                 key={session.id}
-                className="flex items-center justify-between p-3 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg"
+                className="flex items-center justify-between p-3 bg-[var(--card)] border border-[var(--border)] rounded-lg"
               >
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
@@ -528,7 +528,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
           onMouseDown={() => { setShowAddModal(false); setAddModalName(''); }}
         >
           <div
-            className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl"
+            className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl"
             onMouseDown={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">
@@ -585,7 +585,7 @@ export default function SecurityTab({ user, onUserUpdate }: Props) {
           onMouseDown={() => { setRenameModalId(null); setRenameModalName(''); }}
         >
           <div
-            className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl"
+            className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl"
             onMouseDown={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between border-b border-[var(--border)] px-6 py-4">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Copy, Check, Trash2, RefreshCw, Plus } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import { ApiToken, ProjectSource, User } from "@/types";
 import ConfirmModal from "@/components/ConfirmModal";
@@ -21,6 +22,7 @@ export default function ApiTokensTab({ projectName, can, user }: Props) {
   const [createOpen, setCreateOpen] = useState(false);
   const [revokeTarget, setRevokeTarget] = useState<ApiToken | null>(null);
   const [rotateTarget, setRotateTarget] = useState<ApiToken | null>(null);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -53,104 +55,206 @@ export default function ApiTokensTab({ projectName, can, user }: Props) {
     }
   }
 
+  function handleCopy(token: ApiToken) {
+    navigator.clipboard.writeText(token.token_prefix).catch(() => {});
+    setCopiedId(token.id);
+    setTimeout(() => setCopiedId(null), 1500);
+  }
+
   if (loading) return <p className="text-sm text-[var(--text-muted)]">Loading tokens…</p>;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {error && (
         <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-lg">
           {error}
         </p>
       )}
 
-      {/* Token list */}
-      {tokens.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)]">
-            <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">API Tokens</span>
-            {can("tokens:manage") && (
-              <button
-                type="button"
-                onClick={() => setCreateOpen(true)}
-                className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)]"
-              >
-                Create Token
-              </button>
-            )}
-          </div>
-          <div className="p-8 text-center">
-            <p className="text-sm text-[var(--text-muted)]">No API tokens yet.</p>
-          </div>
-        </div>
-      ) : (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)]">
-            <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">API Tokens</span>
-            {can("tokens:manage") && (
-              <button
-                type="button"
-                onClick={() => setCreateOpen(true)}
-                className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)]"
-              >
-                Create Token
-              </button>
-            )}
-          </div>
-          {tokens.map((token) => (
-            <div key={token.id} className="px-4 py-3 border-b border-[var(--border)] last:border-0 space-y-1.5">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-medium text-[var(--text-secondary)]">{token.name}</p>
-                    <code className="text-xs font-mono text-[var(--text-muted)] bg-[var(--surface-input)] px-2 py-0.5 rounded border border-[var(--border)]">
-                      {token.token_prefix}…
-                    </code>
-                    {token.source_name && (
-                      <span className="text-xs bg-[var(--primary-muted)] text-[var(--primary)] border border-[var(--primary)]/30 px-2 py-0.5 rounded-full font-mono">
-                        {token.source_name}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-1 mt-1.5">
-                    {token.permissions.map((p) => (
-                      <span
-                        key={p}
-                        className="rounded-full bg-[var(--surface-input)] border border-[var(--border)] px-2 py-0.5 text-xs text-[var(--text-muted)] font-mono"
-                      >
-                        {p}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                {can("tokens:manage") && (
-                  <div className="flex items-center gap-2 shrink-0">
-                    <button
-                      type="button"
-                      onClick={() => setRotateTarget(token)}
-                      className="text-xs text-[var(--text-muted)] hover:text-[var(--text-secondary)] transition-colors"
-                    >
-                      Rotate
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setRevokeTarget(token)}
-                      className="text-xs text-red-400 hover:text-red-300 transition-colors"
-                    >
-                      Revoke
-                    </button>
-                  </div>
-                )}
-              </div>
-              <p className="text-xs text-[var(--text-muted)]">
-                Created {new Date(token.created_at).toLocaleDateString()}
-                {token.last_used_at && (
-                  <> · Last used {new Date(token.last_used_at).toLocaleDateString()}</>
-                )}
-              </p>
-            </div>
-          ))}
+      {/* Header row */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <p style={{ fontSize: 13, color: "#6B7280" }}>
+          {tokens.length} active token{tokens.length !== 1 ? "s" : ""}
+        </p>
+        {can("tokens:manage") && (
+          <button
+            type="button"
+            onClick={() => setCreateOpen(true)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "8px 16px",
+              borderRadius: 8,
+              border: "none",
+              backgroundColor: "#02F194",
+              color: "#0D0F16",
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: "pointer",
+              fontFamily: "inherit",
+            }}
+          >
+            <Plus size={13} /> Generate token
+          </button>
+        )}
+      </div>
+
+      {/* Empty state */}
+      {tokens.length === 0 && (
+        <div
+          style={{
+            backgroundColor: "#13161F",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 12,
+            padding: 24,
+            textAlign: "center",
+          }}
+        >
+          <p style={{ fontSize: 13, color: "#6B7280" }}>No API tokens yet.</p>
         </div>
       )}
+
+      {/* Token cards */}
+      {tokens.map((token) => (
+        <div
+          key={token.id}
+          style={{
+            backgroundColor: "#13161F",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 12,
+            padding: 24,
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div>
+              <p style={{ fontSize: 14, fontWeight: 600, color: "white", marginBottom: 6 }}>
+                {token.name}
+              </p>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                <code
+                  style={{
+                    fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+                    fontSize: 12,
+                    color: "#9BA3AF",
+                    backgroundColor: "rgba(255,255,255,0.04)",
+                    padding: "4px 10px",
+                    borderRadius: 6,
+                  }}
+                >
+                  {token.token_prefix}…
+                </code>
+                {token.source_name && (
+                  <span
+                    style={{
+                      fontSize: 11,
+                      backgroundColor: "rgba(2,241,148,0.08)",
+                      color: "#02F194",
+                      border: "1px solid rgba(2,241,148,0.3)",
+                      padding: "2px 8px",
+                      borderRadius: 20,
+                      fontFamily: "'JetBrains Mono', monospace",
+                    }}
+                  >
+                    {token.source_name}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {can("tokens:manage") && (
+              <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                <button
+                  type="button"
+                  title="Copy prefix"
+                  onClick={() => handleCopy(token)}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 7,
+                    border: `1px solid ${copiedId === token.id ? "rgba(2,241,148,0.3)" : "rgba(255,255,255,0.08)"}`,
+                    backgroundColor: copiedId === token.id ? "rgba(2,241,148,0.08)" : "transparent",
+                    color: copiedId === token.id ? "#02F194" : "#6B7280",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  {copiedId === token.id ? <Check size={13} /> : <Copy size={13} />}
+                </button>
+                <button
+                  type="button"
+                  title="Rotate token"
+                  onClick={() => setRotateTarget(token)}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 7,
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    backgroundColor: "transparent",
+                    color: "#6B7280",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <RefreshCw size={13} />
+                </button>
+                <button
+                  type="button"
+                  title="Revoke token"
+                  onClick={() => setRevokeTarget(token)}
+                  style={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: 7,
+                    border: "1px solid rgba(255,255,255,0.08)",
+                    backgroundColor: "transparent",
+                    color: "#EF4444",
+                    cursor: "pointer",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Trash2 size={13} />
+                </button>
+              </div>
+            )}
+          </div>
+
+          {token.permissions?.length > 0 && (
+            <div style={{ marginTop: 10, display: "flex", flexWrap: "wrap", gap: 4 }}>
+              {token.permissions.map((p) => (
+                <span
+                  key={p}
+                  style={{
+                    fontSize: 10,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    backgroundColor: "rgba(255,255,255,0.04)",
+                    border: "1px solid rgba(255,255,255,0.07)",
+                    color: "#6B7280",
+                    padding: "2px 8px",
+                    borderRadius: 4,
+                  }}
+                >
+                  {p}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <div style={{ marginTop: 12, display: "flex", gap: 20, fontSize: 11, color: "#4B5563" }}>
+            <span>Created {new Date(token.created_at).toLocaleDateString()}</span>
+            {token.last_used_at && (
+              <span>Last used {new Date(token.last_used_at).toLocaleDateString()}</span>
+            )}
+          </div>
+        </div>
+      ))}
 
       {createOpen && (
         <CreateTokenModal

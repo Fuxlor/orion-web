@@ -86,7 +86,7 @@ function CommandButton({ projectName, serverName, sourceName, type }: {
     <button
       onClick={handleClick}
       disabled={loading}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${isStop
+      className={`hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${isStop
         ? "bg-[rgba(248,113,113,0.12)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]"
         : "bg-[var(--primary-muted)] text-[var(--primary)] hover:opacity-80"
         }`}
@@ -128,7 +128,7 @@ export default function SourceStatsPage() {
       {/* Uptime + Actions */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <UptimeBlock uptimePercent={stats?.uptime_percent ?? null} />
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
           <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
             Source Actions
           </p>
@@ -153,7 +153,7 @@ export default function SourceStatsPage() {
             )}
             <Link
               href={`/dashboard/projects/${params.name}/logs/${encodeURIComponent(sourceName)}`}
-              className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--surface-input)] text-[var(--text-secondary)] hover:text-white transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--secondary)] text-[var(--text-secondary)] hover:text-white transition-colors"
             >
               View Logs →
             </Link>
@@ -168,7 +168,7 @@ export default function SourceStatsPage() {
 
       {/* Recent errors */}
       {stats && (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
           <div className="mb-3 flex items-center gap-2">
             <p className="text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
               Recent Errors
@@ -203,7 +203,7 @@ export default function SourceStatsPage() {
 
       {/* Performance */}
       {stats?.performance && (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
           <p className="mb-3 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
             Performance
           </p>

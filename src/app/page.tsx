@@ -1,16 +1,17 @@
-import { Header, HeroSection, FeaturesSection, PricingSection, QuickstartSection, Footer } from "@/components/landing/index";
+import { Header, HeroSection, FeaturesSection, TerminalDemoSection, PricingSection, CTASection, Footer } from "@/components/landing/index";
 
 export const dynamic = 'force-static';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[var(--page-bg)]">
+    <div className="min-h-screen" style={{ backgroundColor: "#0d0f16" }}>
       <Header />
       <main>
         <HeroSection />
         <FeaturesSection />
+        <TerminalDemoSection />
         <PricingSection />
-        <QuickstartSection />
+        <CTASection />
       </main>
       <Footer />
     </div>

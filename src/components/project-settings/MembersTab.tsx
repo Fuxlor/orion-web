@@ -109,14 +109,27 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
       )}
 
       {/* Members list */}
-      <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)]">
-          <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Members</span>
+      <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+          <h2 style={{ fontSize: 15, fontWeight: 700, color: "white" }}>Members</h2>
           {can("members:manage") && (
             <button
               type="button"
               onClick={() => setInviteOpen(true)}
-              className="rounded-lg bg-[var(--primary)] px-3 py-1.5 text-xs font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)]"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "8px 16px",
+                borderRadius: 8,
+                border: "none",
+                backgroundColor: "#02F194",
+                color: "#0D0F16",
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: "pointer",
+                fontFamily: "inherit",
+              }}
             >
               Invite Member
             </button>
@@ -136,11 +149,10 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
             {/* Role badge / selector */}
             {member.role === "owner" || !can("members:manage") ? (
               <span
-                className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                  member.role === "owner"
+                className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${member.role === "owner"
                     ? "bg-[var(--primary-muted)] text-[var(--primary)]"
                     : "bg-[var(--surface-input)] text-[var(--text-muted)] border border-[var(--border)]"
-                }`}
+                  }`}
               >
                 {member.role}
               </span>

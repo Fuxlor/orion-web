@@ -27,12 +27,12 @@ const ACTION_LABELS: Record<string, string> = {
 
 const ACTION_COLORS: Record<string, string> = {
   token_created: "text-[var(--primary)]",
-  token_revoked: "text-red-400",
-  member_invited: "text-blue-400",
-  member_removed: "text-orange-400",
-  source_deleted: "text-red-400",
-  settings_updated: "text-yellow-400",
-  alert_resolved: "text-green-400",
+  token_revoked: "text-destructive",
+  member_invited: "text-[var(--level-info)]",
+  member_removed: "text-[var(--level-warn)]",
+  source_deleted: "text-destructive",
+  settings_updated: "text-[var(--level-warn)]",
+  alert_resolved: "text-[var(--status-success)]",
 };
 
 interface Props {
@@ -166,13 +166,13 @@ export default function AuditTab({ projectName }: Props) {
 
       {/* Table */}
       {error && (
-        <p className="rounded border border-red-500/20 bg-red-500/10 px-3 py-2 text-xs text-red-400">{error}</p>
+        <p className="rounded border border-destructive/20 bg-destructive/10 px-3 py-2 text-xs text-destructive">{error}</p>
       )}
 
       {loading ? (
         <p className="text-xs text-[var(--text-muted)]">Loading…</p>
       ) : logs.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-8 text-center">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-8 text-center">
           <p className="text-sm text-[var(--text-muted)]">No audit logs found</p>
         </div>
       ) : (
@@ -181,7 +181,7 @@ export default function AuditTab({ projectName }: Props) {
           <div className="overflow-x-auto rounded-lg border border-[var(--border)]">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-[var(--border)] bg-[var(--surface-elevated)]">
+                <tr className="border-b border-[var(--border)] bg-[var(--card)]">
                   <th className="px-3 py-2 text-left font-medium text-[var(--text-muted)]">Action</th>
                   <th className="px-3 py-2 text-left font-medium text-[var(--text-muted)]">Details</th>
                   <th className="px-3 py-2 text-left font-medium text-[var(--text-muted)]">User</th>
@@ -191,7 +191,7 @@ export default function AuditTab({ projectName }: Props) {
               </thead>
               <tbody>
                 {logs.map((log) => (
-                  <tr key={log.id} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-elevated)] transition-colors">
+                  <tr key={log.id} className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--card)] transition-colors">
                     <td className="px-3 py-2.5">
                       <span className={`font-medium ${ACTION_COLORS[log.action] ?? "text-[var(--text-secondary)]"}`}>
                         {ACTION_LABELS[log.action] ?? log.action}

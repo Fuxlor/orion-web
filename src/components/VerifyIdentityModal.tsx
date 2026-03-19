@@ -120,7 +120,7 @@ export default function VerifyIdentityModal({ user, onVerified, onClose }: Props
       onMouseDown={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl"
+        className="w-full max-w-sm rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -146,11 +146,10 @@ export default function VerifyIdentityModal({ user, onVerified, onClose }: Props
                   key={m.id}
                   type="button"
                   onClick={() => switchMethod(m.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
-                    method === m.id
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${method === m.id
                       ? "border-[var(--primary)] bg-[var(--primary-muted)] text-[var(--primary)]"
                       : "border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-secondary)] hover:bg-[var(--surface-input)]"
-                  }`}
+                    }`}
                 >
                   {m.label}
                 </button>
@@ -197,7 +196,7 @@ export default function VerifyIdentityModal({ user, onVerified, onClose }: Props
                   type="button"
                   onClick={sendEmailCode}
                   disabled={sending}
-                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-elevated)] disabled:opacity-50"
+                  className="w-full rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--card)] disabled:opacity-50"
                 >
                   {sending ? "Sending…" : `Send code to ${user.email}`}
                 </button>

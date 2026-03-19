@@ -38,9 +38,9 @@ export default function LogSearchBar({ value, onChange, placeholder = "Search lo
   }, []);
 
   return (
-    <div className="relative flex-1">
-      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <div className="relative" style={{ flex: 1, maxWidth: 400 }}>
+      <span className="absolute pointer-events-none" style={{ left: 11, top: "50%", transform: "translateY(-50%)", color: "#4b5563" }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8" />
           <path d="m21 21-4.35-4.35" />
         </svg>
@@ -51,14 +51,24 @@ export default function LogSearchBar({ value, onChange, placeholder = "Search lo
         defaultValue={value}
         onChange={handleChange}
         placeholder={placeholder}
-        className="w-full pl-9 pr-9 py-2 text-sm rounded-lg border border-[var(--border)] bg-[var(--surface-input)] text-white placeholder:text-[var(--text-muted)] focus:outline-none focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--primary-muted)]"
+        style={{
+          width: "100%",
+          backgroundColor: "var(--card)",
+          border: "1px solid var(--border)",
+          borderRadius: 8,
+          padding: "8px 32px 8px 32px",
+          fontSize: 13,
+          color: "white",
+          outline: "none",
+        }}
       />
       {value && (
         <button
           onClick={handleClear}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-white transition-colors"
+          className="absolute transition-colors hover:text-white"
+          style={{ right: 10, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M18 6 6 18" /><path d="m6 6 12 12" />
           </svg>
         </button>

@@ -28,8 +28,8 @@ export function QuickstartSection() {
             <div className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-[var(--primary)] text-[var(--surface)] flex items-center justify-center font-bold text-lg shadow-[0_0_15px_var(--primary-muted)]">2</div>
             <h3 className="text-xl font-semibold mb-4 text-white">Initialize Logger</h3>
             <div className="p-4 px-1 rounded-lg bg-[#0d0f16] border border-[#252b3b] font-mono text-xs md:text-sm text-[var(--text-muted)] overflow-x-auto whitespace-nowrap">
-              <span className="text-purple-400">import</span> {'{'} <span className="text-yellow-200">createLogger</span> {'}'} <span className="text-purple-400">from</span> <span className="text-green-300">'orion'</span>;<br/>
-              <br/>
+              <span className="text-purple-400">import</span> {'{'} <span className="text-yellow-200">createLogger</span> {'}'} <span className="text-purple-400">from</span> <span className="text-green-300">'orion'</span>;<br />
+              <br />
               <span className="text-blue-400">const</span> logger = <span className="text-blue-400">await</span> <span className="text-yellow-200">createLogger</span>();
               <br />
               logger.<span className="text-yellow-200">info</span>(<span className="text-green-300">'Good to go!'</span>);
@@ -40,7 +40,7 @@ export function QuickstartSection() {
           <div className="relative p-8 rounded-2xl bg-[#0A0D14] border border-[var(--border)] group">
             <div className="absolute -top-4 -left-4 w-10 h-10 rounded-full bg-[var(--primary)] text-[var(--surface)] flex items-center justify-center font-bold text-lg shadow-[0_0_15px_var(--primary-muted)]">3</div>
             <h3 className="text-xl font-semibold mb-4 text-white">Start Monitoring</h3>
-            <div className="p-4 rounded-lg flex items-center justify-center h-[120px] bg-gradient-to-br from-[#0d0f16] to-[var(--surface-elevated)] border border-[#252b3b]">
+            <div className="p-4 rounded-lg flex items-center justify-center h-[120px] bg-gradient-to-br from-[#0d0f16] to-[var(--card)] border border-[#252b3b]">
               <Link href="/register" className="flex items-center gap-2 px-6 py-3 rounded-lg bg-[var(--primary)] text-[var(--surface)] font-medium hover:scale-105 transition-transform shadow-[0_0_15px_var(--primary-muted)]">
                 <Terminal className="w-5 h-5" /> Open Dashboard
               </Link>

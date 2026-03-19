@@ -99,7 +99,7 @@ export default function NewProjectPage() {
   if (created) {
     return (
       <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-6">
-        <div className="w-full max-w-[24rem] bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl p-8 shadow-xl">
+        <div className="w-full max-w-[24rem] bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 shadow-xl">
           <h1 className="text-2xl font-bold text-white text-center tracking-tight m-0 mb-1">
             Orion
           </h1>
@@ -162,7 +162,7 @@ export default function NewProjectPage() {
 
   return (
     <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-6">
-      <div className="w-full max-w-[24rem] bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl p-8 shadow-xl">
+      <div className="w-full max-w-[24rem] bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 shadow-xl">
         <h1 className="text-2xl font-bold text-white text-center tracking-tight m-0 mb-1">
           Orion
         </h1>

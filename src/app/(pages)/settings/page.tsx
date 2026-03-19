@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'motion/react';
 import { apiFetch } from '@/lib/api';
 import { User } from '@/types';
 import UserAvatar from '@/components/UserAvatar';
@@ -143,7 +144,7 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-[var(--page-bg)] flex flex-col">
       {/* Top bar */}
-      <header className="h-14 border-b border-[var(--border)] bg-[var(--surface-elevated)] flex items-center px-6 gap-4 shrink-0">
+      <header className="h-14 border-b border-[var(--border)] bg-[var(--card)] flex items-center px-6 gap-4 shrink-0">
         <Link href="/dashboard" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
           <Image src="/orion-nobg.png" alt="Orion" width={32} height={32} />
           <span className="font-semibold text-[var(--text-secondary)]">Orion</span>
@@ -176,52 +177,66 @@ export default function SettingsPage() {
             </div>
           )}
           {TABS.map(tab => (
-            <button
+            <motion.button
               key={tab.id}
               type="button"
+              whileHover={{ x: 2 }}
+              whileTap={{ scale: 0.97 }}
               onClick={() => handleTabChange(tab.id)}
-              className={`flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors w-full text-left ${activeTab === tab.id
-                ? 'bg-[var(--primary-muted)] text-[var(--primary)] font-medium'
-                : 'text-[var(--text-muted)] hover:bg-[var(--surface-elevated)] hover:text-[var(--text-secondary)]'
-                }`}
+              className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm w-full text-left cursor-pointer transition-colors"
+              style={{
+                backgroundColor: activeTab === tab.id ? 'rgba(2,241,148,0.08)' : 'transparent',
+                color: activeTab === tab.id ? '#02f194' : '#6b7280',
+                fontWeight: activeTab === tab.id ? 500 : 400,
+                border: 'none',
+                fontFamily: 'inherit',
+              }}
             >
               {tab.icon}
               {tab.label}
-            </button>
+            </motion.button>
           ))}
         </nav>
 
         {/* Content */}
         <main className="flex-1 overflow-auto p-8">
           <div className="max-w-2xl">
-            <h1 className="text-xl font-semibold text-[var(--text-secondary)] mb-6">
+            <h1 className="text-xl font-semibold text-white mb-6">
               {TABS.find(t => t.id === activeTab)?.label}
             </h1>
 
             {!user ? null : (
-              <>
-                {activeTab === 'profile' && (
-                  <ProfileTab user={user} onUserUpdate={setUser} />
-                )}
-                {activeTab === 'security' && (
-                  <SecurityTab user={user} onUserUpdate={setUser} />
-                )}
-                {activeTab === 'connections' && (
-                  <ConnectionsTab />
-                )}
-                {activeTab === 'projects' && (
-                  <ProjectsTab />
-                )}
-                {activeTab === 'appearance' && (
-                  <AppearanceTab />
-                )}
-                {activeTab === 'notifications' && (
-                  <NotificationsTab user={user} onUserUpdate={setUser} />
-                )}
-                {activeTab === 'billing' && (
-                  <BillingTab user={user} />
-                )}
-              </>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTab}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8 }}
+                  transition={{ duration: 0.18 }}
+                >
+                  {activeTab === 'profile' && (
+                    <ProfileTab user={user} onUserUpdate={setUser} />
+                  )}
+                  {activeTab === 'security' && (
+                    <SecurityTab user={user} onUserUpdate={setUser} />
+                  )}
+                  {activeTab === 'connections' && (
+                    <ConnectionsTab />
+                  )}
+                  {activeTab === 'projects' && (
+                    <ProjectsTab />
+                  )}
+                  {activeTab === 'appearance' && (
+                    <AppearanceTab />
+                  )}
+                  {activeTab === 'notifications' && (
+                    <NotificationsTab user={user} onUserUpdate={setUser} />
+                  )}
+                  {activeTab === 'billing' && (
+                    <BillingTab user={user} />
+                  )}
+                </motion.div>
+              </AnimatePresence>
             )}
           </div>
         </main>

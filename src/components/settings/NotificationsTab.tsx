@@ -16,14 +16,12 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       role="switch"
       aria-checked={checked}
       onClick={() => onChange(!checked)}
-      className={`relative inline-flex w-11 h-6 rounded-full transition-colors shrink-0 ${
-        checked ? 'bg-[var(--primary)]' : 'bg-[var(--border)]'
-      }`}
+      className={`relative inline-flex w-11 h-6 rounded-full transition-colors shrink-0 ${checked ? 'bg-[var(--primary)]' : 'bg-[var(--border)]'
+        }`}
     >
       <span
-        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
-          checked ? 'translate-x-5' : 'translate-x-0'
-        }`}
+        className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'
+          }`}
       />
     </button>
   );
@@ -66,7 +64,7 @@ export default function NotificationsTab({ user, onUserUpdate }: Props) {
 
       <div className="space-y-4 max-w-lg">
         {/* Alert emails */}
-        <div className="flex items-center justify-between p-4 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-[var(--card)] border border-[var(--border)] rounded-lg">
           <div>
             <p className="text-sm font-medium text-[var(--text-secondary)]">Alert notifications</p>
             <p className="text-xs text-[var(--text-muted)]">Receive emails when alert rules are triggered</p>
@@ -75,12 +73,12 @@ export default function NotificationsTab({ user, onUserUpdate }: Props) {
         </div>
 
         {/* Security emails — always on */}
-        <div className="flex items-center justify-between p-4 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg opacity-70">
+        <div className="flex items-center justify-between p-4 bg-[var(--card)] border border-[var(--border)] rounded-lg opacity-70">
           <div>
             <p className="text-sm font-medium text-[var(--text-secondary)]">Security alerts</p>
             <p className="text-xs text-[var(--text-muted)]">New sign-ins, password changes — always enabled</p>
           </div>
-          <Toggle checked={true} onChange={() => {}} />
+          <Toggle checked={true} onChange={() => { }} />
         </div>
       </div>
 

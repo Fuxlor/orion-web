@@ -46,7 +46,7 @@ export default function DangerConfirmModal({ variant, projectName, user, onConfi
       onMouseDown={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-xl border border-red-500/30 bg-[var(--surface-elevated)] shadow-2xl"
+        className="w-full max-w-sm rounded-xl border border-red-500/30 bg-[var(--card)] shadow-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">

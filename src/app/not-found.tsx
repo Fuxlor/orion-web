@@ -15,18 +15,18 @@ export default function NotFound() {
         </div>
 
         <div className="relative z-10 max-w-2xl mx-auto px-6 flex flex-col items-center text-center">
-          <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-[var(--surface-elevated)] border border-[var(--border)] mb-8 shadow-sm">
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-2xl bg-[var(--card)] border border-[var(--border)] mb-8 shadow-sm">
             <span className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[var(--primary)] to-emerald-400">404</span>
           </div>
-          
+
           <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
             Page not found
           </h1>
-          
+
           <p className="text-lg text-[var(--text-muted)] mb-10 leading-relaxed max-w-md">
             Sorry, we couldn't find the page you're looking for. It might have been moved or doesn't exist.
           </p>
-          
+
           <Link href="/" className="btn-primary px-8 py-3 text-base flex items-center justify-center gap-2 group transition-all hover:scale-105 shadow-[0_0_20px_var(--primary-muted)]">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Back to home

@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api";
 
 type Status = "loading" | "success" | "error";
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const [status, setStatus] = useState<Status>("loading");
@@ -39,7 +39,7 @@ export default function VerifyEmailPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[var(--page-bg)] px-4">
-      <div className="w-full max-w-sm bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl p-8 flex flex-col items-center text-center gap-6">
+      <div className="w-full max-w-sm bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 flex flex-col items-center text-center gap-6">
 
         {/* Logo */}
         <span style={{ fontSize: "20px", fontWeight: 700, color: "var(--primary)", letterSpacing: "-0.5px" }}>
@@ -124,5 +124,13 @@ export default function VerifyEmailPage() {
 
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }

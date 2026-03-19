@@ -46,7 +46,7 @@ export default function RetentionTab({ projectName, can }: Props) {
       </div>
 
       {/* Plan info */}
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] text-sm">
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-[var(--border)] bg-[var(--card)] text-sm">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--primary)] shrink-0">
           <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
         </svg>
@@ -58,7 +58,7 @@ export default function RetentionTab({ projectName, can }: Props) {
 
       {/* Settings table */}
       <div className="rounded-lg border border-[var(--border)] overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)] bg-[var(--surface-elevated)]">
+        <div className="flex items-center justify-between px-4 py-2.5 border-b border-[var(--border)] bg-[var(--card)]">
           <span className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Retention per level</span>
           {canWrite && (
             <button
@@ -72,7 +72,7 @@ export default function RetentionTab({ projectName, can }: Props) {
         </div>
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[var(--border)] bg-[var(--surface-elevated)]">
+            <tr className="border-b border-[var(--border)] bg-[var(--card)]">
               <th className="px-4 py-2.5 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Level</th>
               <th className="px-4 py-2.5 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Retention (days)</th>
             </tr>

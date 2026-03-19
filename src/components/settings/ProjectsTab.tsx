@@ -27,7 +27,7 @@ export default function ProjectsTab() {
     apiFetch('/api/projects/settings/list')
       .then(r => r.json())
       .then(d => setProjects(d.projects ?? []))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
@@ -101,14 +101,14 @@ export default function ProjectsTab() {
           {projects.map(project => (
             <div
               key={project.id}
-              className="flex items-center justify-between p-4 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg"
+              className="flex items-center justify-between p-4 bg-[var(--card)] border border-[var(--border)] rounded-lg"
             >
               <div className="min-w-0">
                 <div className="flex items-center gap-2">
                   <p className="text-sm font-medium text-[var(--text-secondary)] truncate">{project.label}</p>
                   <span className="text-xs text-[var(--text-muted)] font-mono">{project.name}</span>
                   {project.archived && (
-                    <span className="text-xs text-amber-400 bg-amber-400/10 px-2 py-0.5 rounded-full">Archived</span>
+                    <span className="text-xs text-[var(--status-warning)] bg-[var(--status-warning)]/10 px-2 py-0.5 rounded-full">Archived</span>
                   )}
                   <span className="text-xs text-[var(--text-muted)] bg-[var(--surface-input)] px-2 py-0.5 rounded-full capitalize">
                     {project.role}
@@ -144,7 +144,7 @@ export default function ProjectsTab() {
                   <button
                     type="button"
                     onClick={() => { setDeleteTarget(project); setConfirmName(''); setDeleteError(null); }}
-                    className="text-sm text-red-400 hover:text-red-300 transition-colors"
+                    className="text-sm text-destructive hover:text-destructive/70 transition-colors"
                   >
                     Delete
                   </button>
@@ -168,7 +168,7 @@ export default function ProjectsTab() {
       {/* Delete confirmation modal */}
       {deleteTarget && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[var(--surface-elevated)] border border-[var(--border)] rounded-xl p-6 w-full max-w-md shadow-2xl">
+          <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 w-full max-w-md shadow-2xl">
             <h3 className="text-base font-semibold text-[var(--text-secondary)] mb-2">Delete project</h3>
             <p className="text-sm text-[var(--text-muted)] mb-4">
               This will permanently delete <strong className="text-[var(--text-secondary)]">{deleteTarget.label}</strong> and all its data.
@@ -185,13 +185,13 @@ export default function ProjectsTab() {
               className="w-full mb-4"
               autoFocus
             />
-            {deleteError && <p className="text-sm text-red-400 mb-3">{deleteError}</p>}
+            {deleteError && <p className="text-sm text-destructive mb-3">{deleteError}</p>}
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={confirmDelete}
                 disabled={confirmName !== deleteTarget.name || actionLoading === deleteTarget.id}
-                className="flex-1 px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
+                className="flex-1 px-4 py-2 bg-destructive hover:bg-destructive/90 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium rounded-lg transition-colors"
               >
                 {actionLoading === deleteTarget.id ? 'Deleting…' : 'Delete permanently'}
               </button>

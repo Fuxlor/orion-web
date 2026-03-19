@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Edit3 } from "lucide-react";
 import { ProjectSettings } from "@/types";
 import LogLevelsModal from "./modals/LogLevelsModal";
 
@@ -38,20 +39,40 @@ export default function LogLevelsTab({ projectName, settings, can, onUpdate }: P
       )}
 
       {/* Native levels */}
-      <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium text-[var(--text-secondary)]">Native Levels</h2>
+      <div
+        style={{
+          backgroundColor: "#13161F",
+          border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 12,
+          padding: 24,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <h2 style={{ fontSize: 15, fontWeight: 700, color: "white" }}>Native Levels</h2>
           {canWrite && (
             <button
               type="button"
               onClick={() => setEditOpen(true)}
-              className="rounded-lg border border-[var(--border)] px-3 py-1.5 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-input)]"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                padding: "6px 12px",
+                borderRadius: 7,
+                border: "1px solid rgba(255,255,255,0.1)",
+                backgroundColor: "transparent",
+                color: "#9BA3AF",
+                fontSize: 12,
+                cursor: "pointer",
+                fontFamily: "inherit",
+                fontWeight: 500,
+              }}
             >
-              Edit Log Levels
+              <Edit3 size={12} /> Edit Log Levels
             </button>
           )}
         </div>
-        <p className="text-xs text-[var(--text-muted)]">
+        <p className="text-xs text-[var(--text-muted)]" style={{ marginBottom: 12 }}>
           Disabled levels are accepted by the API but immediately discarded — not stored or broadcast.
         </p>
         <div className="space-y-2">
@@ -79,8 +100,15 @@ export default function LogLevelsTab({ projectName, settings, can, onUpdate }: P
       </div>
 
       {/* Custom levels */}
-      <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-5 space-y-3">
-        <h2 className="text-sm font-medium text-[var(--text-secondary)]">Custom Levels</h2>
+      <div
+        style={{
+          backgroundColor: "#13161F",
+          border: "1px solid rgba(255,255,255,0.07)",
+          borderRadius: 12,
+          padding: 24,
+        }}
+      >
+        <h2 style={{ fontSize: 15, fontWeight: 700, color: "white", marginBottom: 16 }}>Custom Levels</h2>
         {customLevels.length === 0 ? (
           <p className="text-xs text-[var(--text-muted)]">No custom levels added yet.</p>
         ) : (

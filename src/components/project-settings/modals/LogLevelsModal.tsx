@@ -80,7 +80,7 @@ export default function LogLevelsModal({ projectName, settings, onSaved, onClose
       onMouseDown={onClose}
     >
       <div
-        className="w-full max-w-lg rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl max-h-[90vh] flex flex-col"
+        className="w-full max-w-lg rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl max-h-[90vh] flex flex-col"
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -114,11 +114,10 @@ export default function LogLevelsModal({ projectName, settings, onSaved, onClose
                     key={level}
                     type="button"
                     onClick={() => toggleLevel(level)}
-                    className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-sm transition-colors cursor-pointer hover:opacity-90 ${
-                      active
+                    className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-sm transition-colors cursor-pointer hover:opacity-90 ${active
                         ? "border-[var(--primary)] bg-[var(--primary-muted)]"
                         : "border-[var(--border)] bg-[var(--surface-input)] opacity-60"
-                    }`}
+                      }`}
                   >
                     <span className={`font-mono font-medium ${LEVEL_COLORS[level] ?? "text-[var(--text-secondary)]"}`}>
                       {level}

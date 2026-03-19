@@ -62,25 +62,25 @@ export default function SourceLogsPage() {
 
       {/* Stats row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 shrink-0">
-        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
+        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--card)]">
           <p className="text-xs text-[var(--text-muted)]">Total (24h)</p>
           <p className="text-lg font-semibold text-[var(--primary)]">
             {stats?.log_counts.total ?? logs.length ?? "—"}
           </p>
         </div>
-        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
+        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--card)]">
           <p className="text-xs text-[var(--text-muted)]">Errors (24h)</p>
           <p className="text-lg font-semibold text-[var(--primary)]">
             {stats?.log_counts.error ?? "—"}
           </p>
         </div>
-        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
+        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--card)]">
           <p className="text-xs text-[var(--text-muted)]">Warnings (24h)</p>
           <p className="text-lg font-semibold text-[var(--primary)]">
             {stats?.log_counts.warn ?? "—"}
           </p>
         </div>
-        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)]">
+        <div className="p-3 rounded-lg border border-[var(--border)] bg-[var(--card)]">
           <p className="text-xs text-[var(--text-muted)]">Uptime (24h)</p>
           <p className="text-lg font-semibold text-[var(--primary)]">{uptimeDisplay}</p>
         </div>
@@ -115,7 +115,7 @@ export default function SourceLogsPage() {
           }
           hideSources
           onLevelsChange={setLevels}
-          onSourcesChange={() => {}}
+          onSourcesChange={() => { }}
           onServersChange={setServers}
           onFromChange={setFrom}
           onToChange={setTo}

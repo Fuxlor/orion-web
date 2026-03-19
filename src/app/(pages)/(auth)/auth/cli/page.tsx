@@ -29,7 +29,7 @@
  *    → After login, /login redirects back here → same flow
  */
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 
@@ -40,7 +40,7 @@ interface StoredUser {
     email?: string;
 }
 
-export default function CliAuthPage() {
+function CliAuthContent() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const state = searchParams.get("state");
@@ -113,7 +113,7 @@ export default function CliAuthPage() {
 
     return (
         <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-6">
-            <div className="w-full max-w-[24rem] bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl p-8 shadow-xl text-center">
+            <div className="w-full max-w-[24rem] bg-[var(--card)] border border-[var(--border)] rounded-2xl p-8 shadow-xl text-center">
 
                 {/* Logo / titre */}
                 <h1 className="text-2xl font-bold text-white tracking-tight mb-1">Orion</h1>
@@ -207,5 +207,13 @@ export default function CliAuthPage() {
 
             </div>
         </div>
+    );
+}
+
+export default function CliAuthPage() {
+    return (
+        <Suspense>
+            <CliAuthContent />
+        </Suspense>
     );
 }

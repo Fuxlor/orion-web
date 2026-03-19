@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { motion } from "motion/react";
 import { startAuthentication } from "@simplewebauthn/browser";
 import { apiFetch } from "@/lib/api";
 
@@ -21,7 +22,7 @@ function passwordFromDisplay(prevPassword: string, display: string): string {
   return prevPassword.slice(0, -1) + display.slice(-1);
 }
 
-export default function LoginPage() {
+function LoginContent() {
   const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -122,8 +123,14 @@ export default function LoginPage() {
 
   if (twoFARequired) {
     return (
-      <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-6">
-        <div className="w-full max-w-[24rem] bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl p-8 shadow-xl">
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: "#0d0f16", backgroundImage: "radial-gradient(ellipse 60% 40% at 50% 80%, rgba(2,241,148,0.07) 0%, transparent 60%)" }}>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="w-full max-w-[24rem] p-8 rounded-[18px] shadow-2xl"
+          style={{ backgroundColor: "#13161f", border: "1px solid rgba(255,255,255,0.07)" }}
+        >
           <h1 className="text-2xl font-bold text-white text-center tracking-tight m-0 mb-1">
             Two-factor authentication
           </h1>
@@ -173,20 +180,32 @@ export default function LoginPage() {
           >
             ← Back to sign in
           </button>
-        </div>
+        </motion.div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[var(--surface)] flex items-center justify-center p-6">
-      <div className="w-full max-w-[24rem] bg-[var(--surface-elevated)] border border-[var(--border)] rounded-2xl p-8 shadow-xl">
-        <h1 className="text-2xl font-bold text-white text-center tracking-tight m-0 mb-1">
-          Orion
-        </h1>
-        <p className="text-[var(--text-muted)] text-sm text-center m-0 mb-7">
-          Sign in to your account
-        </p>
+    <div className="min-h-screen flex items-center justify-center p-6" style={{ backgroundColor: "#0d0f16", backgroundImage: "radial-gradient(ellipse 60% 40% at 50% 80%, rgba(2,241,148,0.07) 0%, transparent 60%)" }}>
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-[24rem] p-8 rounded-[18px] shadow-2xl"
+        style={{ backgroundColor: "#13161f", border: "1px solid rgba(255,255,255,0.07)" }}
+      >
+        {/* Brand */}
+        <div className="flex flex-col items-center mb-7">
+          <div className="flex items-center justify-center rounded-[12px] mb-3" style={{ width: 44, height: 44, backgroundColor: "#02f194" }}>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="12" r="4" fill="#0d0f16" />
+              <circle cx="12" cy="12" r="9" stroke="#0d0f16" strokeWidth="2.5" fill="none" />
+              <circle cx="12" cy="3" r="1.5" fill="#0d0f16" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-white tracking-tight m-0 mb-1">Welcome back</h1>
+          <p className="text-sm m-0" style={{ color: "#6b7280" }}>Sign in to your Orion account</p>
+        </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <label htmlFor="email" className="text-sm font-medium text-[var(--text-secondary)]">
@@ -247,10 +266,18 @@ export default function LoginPage() {
           {passkeyLoading ? "Waiting for authenticator…" : "Sign in with passkey"}
         </button>
 
-        <p className="text-[var(--text-muted)] text-sm text-center m-0 mt-4">
-          Don&apos;t have an account? <Link href="/register" className="text-[var(--primary)] underline hover:no-underline">Register</Link>
+        <p className="text-sm text-center m-0 mt-4" style={{ color: "#6b7280" }}>
+          Don&apos;t have an account? <Link href="/register" className="hover:no-underline underline" style={{ color: "#02f194" }}>Register</Link>
         </p>
-      </div>
+      </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   );
 }

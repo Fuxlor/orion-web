@@ -79,7 +79,7 @@ export default function LogExportButton({ projectName, filters, currentCount }: 
       </button>
 
       {open && (
-        <div className="absolute top-full right-0 mt-1 z-50 w-56 rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] shadow-xl p-4 space-y-3">
+        <div className="absolute top-full right-0 mt-1 z-50 w-56 rounded-lg border border-[var(--border)] bg-[var(--card)] shadow-xl p-4 space-y-3">
           <p className="text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Export logs</p>
 
           <div className="space-y-1">

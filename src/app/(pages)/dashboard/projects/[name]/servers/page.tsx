@@ -48,14 +48,14 @@ export default function ServersPage() {
       <h1 className="text-xl font-semibold text-white">Servers</h1>
 
       {servers.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-8 text-center">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-8 text-center">
           <p className="text-[var(--text-muted)]">No servers detected yet.</p>
           <p className="mt-1 text-xs text-[var(--text-muted)]">
             Servers appear automatically when the SDK sends a heartbeat with a hostname.
           </p>
         </div>
       ) : (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--border)]">

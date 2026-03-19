@@ -38,7 +38,7 @@ export default function BillingTab({ user }: Props) {
   useEffect(() => {
     Promise.all([
       apiFetch('/api/billing/subscription').then(r => r.json()).then(d => { if (d.ok) setSub(d.subscription); }),
-      fetchPlans().then(setPlans).catch(() => {}),
+      fetchPlans().then(setPlans).catch(() => { }),
     ]).finally(() => setLoading(false));
   }, []);
 
@@ -80,7 +80,7 @@ export default function BillingTab({ user }: Props) {
       </div>
 
       {/* Current plan card */}
-      <div className="p-5 bg-[var(--surface-elevated)] border border-[var(--border)] rounded-lg space-y-4">
+      <div className="p-5 bg-[var(--card)] border border-[var(--border)] rounded-lg space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-xs text-[var(--text-muted)] uppercase tracking-wide mb-1">Current plan</p>
@@ -139,7 +139,7 @@ export default function BillingTab({ user }: Props) {
                 { label: 'Alert rules', free: '—', pro: plans?.limits.pro?.alertsEnabled ? 'Unlimited' : '—' },
                 { label: 'Price', free: '$0', pro: plans?.display.pro.price ?? '$10 / month' },
               ].map(row => (
-                <tr key={row.label} className="bg-[var(--surface-elevated)]">
+                <tr key={row.label} className="bg-[var(--card)]">
                   <td className="px-4 py-3 text-[var(--text-secondary)]">{row.label}</td>
                   <td className="px-4 py-3 text-center text-[var(--text-muted)]">{row.free}</td>
                   <td className="px-4 py-3 text-center" style={{ color: 'var(--primary)' }}>{row.pro}</td>

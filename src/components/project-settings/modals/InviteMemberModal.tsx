@@ -49,7 +49,7 @@ export default function InviteMemberModal({ projectName, onInvited, onClose }: P
       onMouseDown={onClose}
     >
       <div
-        className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--surface-elevated)] shadow-2xl"
+        className="w-full max-w-md rounded-xl border border-[var(--border)] bg-[var(--card)] shadow-2xl"
         onMouseDown={(e) => e.stopPropagation()}
       >
         {/* Header */}

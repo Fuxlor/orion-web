@@ -87,7 +87,7 @@ export default function RulesTab({ projectName, rules, sources, loading, onRefre
       {loading ? (
         <p className="text-sm text-[var(--text-muted)]">Loading…</p>
       ) : rules.length === 0 && !showForm ? (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-8 text-center">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-8 text-center">
           <p className="text-sm text-[var(--text-muted)]">No rules configured</p>
           <button
             type="button"
@@ -102,13 +102,13 @@ export default function RulesTab({ projectName, rules, sources, loading, onRefre
           {rules.map((rule) => (
             <div
               key={rule.id}
-              className={`rounded-lg border p-4 transition-colors ${rule.enabled ? "border-[var(--border)] bg-[var(--surface-elevated)]" : "border-[var(--border)] bg-[var(--surface)] opacity-60"}`}
+              className={`rounded-lg border p-4 transition-colors ${rule.enabled ? "border-[var(--border)] bg-[var(--card)]" : "border-[var(--border)] bg-[var(--surface)] opacity-60"}`}
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">
                   {/* Rule name + condition */}
                   <div className="flex items-center gap-2">
-                    <p className="truncate font-medium text-white">{rule.name}</p>
+                    <p className="truncate font-medium text-[var(--foreground)]">{rule.name}</p>
                     {!rule.enabled && (
                       <span className="rounded bg-[var(--surface-input)] px-1.5 py-0.5 text-xs text-[var(--text-muted)]">
                         Disabled
@@ -182,7 +182,7 @@ export default function RulesTab({ projectName, rules, sources, loading, onRefre
                   <button
                     type="button"
                     onClick={() => setDeleteTargetId(rule.id)}
-                    className="cursor-pointer rounded p-1.5 text-[var(--text-muted)] transition-colors hover:bg-[rgba(248,113,113,0.12)] hover:text-red-400"
+                    className="cursor-pointer rounded p-1.5 text-[var(--text-muted)] transition-colors hover:bg-destructive/10 hover:text-destructive"
                     title="Delete"
                   >
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-3.5 w-3.5">

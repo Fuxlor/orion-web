@@ -6,10 +6,10 @@ import { ProjectSource } from "@/types";
 import ConfirmModal from "@/components/ConfirmModal";
 
 const ENV_COLORS: Record<string, string> = {
-  prod: "bg-red-500/15 text-red-400 border-red-500/30",
-  staging: "bg-yellow-500/15 text-yellow-400 border-yellow-500/30",
-  dev: "bg-blue-500/15 text-blue-400 border-blue-500/30",
-  test: "bg-purple-500/15 text-purple-400 border-purple-500/30",
+  prod: "bg-destructive/15 text-destructive border-destructive/30",
+  staging: "bg-[var(--status-warning)]/15 text-[var(--status-warning)] border-[var(--status-warning)]/30",
+  dev: "bg-[var(--level-info)]/15 text-[var(--level-info)] border-[var(--level-info)]/30",
+  test: "bg-[var(--level-debug)]/15 text-[var(--level-debug)] border-[var(--level-debug)]/30",
 };
 
 interface Props {
@@ -60,17 +60,28 @@ export default function SourcesTab({ projectName, can }: Props) {
   return (
     <div className="space-y-4">
       {error && (
-        <p className="text-xs text-red-400 bg-red-500/10 border border-red-500/20 px-3 py-2 rounded-lg">
+        <p className="text-xs text-destructive bg-destructive/10 border border-destructive/20 px-3 py-2 rounded-lg">
           {error}
         </p>
       )}
 
       {sources.length === 0 ? (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] p-8 text-center">
-          <p className="text-sm text-[var(--text-muted)]">No sources yet.</p>
+        <div
+          style={{
+            backgroundColor: "#13161F",
+            border: "1px solid rgba(255,255,255,0.07)",
+            borderRadius: 12,
+            padding: 32,
+            textAlign: "center",
+          }}
+        >
+          <p style={{ fontSize: 13, color: "#6B7280" }}>No sources yet.</p>
         </div>
       ) : (
-        <div className="rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] overflow-hidden">
+        <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--border)]">
+            <h2 style={{ fontSize: 15, fontWeight: 700, color: "white" }}>Sources</h2>
+          </div>
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[var(--border)] text-xs text-[var(--text-muted)]">
@@ -88,9 +99,8 @@ export default function SourcesTab({ projectName, can }: Props) {
                   <td className="px-4 py-3">
                     {source.environment ? (
                       <span
-                        className={`rounded-full border px-2 py-0.5 text-xs font-medium ${
-                          ENV_COLORS[source.environment] ?? "bg-[var(--surface-input)] text-[var(--text-muted)] border-[var(--border)]"
-                        }`}
+                        className={`rounded-full border px-2 py-0.5 text-xs font-medium ${ENV_COLORS[source.environment] ?? "bg-[var(--surface-input)] text-[var(--text-muted)] border-[var(--border)]"
+                          }`}
                       >
                         {source.environment}
                       </span>
@@ -109,7 +119,7 @@ export default function SourcesTab({ projectName, can }: Props) {
                       <button
                         type="button"
                         onClick={() => setDeleteTarget(source)}
-                        className="text-xs text-red-400 hover:text-red-300 transition-colors"
+                        className="text-xs text-destructive hover:text-destructive/70 transition-colors"
                       >
                         Delete
                       </button>

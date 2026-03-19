@@ -32,7 +32,7 @@ export default function SilenceMenu({ onSelect, onClose }: SilenceMenuProps) {
   return (
     <div
       ref={ref}
-      className="absolute right-0 top-8 z-50 min-w-[160px] rounded-lg border border-[var(--border)] bg-[var(--surface-elevated)] py-1 shadow-lg"
+      className="absolute right-0 top-8 z-50 min-w-[160px] rounded-lg border border-[var(--border)] bg-[var(--card)] py-1 shadow-lg"
     >
       <p className="px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-[var(--text-muted)]">
         Silence for…

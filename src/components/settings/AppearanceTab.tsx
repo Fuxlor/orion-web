@@ -66,11 +66,10 @@ export default function AppearanceTab() {
                 key={opt.id}
                 type="button"
                 onClick={() => setTheme(opt.id)}
-                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
-                  isActive
+                className={`flex flex-col items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${isActive
                     ? 'border-[var(--primary)] bg-[var(--primary-muted)]'
-                    : 'border-[var(--border)] bg-[var(--surface-elevated)] hover:border-[var(--primary)] hover:bg-[var(--primary-muted)]'
-                }`}
+                    : 'border-[var(--border)] bg-[var(--card)] hover:border-[var(--primary)] hover:bg-[var(--primary-muted)]'
+                  }`}
               >
                 <div className={`${isActive ? 'text-[var(--primary)]' : 'text-[var(--text-muted)]'}`}>
                   {opt.icon}
