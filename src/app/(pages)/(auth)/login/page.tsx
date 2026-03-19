@@ -2,6 +2,7 @@
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { motion } from "motion/react";
 import { startAuthentication } from "@simplewebauthn/browser";
@@ -197,11 +198,7 @@ function LoginContent() {
         {/* Brand */}
         <div className="flex flex-col items-center mb-7">
           <div className="flex items-center justify-center rounded-[12px] mb-3" style={{ width: 44, height: 44, backgroundColor: "#02f194" }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <circle cx="12" cy="12" r="4" fill="#0d0f16" />
-              <circle cx="12" cy="12" r="9" stroke="#0d0f16" strokeWidth="2.5" fill="none" />
-              <circle cx="12" cy="3" r="1.5" fill="#0d0f16" />
-            </svg>
+            <Image src="/orion-nobg.png" alt="Orion" width={64} height={64} />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-tight m-0 mb-1">Welcome back</h1>
           <p className="text-sm m-0" style={{ color: "#6b7280" }}>Sign in to your Orion account</p>

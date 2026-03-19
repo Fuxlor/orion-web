@@ -169,8 +169,8 @@ export default function Navbar() {
           <Image
             src="/orion-nobg.png"
             alt="Orion"
-            width={20}
-            height={20}
+            width={32}
+            height={32}
             className="object-contain"
             style={{ filter: "brightness(0)" }}
           />
@@ -252,7 +252,7 @@ export default function Navbar() {
                       onToggle={() => setServersManuallyOpen((o) => !o)}
                       active={
                         pathname ===
-                          `/dashboard/projects/${projectName}/servers` ||
+                        `/dashboard/projects/${projectName}/servers` ||
                         pathname.startsWith(
                           `/dashboard/projects/${projectName}/servers/`
                         )
