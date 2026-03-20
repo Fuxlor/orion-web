@@ -4,21 +4,6 @@ import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api";
 import { ApiToken, ProjectSource } from "@/types";
 
-const ALL_PERMISSIONS = [
-  { id: "logs:write", label: "logs:write", description: "Emit logs via SDK" },
-  { id: "logs:read", label: "logs:read", description: "Query / read logs" },
-  { id: "sources:read", label: "sources:read", description: "View sources list" },
-  { id: "sources:manage", label: "sources:manage", description: "Create / delete sources" },
-  { id: "members:read", label: "members:read", description: "View member list" },
-  { id: "members:manage", label: "members:manage", description: "Invite / remove members" },
-  { id: "tokens:read", label: "tokens:read", description: "View API token list" },
-  { id: "tokens:manage", label: "tokens:manage", description: "Create / revoke tokens" },
-  { id: "settings:read", label: "settings:read", description: "View project settings" },
-  { id: "settings:write", label: "settings:write", description: "Modify project settings" },
-  { id: "performance:write", label: "performance:write", description: "Emit performance metrics" },
-  { id: "heartbeat:write", label: "heartbeat:write", description: "Emit heartbeat events" },
-];
-
 interface Props {
   projectName: string;
   sources: ProjectSource[];
@@ -27,6 +12,7 @@ interface Props {
 }
 
 export default function CreateTokenModal({ projectName, sources, onCreated, onClose }: Props) {
+  const [allPermissions, setAllPermissions] = useState<{ id: string; description: string }[]>([]);
   const [name, setName] = useState("");
   const [perms, setPerms] = useState<string[]>(["logs:write", "logs:read"]);
   const [source, setSource] = useState<string>("");
@@ -34,6 +20,12 @@ export default function CreateTokenModal({ projectName, sources, onCreated, onCl
   const [error, setError] = useState<string | null>(null);
   const [createdToken, setCreatedToken] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    apiFetch("/api/projects/permissions")
+      .then((r) => r.json())
+      .then((d) => setAllPermissions(d.permissions ?? []));
+  }, []);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -173,7 +165,7 @@ export default function CreateTokenModal({ projectName, sources, onCreated, onCl
               <div className="space-y-2">
                 <p className="text-xs text-[var(--text-muted)]">Permissions</p>
                 <div className="grid gap-2 sm:grid-cols-2">
-                  {ALL_PERMISSIONS.map((perm) => (
+                  {allPermissions.map((perm) => (
                     <label
                       key={perm.id}
                       className="flex items-start gap-2.5 cursor-pointer rounded-lg border border-[var(--border)] bg-[var(--surface-input)] px-3 py-2.5 hover:border-[var(--border-focus)] transition-colors"
@@ -185,7 +177,7 @@ export default function CreateTokenModal({ projectName, sources, onCreated, onCl
                         className="mt-0.5 accent-[var(--primary)]"
                       />
                       <div>
-                        <p className="text-xs font-mono text-[var(--text-secondary)]">{perm.label}</p>
+                        <p className="text-xs font-mono text-[var(--text-secondary)]">{perm.id}</p>
                         <p className="text-xs text-[var(--text-muted)]">{perm.description}</p>
                       </div>
                     </label>
