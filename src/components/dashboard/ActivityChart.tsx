@@ -134,6 +134,10 @@ export default function ActivityChart({ chartData, window }: Props) {
               <stop offset="5%" stopColor="var(--level-warn)" stopOpacity={0.2} />
               <stop offset="95%" stopColor="var(--level-warn)" stopOpacity={0} />
             </linearGradient>
+            <linearGradient id="gradDebug" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="var(--level-debug)" stopOpacity={0.2} />
+              <stop offset="95%" stopColor="var(--level-debug)" stopOpacity={0} />
+            </linearGradient>
           </defs>
           <CartesianGrid
             strokeDasharray="3 3"
@@ -176,6 +180,14 @@ export default function ActivityChart({ chartData, window }: Props) {
             stroke="var(--level-error)"
             strokeWidth={1.5}
             fill="url(#gradError)"
+          />
+          <Area
+            type="monotone"
+            dataKey="debug"
+            name="Debug"
+            stroke="var(--level-debug)"
+            strokeWidth={1.5}
+            fill="url(#gradDebug)"
           />
         </AreaChart>
       </ResponsiveContainer>
