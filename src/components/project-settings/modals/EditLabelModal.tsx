@@ -37,7 +37,7 @@ export default function EditLabelModal({ projectName, currentLabel, onSaved, onC
       onSaved(label);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "An error occurred"));
     } finally {
       setSaving(false);
     }

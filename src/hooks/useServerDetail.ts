@@ -19,7 +19,7 @@ export function useServerDetail(projectName: string | null, serverName: string |
         setError(null);
       })
       .catch((err: Error) => {
-        setError(err.message);
+        setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message);
       })
       .finally(() => {
         setLoading(false);

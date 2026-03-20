@@ -68,7 +68,7 @@ export function useLogSearch(projectName: string | null, filters: LogSearchFilte
           }
         })
         .catch((err: Error) => {
-          if (!cancelled) setError(err.message);
+          if (!cancelled) setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message);
         })
         .finally(() => {
           if (!cancelled) setLoading(false);

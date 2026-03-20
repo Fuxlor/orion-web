@@ -24,7 +24,7 @@ export function useDashboardStats(projectName: string | null, window: StatsWindo
           }
         })
         .catch((err: Error) => {
-          if (!cancelled) setError(err.message);
+          if (!cancelled) setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message);
         })
         .finally(() => {
           if (!cancelled) setLoading(false);

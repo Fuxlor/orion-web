@@ -50,7 +50,7 @@ function LoginContent() {
       body: JSON.stringify({ email, password }),
     }).then(res => res.json()).then(data => {
       if (data.error) {
-        setError(data.error ?? data.message);
+        setError("Unknown error");
       } else if (data.requires2FA) {
         setError("");
         setTwoFARequired(true);
@@ -60,8 +60,8 @@ function LoginContent() {
         setError("");
         finishLogin(data);
       }
-    }).catch(err => {
-      setError("An error occurred: " + err.message);
+    }).catch(() => {
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : 'An error occurred');
     });
   }
 
@@ -72,13 +72,13 @@ function LoginContent() {
       body: JSON.stringify({ sessionToken: twoFASession, code: twoFACode }),
     }).then(res => res.json()).then(data => {
       if (data.error) {
-        setError(data.error);
+        setError("Unknown error");
       } else {
         setError("");
         finishLogin(data);
       }
-    }).catch(err => {
-      setError("An error occurred: " + err.message);
+    }).catch(() => {
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : 'An error occurred');
     });
   }
 
@@ -111,7 +111,7 @@ function LoginContent() {
       window.location.href = next ?? "/dashboard";
     } catch (err: unknown) {
       if (err instanceof Error && err.name !== "NotAllowedError") {
-        setError(err.message || "Passkey authentication failed");
+        setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err.message || "Passkey authentication failed"));
       }
     } finally {
       setPasskeyLoading(false);

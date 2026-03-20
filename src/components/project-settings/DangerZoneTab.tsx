@@ -48,7 +48,7 @@ export default function DangerZoneTab({ projectName, user }: Props) {
       const res = await apiFetch(`/api/projects/${projectName}`, {
         method: "DELETE",
         body: JSON.stringify({ confirmName: projectName, actionToken }),
-      });
+      }, true);
       if (!res.ok) {
         const d = await res.json();
         throw new Error(d.error ?? "Failed to delete");
@@ -76,7 +76,7 @@ export default function DangerZoneTab({ projectName, user }: Props) {
           type="button"
           onClick={() => setArchiveOpen(true)}
           disabled={archiving}
-          className="rounded-lg border border-[var(--status-warning)]/40 bg-[var(--status-warning)]/10 px-4 py-2 text-sm font-medium text-[var(--status-warning)] transition-colors hover:bg-[var(--status-warning)]/20 disabled:opacity-50"
+          className="cursor-pointer rounded-lg border border-[var(--status-warning)]/40 bg-[var(--status-warning)]/10 px-4 py-2 text-sm font-medium text-[var(--status-warning)] transition-colors hover:bg-[var(--status-warning)]/20 disabled:opacity-50"
         >
           {archiving ? "Archiving…" : "Archive Project"}
         </button>
@@ -96,7 +96,7 @@ export default function DangerZoneTab({ projectName, user }: Props) {
           type="button"
           onClick={() => setDeleteOpen(true)}
           disabled={deleting}
-          className="rounded-lg bg-destructive/90 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-destructive disabled:opacity-40"
+          className="cursor-pointer rounded-lg bg-destructive/90 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-destructive disabled:opacity-40"
         >
           {deleting ? "Deleting…" : "Delete Project Permanently"}
         </button>

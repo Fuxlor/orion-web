@@ -37,7 +37,7 @@ export default function InviteMemberModal({ projectName, onInvited, onClose }: P
       onInvited(d.member);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to invite member");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to invite member"));
     } finally {
       setInviting(false);
     }

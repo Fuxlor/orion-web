@@ -49,7 +49,7 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
     try {
       const res = await apiFetch(`/api/projects/${projectName}/members/${removeTarget.id}`, {
         method: "DELETE",
-      });
+      }, true);
       if (!res.ok) {
         const d = await res.json();
         throw new Error(d.error ?? "Failed to remove");
@@ -57,7 +57,7 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
       setMembers((prev) => prev.filter((m) => m.id !== removeTarget.id));
       setRemoveTarget(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to remove member");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to remove member"));
     }
   }
 
@@ -74,7 +74,7 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
       }
       setMembers((prev) => prev.map((m) => (m.id === member.id ? { ...m, role: newRole } : m)));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update role");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to update role"));
     }
   }
 
@@ -94,7 +94,7 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
       if (refreshData.ok) setMembers(refreshData.members);
       setTransferTarget(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to transfer ownership");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to transfer ownership"));
     }
   }
 

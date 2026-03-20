@@ -151,7 +151,7 @@ export default function RetentionModal({ data, saving, externalError, update, on
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-input)]"
+            className="cursor-pointer rounded-lg border border-[var(--border)] px-4 py-2 text-sm text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-input)]"
           >
             Cancel
           </button>
@@ -159,7 +159,7 @@ export default function RetentionModal({ data, saving, externalError, update, on
             type="button"
             onClick={handleSave}
             disabled={saving || hasExceeded}
-            className="rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)] disabled:opacity-50"
+            className="cursor-pointer rounded-lg bg-[var(--primary)] px-4 py-2 text-sm font-medium text-[var(--surface)] transition-colors hover:bg-[var(--primary-hover)] disabled:opacity-50"
           >
             {saving ? "Saving…" : "Save"}
           </button>

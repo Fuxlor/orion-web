@@ -64,7 +64,7 @@ export default function RetentionTab({ projectName, can }: Props) {
             <button
               type="button"
               onClick={() => setEditOpen(true)}
-              className="rounded-lg border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-input)]"
+              className="cursor-pointer rounded-lg border border-[var(--border)] px-3 py-1 text-xs text-[var(--text-secondary)] transition-colors hover:bg-[var(--surface-input)]"
             >
               Edit Retention
             </button>

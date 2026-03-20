@@ -57,7 +57,7 @@ export default function NewProjectPage() {
         setMemberEmail("");
       })
       .catch((err) => {
-        setError(err instanceof Error ? err.message : "An error occurred while adding the member");
+        setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "An error occurred while adding the member"));
       });
   }
 
@@ -91,7 +91,7 @@ export default function NewProjectPage() {
         refetch();
       })
       .catch((err) => {
-        setError(err instanceof Error ? err.message : "Failed to create project");
+        setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to create project"));
       })
       .finally(() => setSubmitting(false));
   }

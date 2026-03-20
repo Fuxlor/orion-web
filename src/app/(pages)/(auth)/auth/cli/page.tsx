@@ -88,7 +88,7 @@ function CliAuthContent() {
 
             if (!res.ok) {
                 const err = await res.json();
-                setErrorMessage(err.message ?? "Unknown error");
+                setErrorMessage("Unknown error");
                 setStatus("error");
                 return;
             }

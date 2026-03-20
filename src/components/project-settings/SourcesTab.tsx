@@ -41,7 +41,7 @@ export default function SourcesTab({ projectName, can }: Props) {
     try {
       const res = await apiFetch(`/api/projects/${projectName}/sources/${deleteTarget.id}`, {
         method: "DELETE",
-      });
+      }, true);
       if (!res.ok) {
         const d = await res.json();
         throw new Error(d.error ?? "Failed to delete");
@@ -49,7 +49,7 @@ export default function SourcesTab({ projectName, can }: Props) {
       setSources((prev) => prev.filter((s) => s.id !== deleteTarget.id));
       setDeleteTarget(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete source");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to delete source"));
     } finally {
       setDeleting(false);
     }
@@ -119,7 +119,7 @@ export default function SourcesTab({ projectName, can }: Props) {
                       <button
                         type="button"
                         onClick={() => setDeleteTarget(source)}
-                        className="text-xs text-destructive hover:text-destructive/70 transition-colors"
+                        className="cursor-pointer text-xs text-destructive hover:text-destructive/70 transition-colors"
                       >
                         Delete
                       </button>

@@ -44,7 +44,7 @@ export default function GeneralTab({ projectName, settings, can, onUpdate }: Pro
         body: JSON.stringify({ label: draftLabel }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Failed to save");
+      if (!res.ok) throw new Error("Failed to save");
       setLabel(draftLabel);
       onUpdate(draftLabel);
       setEditing(false);

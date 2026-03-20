@@ -34,7 +34,7 @@ export default function RotateTokenModal({ token, projectName, user, onRotated, 
       setNewToken(d.token);
       onRotated(d.token_prefix);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to rotate token");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to rotate token"));
       setActionToken(null);
     } finally {
       setRotating(false);

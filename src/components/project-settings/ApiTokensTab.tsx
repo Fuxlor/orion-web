@@ -43,7 +43,7 @@ export default function ApiTokensTab({ projectName, can, user }: Props) {
     try {
       const res = await apiFetch(`/api/projects/${projectName}/tokens/${revokeTarget.id}`, {
         method: "DELETE",
-      });
+      }, true);
       if (!res.ok) {
         const d = await res.json();
         throw new Error(d.error ?? "Failed to revoke token");
@@ -51,7 +51,7 @@ export default function ApiTokensTab({ projectName, can, user }: Props) {
       setTokens((prev) => prev.filter((t) => t.id !== revokeTarget.id));
       setRevokeTarget(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to revoke token");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to revoke token"));
     }
   }
 

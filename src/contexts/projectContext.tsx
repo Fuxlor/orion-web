@@ -42,8 +42,8 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
             setSources(data.sources);
           }
         })
-        .catch(err => {
-          setError("An error occurred: " + err.message);
+        .catch(() => {
+          setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : 'An error occurred');
         });
 
       apiFetch(`/api/projects/${projectName}/servers`)

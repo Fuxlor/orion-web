@@ -149,7 +149,7 @@ export default function AuditTab({ projectName }: Props) {
         <button
           type="button"
           onClick={handleSearch}
-          className="h-8 rounded bg-[var(--primary)] px-3 text-xs font-medium text-black hover:opacity-90 transition-opacity"
+          className="cursor-pointer h-8 rounded bg-[var(--primary)] px-3 text-xs font-medium text-black hover:opacity-90 transition-opacity"
         >
           Search
         </button>

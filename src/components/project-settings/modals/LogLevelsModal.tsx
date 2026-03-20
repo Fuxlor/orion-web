@@ -68,7 +68,7 @@ export default function LogLevelsModal({ projectName, settings, onSaved, onClose
       onSaved(levels);
       onClose();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "An error occurred");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "An error occurred"));
     } finally {
       setSaving(false);
     }

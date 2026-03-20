@@ -24,7 +24,7 @@ export function ProjectsProvider({ children }: { children: React.ReactNode }) {
     fetchProjects()
       .then(setProjects)
       .catch((err) => {
-        setError(err?.message ?? "Failed to load projects");
+        setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err?.message ?? "Failed to load projects"));
         setProjects([]);
       })
       .finally(() => setLoading(false));

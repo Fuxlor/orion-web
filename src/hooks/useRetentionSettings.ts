@@ -23,7 +23,7 @@ export function useRetentionSettings(projectName: string | null) {
         }
       })
       .catch((err: Error) => {
-        if (!cancelled) setError(err.message);
+        if (!cancelled) setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message);
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -51,7 +51,7 @@ export function useRetentionSettings(projectName: string | null) {
       }
       await fetch();
     } catch (err) {
-      setError((err as Error).message);
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err as Error).message);
       throw err;
     } finally {
       setSaving(false);

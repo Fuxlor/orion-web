@@ -76,8 +76,8 @@ export default function RegisterPage() {
         localStorage.setItem("user", JSON.stringify(data.user));
         window.location.href = "/dashboard";
       }
-    }).catch(err => {
-      setError("An error occurred: " + err.message);
+    }).catch(() => {
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : 'An error occurred');
     });
   }
 

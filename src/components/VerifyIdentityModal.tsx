@@ -53,7 +53,7 @@ export default function VerifyIdentityModal({ user, onVerified, onClose }: Props
       if (!res.ok) throw new Error(d.error ?? "Failed to send code");
       setCodeSent(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send code");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to send code"));
     } finally {
       setSending(false);
     }
@@ -71,7 +71,7 @@ export default function VerifyIdentityModal({ user, onVerified, onClose }: Props
       if (!res.ok) throw new Error(d.error ?? "Verification failed");
       onVerified(d.actionToken);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Verification failed");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Verification failed"));
     } finally {
       setLoading(false);
     }
@@ -98,7 +98,7 @@ export default function VerifyIdentityModal({ user, onVerified, onClose }: Props
       if (err instanceof Error && err.name === "NotAllowedError") {
         setError("Passkey verification was cancelled");
       } else {
-        setError(err instanceof Error ? err.message : "Passkey verification failed");
+        setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Passkey verification failed"));
       }
     } finally {
       setLoading(false);

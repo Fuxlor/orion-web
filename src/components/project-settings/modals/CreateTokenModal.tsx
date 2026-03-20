@@ -73,7 +73,7 @@ export default function CreateTokenModal({ projectName, sources, onCreated, onCl
         created_at: d.created_at,
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create token");
+      setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : (err instanceof Error ? err.message : "Failed to create token"));
     } finally {
       setCreating(false);
     }
