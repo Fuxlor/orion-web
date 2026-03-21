@@ -6,8 +6,8 @@ export function getProjectFromPathname(pathname: string): string | null {
   return match ? match[1] : null;
 }
 
-function normalizeProject(p: { id: string | number; name: string; label: string }): Project {
-  return { id: String(p.id), name: p.name, label: p.label };
+function normalizeProject(p: { id: string | number; name: string; label: string; role?: string }): Project {
+  return { id: String(p.id), name: p.name, label: p.label, role: p.role === 'owner' ? 'owner' : 'member' };
 }
 
 export async function fetchProjects(): Promise<Project[]> {

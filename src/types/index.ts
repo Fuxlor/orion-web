@@ -21,6 +21,7 @@ export interface Project {
   id: string;
   name: string;
   label: string;
+  role: 'owner' | 'member';
 }
 
 export interface LogSource {

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "motion/react";
-import { Plus, ArrowRight } from "lucide-react";
+import { Plus, ArrowRight, Crown } from "lucide-react";
 import { useProjects } from "@/contexts/projectsContext";
 
 export default function OverviewPage() {
@@ -32,7 +32,10 @@ export default function OverviewPage() {
         </div>
         <Link href="/dashboard/projects/new">
           <motion.div
-            whileHover={{ scale: 1.03, boxShadow: "0 0 20px rgba(2,241,148,0.3)" }}
+            whileHover={{
+              scale: 1.03,
+              boxShadow: "0 0 20px rgba(2,241,148,0.3)",
+            }}
             whileTap={{ scale: 0.95 }}
             className="flex items-center gap-1.5 cursor-pointer"
             style={{
@@ -53,7 +56,9 @@ export default function OverviewPage() {
       {loading ? (
         <div
           className="grid gap-3.5"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          }}
         >
           {[...Array(3)].map((_, i) => (
             <div
@@ -70,14 +75,16 @@ export default function OverviewPage() {
       ) : (
         <div
           className="grid gap-3.5"
-          style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }}
+          style={{
+            gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
+          }}
         >
           {projects.map((project, i) => (
             <Link key={project.id} href={`/dashboard/projects/${project.name}`}>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.125, delay: i * 0.08 }}
+                transition={{ duration: 0.125 }}
                 whileHover={{
                   y: -4,
                   borderColor: "var(--level-info-border)",
@@ -93,34 +100,45 @@ export default function OverviewPage() {
                 }}
               >
                 {/* Top row */}
-                <div className="flex items-start justify-between mb-5">
-                  <div>
-                    <div
-                      style={{
-                        fontSize: 15,
-                        fontWeight: 700,
-                        color: "var(--foreground)",
-                        marginBottom: 6,
-                        letterSpacing: "-0.01em",
-                      }}
-                    >
-                      {project.label}
+                <div className="flex items-start justify-between gap-3 mb-5">
+                  <div className="flex-1 min-w-0 pr-2">
+                    <div className="flex gap-2">
+                      {project.role === 'owner' && (
+                        <Crown size={14} style={{ color: "var(--primary)", marginTop: "0.2em" }} />
+                      )}
+                      <div
+                        title={project.label}
+                        style={{
+                          fontSize: 15,
+                          fontWeight: 700,
+                          color: "var(--foreground)",
+                          marginBottom: 6,
+                          letterSpacing: "-0.01em",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {project.label}
+                      </div>
                     </div>
                     <div
-                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold"
+                      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold max-w-full"
                       style={{
                         backgroundColor: "var(--accent)",
                         color: "var(--primary)",
                       }}
                     >
                       <span
-                        className="w-1.5 h-1.5 rounded-full"
+                        className="w-1.5 h-1.5 rounded-full shrink-0"
                         style={{ backgroundColor: "var(--primary)" }}
                       />
-                      {project.name}
+                      <span className="truncate">{project.name}</span>
                     </div>
                   </div>
-                  <ArrowRight size={16} style={{ color: "var(--text-muted)", marginTop: 4 }} />
+                  <div className="flex items-center gap-1.5" style={{ marginTop: 4 }}>
+                    <ArrowRight size={16} style={{ color: "var(--text-muted)" }} />
+                  </div>
                 </div>
 
                 {/* Footer */}
@@ -144,7 +162,7 @@ export default function OverviewPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.125, delay: projects.length * 0.08 }}
+              transition={{ duration: 0.125 }}
               whileHover={{
                 y: -4,
                 borderColor: "var(--level-info-border)",
@@ -171,7 +189,13 @@ export default function OverviewPage() {
               >
                 <Plus size={18} style={{ color: "var(--primary)" }} />
               </div>
-              <span style={{ fontSize: 13, color: "var(--text-muted)", fontWeight: 500 }}>
+              <span
+                style={{
+                  fontSize: 13,
+                  color: "var(--text-muted)",
+                  fontWeight: 500,
+                }}
+              >
                 New project
               </span>
             </motion.div>
