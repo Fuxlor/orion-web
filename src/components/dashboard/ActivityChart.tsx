@@ -78,7 +78,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 }
 
 export default function ActivityChart({ chartData, window }: Props) {
-  const { project, settings, settingsLoading } = useProject();
+  const { settings, settingsLoading } = useProject();
   if (!chartData) return null;
 
   const allBuckets = generateBuckets(window);
@@ -98,12 +98,12 @@ export default function ActivityChart({ chartData, window }: Props) {
         ? key.substring(0, 14) + "00:00.000Z"
         : key.substring(0, 11) + "00:00:00.000Z";
     const found = dataMap.get(normalizedKey);
-    const returnValue: Record<string, number> = {
+    const returnValue: Record<string, number | string> = {
       label: formatBucketLabel(key, window),
     };
-    settings?.enabled_levels.map((level) => (
-      returnValue[level] = found?.[level] ?? 0
-    ))
+    settings?.enabled_levels.forEach((level) => {
+      returnValue[level] = found?.[level as keyof ChartBucket] ?? 0;
+    });
     return returnValue;
   });
 
