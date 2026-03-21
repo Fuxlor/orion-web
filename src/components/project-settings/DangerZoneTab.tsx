@@ -48,7 +48,7 @@ export default function DangerZoneTab({ projectName, user }: Props) {
       const res = await apiFetch(`/api/projects/${projectName}`, {
         method: "DELETE",
         body: JSON.stringify({ confirmName: projectName, actionToken }),
-      }, true);
+      });
       if (!res.ok) {
         const d = await res.json();
         throw new Error(d.error ?? "Failed to delete");
