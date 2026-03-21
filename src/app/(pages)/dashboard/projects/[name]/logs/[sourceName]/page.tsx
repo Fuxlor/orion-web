@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useParams } from "next/navigation";
 import { useProject } from "@/contexts/projectContext";
@@ -50,9 +51,16 @@ export default function SourceLogsPage() {
     <div className="flex flex-col h-full gap-3">
       {/* Header */}
       <div className="flex items-center justify-between shrink-0">
-        <h1 className="text-xl font-semibold text-white">
-          Logs — {project?.label} / {params.sourceName}
-        </h1>
+        <div className="flex items-center gap-2">
+          <h1 className="text-xl font-semibold text-white">
+            Logs — {project?.label} / {params.sourceName}
+          </h1>
+          <button className="flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border border-[var(--border)] text-[var(--text-muted)] hover:border-[var(--primary)] hover:text-[var(--primary)] transition-colors">
+            <Link href={`/dashboard/projects/${params.name}/sources/${params.sourceName}`}>
+              Manage
+            </Link>
+          </button>
+        </div>
         <LogExportButton
           projectName={projectName ?? ""}
           filters={filters}

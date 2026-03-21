@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { ChartBucket, StatsWindow } from "@/types";
+import { useProject } from "@/contexts/projectContext";
 
 interface Props {
   chartData: ChartBucket[];
@@ -77,6 +78,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 }
 
 export default function ActivityChart({ chartData, window }: Props) {
+  const { project, settings, settingsLoading } = useProject();
   if (!chartData) return null;
 
   const allBuckets = generateBuckets(window);
@@ -96,13 +98,13 @@ export default function ActivityChart({ chartData, window }: Props) {
         ? key.substring(0, 14) + "00:00.000Z"
         : key.substring(0, 11) + "00:00:00.000Z";
     const found = dataMap.get(normalizedKey);
-    return {
+    const returnValue: Record<string, number> = {
       label: formatBucketLabel(key, window),
-      info: found?.info ?? 0,
-      warn: found?.warn ?? 0,
-      error: found?.error ?? 0,
-      debug: found?.debug ?? 0,
     };
+    settings?.enabled_levels.map((level) => (
+      returnValue[level] = found?.[level] ?? 0
+    ))
+    return returnValue;
   });
 
   return (
@@ -122,22 +124,12 @@ export default function ActivityChart({ chartData, window }: Props) {
       <ResponsiveContainer width="100%" height={180}>
         <AreaChart data={merged} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
           <defs>
-            <linearGradient id="gradInfo" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--level-info)" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="var(--level-info)" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="gradError" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--level-error)" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="var(--level-error)" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="gradWarn" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--level-warn)" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="var(--level-warn)" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="gradDebug" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--level-debug)" stopOpacity={0.2} />
-              <stop offset="95%" stopColor="var(--level-debug)" stopOpacity={0} />
-            </linearGradient>
+            {!settingsLoading && settings?.enabled_levels.map((level) => (
+              <linearGradient id={`grad${level}`} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={`var(--level-${level})`} stopOpacity={0.3} />
+                <stop offset="95%" stopColor={`var(--level-${level})`} stopOpacity={0} />
+              </linearGradient>
+            ))}
           </defs>
           <CartesianGrid
             strokeDasharray="3 3"
@@ -157,56 +149,29 @@ export default function ActivityChart({ chartData, window }: Props) {
             tickLine={false}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Area
-            type="monotone"
-            dataKey="info"
-            name="Info"
-            stroke="var(--level-info)"
-            strokeWidth={1.5}
-            fill="url(#gradInfo)"
-          />
-          <Area
-            type="monotone"
-            dataKey="warn"
-            name="Warn"
-            stroke="var(--level-warn)"
-            strokeWidth={1.5}
-            fill="url(#gradWarn)"
-          />
-          <Area
-            type="monotone"
-            dataKey="error"
-            name="Error"
-            stroke="var(--level-error)"
-            strokeWidth={1.5}
-            fill="url(#gradError)"
-          />
-          <Area
-            type="monotone"
-            dataKey="debug"
-            name="Debug"
-            stroke="var(--level-debug)"
-            strokeWidth={1.5}
-            fill="url(#gradDebug)"
-          />
+          {!settingsLoading && settings?.enabled_levels.map((level) => (
+            <Area
+              type="monotone"
+              dataKey={level}
+              name={level.charAt(0).toUpperCase() + level.slice(1)}
+              stroke={`var(--level-${level})`}
+              strokeWidth={1.5}
+              fill={`url(#grad${level})`}
+            />
+          ))}
         </AreaChart>
       </ResponsiveContainer>
 
       {/* Legend */}
       <div className="mt-3 flex items-center gap-5">
-        {[
-          { label: "Info",  color: "var(--level-info)" },
-          { label: "Warn",  color: "var(--level-warn)" },
-          { label: "Error", color: "var(--level-error)" },
-          { label: "Debug", color: "var(--level-debug)" },
-        ].map(({ label, color }) => (
-          <div key={label} className="flex items-center gap-1.5">
+        {!settingsLoading && settings?.enabled_levels.map((level) => (
+          <div key={level} className="flex items-center gap-1.5">
             <span
               className="inline-block w-2 h-2 rounded-sm"
-              style={{ backgroundColor: color }}
+              style={{ backgroundColor: `var(--level-${level})` }}
             />
             <span className="text-xs" style={{ color: "var(--text-muted)" }}>
-              {label}
+              {level.charAt(0).toUpperCase() + level.slice(1)}
             </span>
           </div>
         ))}

@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { LogSource, Project, ServerSummary } from "@/types";
+import { LogSource, Project, ProjectSettings, ServerSummary } from "@/types";
 import { getProjectFromPathname } from "@/lib/projects";
 import { apiFetch } from "@/lib/api";
 import { useError } from "./errorContext";
@@ -14,6 +14,10 @@ interface ProjectContextValue {
   project: Project | null;
   sources: LogSource[];
   servers: ServerSummary[];
+  settings: ProjectSettings | null;
+  settingsLoading: boolean;
+  settingsError: string | null;
+  updateSettings: (partial: Partial<ProjectSettings>) => void;
 }
 
 const ProjectContext = createContext<ProjectContextValue | null>(null);
@@ -29,6 +33,13 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
 
   const [sources, setSources] = useState<LogSource[]>([]);
   const [servers, setServers] = useState<ServerSummary[]>([]);
+  const [settings, setSettings] = useState<ProjectSettings | null>(null);
+  const [settingsLoading, setSettingsLoading] = useState(false);
+  const [settingsError, setSettingsError] = useState<string | null>(null);
+
+  const updateSettings = useCallback((partial: Partial<ProjectSettings>) => {
+    setSettings((s) => s ? { ...s, ...partial } : s);
+  }, []);
 
   useEffect(() => {
     if (projectName) {
@@ -52,11 +63,25 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
           if (!data.error) setServers(data.servers ?? []);
         })
         .catch(() => {});
+
+      setSettingsLoading(true);
+      setSettingsError(null);
+      apiFetch(`/api/projects/${projectName}/settings`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok) {
+            setSettings(data as ProjectSettings);
+          } else {
+            setSettingsError(data.message ?? "Failed to load settings");
+          }
+        })
+        .catch(() => setSettingsError("Failed to load settings"))
+        .finally(() => setSettingsLoading(false));
     }
   }, [projectName]);
 
   return (
-    <ProjectContext.Provider value={{ projectName, project, sources, servers }}>
+    <ProjectContext.Provider value={{ projectName, project, sources, servers, settings, settingsLoading, settingsError, updateSettings }}>
       {children}
     </ProjectContext.Provider>
   );

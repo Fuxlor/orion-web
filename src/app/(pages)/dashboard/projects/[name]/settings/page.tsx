@@ -44,13 +44,10 @@ const TAB_VIEW_PERMS: Record<SettingsTab, string | null> = {
 
 export default function ProjectSettingsPage({ params }: { params: Promise<{ name: string }> }) {
   const { name: projectName } = use(params);
-  const { project } = useProject();
+  const { project, settings, settingsLoading, settingsError, updateSettings } = useProject();
   const { loading: projectsLoading } = useProjects();
 
-  const [settings, setSettings] = useState<ProjectSettings | null>(null);
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [fetchError, setFetchError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<SettingsTab>("general");
 
   useEffect(() => {
@@ -59,23 +56,13 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
   }, []);
 
   useEffect(() => {
-    Promise.all([
-      apiFetch(`/api/projects/${projectName}/settings`).then((r) => r.json()),
-      apiFetch("/api/auth/me").then((r) => r.json()),
-    ])
-      .then(([settingsData, userData]) => {
-        if (settingsData.ok) {
-          setSettings(settingsData as ProjectSettings & { ok: boolean });
-        } else {
-          setFetchError(settingsData.error ?? "Failed to load settings");
-        }
-        if (userData && !userData.error) {
-          setUser(userData);
-        }
+    apiFetch("/api/auth/me")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && !data.error) setUser(data);
       })
-      .catch(() => setFetchError("Failed to load settings"))
-      .finally(() => setLoading(false));
-  }, [projectName]);
+      .catch(() => {});
+  }, []);
 
   // Sync active tab to first accessible tab once permissions are loaded
   useEffect(() => {
@@ -86,17 +73,17 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
     }
   }, [settings]);
 
-  if (projectsLoading || loading) {
+  if (projectsLoading || settingsLoading) {
     return <div className="text-sm text-[var(--text-muted)]">Loading…</div>;
   }
 
-  if (projectName && !project && !loading) notFound();
+  if (projectName && !project && !settingsLoading) notFound();
 
-  if (fetchError) {
+  if (settingsError) {
     return (
       <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-8 text-center space-y-2">
         <p className="text-sm font-medium text-[var(--text-secondary)]">Cannot access settings</p>
-        <p className="text-xs text-[var(--text-muted)]">{fetchError}</p>
+        <p className="text-xs text-[var(--text-muted)]">{settingsError}</p>
       </div>
     );
   }
@@ -202,7 +189,7 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
                 projectName={projectName}
                 settings={settings}
                 can={can}
-                onUpdate={(label) => setSettings((s) => s ? { ...s, label } : s)}
+                onUpdate={(label) => updateSettings({ label })}
               />
             )}
             {activeTab === "log-levels" && (
@@ -210,7 +197,7 @@ export default function ProjectSettingsPage({ params }: { params: Promise<{ name
                 projectName={projectName}
                 settings={settings}
                 can={can}
-                onUpdate={(levels) => setSettings((s) => s ? { ...s, enabled_levels: levels } : s)}
+                onUpdate={(levels) => updateSettings({ enabled_levels: levels })}
               />
             )}
             {activeTab === "retention" && (

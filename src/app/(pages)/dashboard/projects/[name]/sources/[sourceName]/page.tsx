@@ -49,15 +49,6 @@ function EnvironmentBadge({ env }: { env: string | null }) {
   );
 }
 
-const LOG_LEVELS = [
-  { key: 'info', label: 'Info', color: '#60a5fa' },
-  { key: 'warn', label: 'Warn', color: '#facc15' },
-  { key: 'error', label: 'Error', color: '#f87171' },
-  { key: 'debug', label: 'Debug', color: '#9ca3af' },
-  { key: 'verbose', label: 'Verbose', color: '#a78bfa' },
-  { key: 'trace', label: 'Trace', color: '#6ee7b7' },
-] as const;
-
 function CommandButton({ projectName, serverName, sourceName, type }: {
   projectName: string;
   serverName: string;

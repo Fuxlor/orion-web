@@ -19,6 +19,7 @@ export function useSourceStats(projectName: string | null, sourceName: string | 
         .then((r) => r.json())
         .then((data) => {
           if (!cancelled) {
+            console.log(data)
             setStats(data);
             setError(null);
           }
