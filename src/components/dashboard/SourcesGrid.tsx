@@ -58,7 +58,7 @@ export default function SourcesGrid({ heartbeats }: Props) {
         {heartbeats.map((hb) => (
           <div
             key={hb.source}
-            className="rounded-[14px] border border-[var(--border)] bg-[var(--card)] p-4"
+            className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-4"
           >
             <div className="mb-2 flex items-center justify-between">
               <span className="text-sm font-medium text-[var(--text-muted)]">

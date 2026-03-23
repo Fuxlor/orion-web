@@ -109,7 +109,7 @@ export default function ActivityChart({ chartData, window }: Props) {
 
   return (
     <div
-      className="rounded-[14px] p-5"
+      className="rounded-lg p-5"
       style={{
         backgroundColor: "var(--card)",
         border: "1px solid var(--border)",

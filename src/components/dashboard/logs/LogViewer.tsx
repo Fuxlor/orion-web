@@ -5,23 +5,24 @@ import { motion, AnimatePresence } from "motion/react";
 import { LogEntry } from "@/types";
 
 const LEVEL_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
-  info:    { color: "var(--level-info)",    bg: "var(--level-info-bg)",    border: "var(--level-info-border)" },
-  warn:    { color: "var(--level-warn)",    bg: "var(--level-warn-bg)",    border: "var(--level-warn-border)" },
-  error:   { color: "var(--level-error)",   bg: "var(--level-error-bg)",   border: "var(--level-error-border)" },
-  debug:   { color: "var(--level-debug)",   bg: "var(--level-debug-bg)",   border: "var(--level-debug-border)" },
+  info: { color: "var(--level-info)", bg: "var(--level-info-bg)", border: "var(--level-info-border)" },
+  warn: { color: "var(--level-warn)", bg: "var(--level-warn-bg)", border: "var(--level-warn-border)" },
+  error: { color: "var(--level-error)", bg: "var(--level-error-bg)", border: "var(--level-error-border)" },
+  debug: { color: "var(--level-debug)", bg: "var(--level-debug-bg)", border: "var(--level-debug-border)" },
   verbose: { color: "var(--level-verbose)", bg: "var(--level-verbose-bg)", border: "var(--level-verbose-border)" },
-  trace:   { color: "var(--level-trace)",   bg: "var(--level-trace-bg)",   border: "var(--level-trace-border)" },
+  trace: { color: "var(--level-trace)", bg: "var(--level-trace-bg)", border: "var(--level-trace-border)" },
 };
 
 const STATS_LEVELS = ["info", "warn", "error", "debug", "verbose", "trace"];
 
 interface Props {
-  logs: LogEntry[];
+  logs: LogEntry[] | null;
   isLive: boolean;
   loading?: boolean;
+  header?: boolean;
 }
 
-export default function LogViewer({ logs, isLive, loading }: Props) {
+export default function LogViewer({ logs, isLive, loading, header = true }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const isAutoScrollRef = useRef(true);
 
@@ -42,47 +43,49 @@ export default function LogViewer({ logs, isLive, loading }: Props) {
   };
 
   const levelCounts = STATS_LEVELS.reduce<Record<string, number>>((acc, lvl) => {
-    acc[lvl] = logs.filter(l => l.level === lvl).length;
+    acc[lvl] = logs?.filter(l => l.level === lvl).length || 0;
     return acc;
   }, {});
 
   const activeLevels = STATS_LEVELS.filter(lvl => levelCounts[lvl] > 0);
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col rounded-[14px] overflow-hidden" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
+    <div className="flex-1 min-h-0 flex flex-col rounded-lg overflow-hidden" style={{ backgroundColor: "var(--card)", border: "1px solid var(--border)" }}>
       {/* Stats bar */}
-      <div
-        className="flex items-center gap-5 px-4 py-2 shrink-0"
-        style={{ borderBottom: "1px solid var(--border)", fontSize: 12 }}
-      >
-        <span style={{ color: "var(--text-muted)" }}>
-          <span style={{ color: "var(--foreground)", fontWeight: 600 }}>{logs.length}</span> events
-        </span>
-        {activeLevels.map(lvl => (
-          <span key={lvl} style={{ color: LEVEL_CONFIG[lvl]?.color ?? "var(--foreground)" }}>
-            {levelCounts[lvl]} {lvl}
+      {header && (
+        <div
+          className="flex items-center gap-5 px-4 py-2 shrink-0"
+          style={{ borderBottom: "1px solid var(--border)", fontSize: 12 }}
+        >
+          <span style={{ color: "var(--text-muted)" }}>
+            <span style={{ color: "var(--foreground)", fontWeight: 600 }}>{logs?.length}</span> events
           </span>
-        ))}
-        <div style={{ flex: 1 }} />
-        {loading && (
-          <span className="text-xs animate-pulse" style={{ color: "var(--text-muted)" }}>Loading…</span>
-        )}
-        {isLive ? (
-          <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--primary)" }}>
-            <motion.span
-              animate={{ opacity: [1, 0.3, 1] }}
-              transition={{ repeat: Infinity, duration: 1.4 }}
-              style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--primary)", display: "inline-block" }}
-            />
-            Live
-          </span>
-        ) : (
-          <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--level-warn)" }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--level-warn)", display: "inline-block" }} />
-            Paused
-          </span>
-        )}
-      </div>
+          {activeLevels.map(lvl => (
+            <span key={lvl} style={{ color: LEVEL_CONFIG[lvl]?.color ?? "var(--foreground)" }}>
+              {levelCounts[lvl]} {lvl}
+            </span>
+          ))}
+          <div style={{ flex: 1 }} />
+          {loading && (
+            <span className="text-xs animate-pulse" style={{ color: "var(--text-muted)" }}>Loading…</span>
+          )}
+          {isLive ? (
+            <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--primary)" }}>
+              <motion.span
+                animate={{ opacity: [1, 0.3, 1] }}
+                transition={{ repeat: Infinity, duration: 1.4 }}
+                style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--primary)", display: "inline-block" }}
+              />
+              Live
+            </span>
+          ) : (
+            <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "var(--level-warn)" }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", backgroundColor: "var(--level-warn)", display: "inline-block" }} />
+              Paused
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Log list */}
       <div
@@ -91,11 +94,11 @@ export default function LogViewer({ logs, isLive, loading }: Props) {
         className="flex-1 overflow-auto"
         style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12 }}
       >
-        {logs.length === 0 && !loading && (
+        {logs === null || logs.length === 0 && !loading && (
           <p className="p-4" style={{ color: "var(--text-muted)" }}>No logs found.</p>
         )}
         <AnimatePresence initial={false}>
-          {logs.map((log) => {
+          {logs?.map((log) => {
             const cfg = LEVEL_CONFIG[log.level];
             return (
               <motion.div

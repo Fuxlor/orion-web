@@ -12,17 +12,18 @@ interface Props {
     total: number;
   };
   chartData: ChartBucket[];
+  timeWindow?: string | null;
 }
 
 type Level = "info" | "warn" | "error" | "debug" | "verbose" | "trace";
 
 const LEVEL_CONFIG: { level: Level; label: string; color: string; stroke: string }[] = [
-  { level: "info",    label: "Info",    color: "var(--level-info)",    stroke: "var(--level-info)" },
-  { level: "warn",    label: "Warn",    color: "var(--level-warn)",    stroke: "var(--level-warn)" },
-  { level: "error",   label: "Error",   color: "var(--level-error)",   stroke: "var(--level-error)" },
-  { level: "debug",   label: "Debug",   color: "var(--level-debug)",   stroke: "var(--level-debug)" },
+  { level: "info", label: "Info", color: "var(--level-info)", stroke: "var(--level-info)" },
+  { level: "warn", label: "Warn", color: "var(--level-warn)", stroke: "var(--level-warn)" },
+  { level: "error", label: "Error", color: "var(--level-error)", stroke: "var(--level-error)" },
+  { level: "debug", label: "Debug", color: "var(--level-debug)", stroke: "var(--level-debug)" },
   { level: "verbose", label: "Verbose", color: "var(--level-verbose)", stroke: "var(--level-verbose)" },
-  { level: "trace",   label: "Trace",   color: "var(--level-trace)",   stroke: "var(--level-trace)" },
+  { level: "trace", label: "Trace", color: "var(--level-trace)", stroke: "var(--level-trace)" },
 ];
 
 function Sparkline({
@@ -35,7 +36,7 @@ function Sparkline({
   stroke: string;
 }) {
   if (data.length < 2) return <svg width={40} height={20} />;
-  const values = data.map((b) => b[level]);
+  const values = data.map((b) => Number(b[level]) || 0);
   const max = Math.max(...values, 1);
   const W = 40;
   const H = 20;
@@ -62,7 +63,7 @@ function Sparkline({
   );
 }
 
-export default function LogCounters({ logCounts, chartData }: Props) {
+export default function LogCounters({ logCounts, chartData, timeWindow }: Props) {
   if (!logCounts) return null;
 
   const activeConfigs = LEVEL_CONFIG.filter(
@@ -71,7 +72,7 @@ export default function LogCounters({ logCounts, chartData }: Props) {
 
   return (
     <div
-      className="rounded-[14px] p-5"
+      className="rounded-lg p-5"
       style={{
         backgroundColor: "var(--card)",
         border: "1px solid var(--border)",
@@ -81,7 +82,7 @@ export default function LogCounters({ logCounts, chartData }: Props) {
         className="mb-4 text-[11px] font-bold uppercase tracking-widest"
         style={{ color: "var(--text-muted)" }}
       >
-        Log Volume
+        Log Volume {timeWindow ? `(${timeWindow})` : ""}
       </p>
       <div className="grid gap-4 auto-cols-max grid-flow-col justify-between">
         {activeConfigs.map(({ level, label, color, stroke }) => (

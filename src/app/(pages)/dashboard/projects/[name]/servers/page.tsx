@@ -60,6 +60,7 @@ export default function ServersPage() {
             <thead>
               <tr className="border-b border-[var(--border)]">
                 <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Hostname</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Display Name</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">IP</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Status</th>
                 <th className="px-4 py-3 text-left text-xs font-medium text-[var(--text-muted)] uppercase tracking-wider">Sources</th>
@@ -70,6 +71,7 @@ export default function ServersPage() {
               {servers.map((srv) => (
                 <tr key={srv.id} className="hover:bg-[var(--surface)] transition-colors hover:cursor-pointer" onClick={() => window.location.href = `/dashboard/projects/${projectName}/servers/${encodeURIComponent(srv.hostname)}`}>
                   <td className="px-4 py-3">{srv.hostname}</td>
+                  <td className="px-4 py-3 text-[var(--text-muted)]">{srv.name ?? "—"}</td>
                   <td className="px-4 py-3 text-[var(--text-muted)]">{srv.ip ?? "—"}</td>
                   <td className="px-4 py-3"><ServerStatusBadge status={srv.status} /></td>
                   <td className="px-4 py-3 text-[var(--text-muted)]">{srv.source_count}</td>

@@ -12,6 +12,7 @@ import {
   Bell,
   Settings,
   ChevronRight,
+  SquareCode
 } from "lucide-react";
 import { useProject } from "@/contexts/projectContext";
 
@@ -145,8 +146,10 @@ export default function Navbar() {
   const pathname = usePathname();
   const [logsManuallyOpen, setLogsManuallyOpen] = useState(false);
   const [serversManuallyOpen, setServersManuallyOpen] = useState(false);
+  const [sourcesManuallyOpen, setSourcesManuallyOpen] = useState(false);
   const logsOpen = pathname.includes("/logs") || logsManuallyOpen;
   const serversOpen = pathname.includes("/servers") || serversManuallyOpen;
+  const sourcesOpen = pathname.includes("/sources") || sourcesManuallyOpen;
   const { sources, servers, projectName } = useProject();
 
   return (
@@ -216,7 +219,18 @@ export default function Navbar() {
 
               {sources?.length > 0 && (
                 <>
-                  <ExpandItem
+                  <NavItem
+                    href={`/dashboard/projects/${projectName}/logs`}
+                    icon={<FileText size={15} />}
+                    label="Logs"
+                    active={
+                      pathname === `/dashboard/projects/${projectName}/logs` ||
+                      pathname.startsWith(
+                        `/dashboard/projects/${projectName}/logs/`
+                      )
+                    }
+                  />
+                  {/* <ExpandItem
                     href={`/dashboard/projects/${projectName}/logs`}
                     icon={<FileText size={15} />}
                     label="Logs"
@@ -241,7 +255,7 @@ export default function Navbar() {
                         {s.name}
                       </SubLink>
                     ))}
-                  </ExpandItem>
+                  </ExpandItem> */}
 
                   {servers?.length > 0 && (
                     <ExpandItem
@@ -272,6 +286,33 @@ export default function Navbar() {
                       ))}
                     </ExpandItem>
                   )}
+
+                  <ExpandItem
+                    href={`/dashboard/projects/${projectName}/sources`}
+                    icon={<SquareCode size={15} />}
+                    label="Sources"
+                    open={sourcesOpen}
+                    onToggle={() => setSourcesManuallyOpen((o) => !o)}
+                    active={
+                      pathname === `/dashboard/projects/${projectName}/sources` ||
+                      pathname.startsWith(
+                        `/dashboard/projects/${projectName}/sources/`
+                      )
+                    }
+                  >
+                    {sources.map((s) => (
+                      <SubLink
+                        key={s.name}
+                        href={`/dashboard/projects/${projectName}/sources/${s.name}`}
+                        active={
+                          pathname ===
+                          `/dashboard/projects/${projectName}/sources/${s.name}`
+                        }
+                      >
+                        {s.name}
+                      </SubLink>
+                    ))}
+                  </ExpandItem>
 
                   <NavItem
                     href={`/dashboard/projects/${projectName}/alerts`}

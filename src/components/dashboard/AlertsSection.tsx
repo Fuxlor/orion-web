@@ -1,6 +1,6 @@
 export default function AlertsSection() {
   return (
-    <div className="rounded-[14px] border border-[var(--border)] bg-[var(--card)] p-5">
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--card)] p-5">
       <div className="mb-1 flex items-center gap-2">
         <p className="text-xs font-bold uppercase tracking-widest text-[var(--text-muted)]">
           Pending Alerts

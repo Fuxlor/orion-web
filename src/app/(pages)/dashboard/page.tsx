@@ -63,7 +63,7 @@ export default function OverviewPage() {
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
-              className="animate-pulse rounded-[14px]"
+              className="animate-pulse rounded-lg"
               style={{
                 backgroundColor: "var(--card)",
                 border: "1px solid var(--border)",

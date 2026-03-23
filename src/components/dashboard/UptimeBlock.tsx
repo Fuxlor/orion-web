@@ -2,6 +2,7 @@ import AnimatedNumber from "./AnimatedNumber";
 
 interface Props {
   uptimePercent: number | null;
+  timeWindow?: string | null;
 }
 
 function getValueColor(pct: number | null): string {
@@ -18,13 +19,13 @@ function getBarColor(pct: number | null): string {
   return "var(--level-error)";
 }
 
-export default function UptimeBlock({ uptimePercent }: Props) {
+export default function UptimeBlock({ uptimePercent, timeWindow }: Props) {
   const valueColor = getValueColor(uptimePercent);
   const barColor = getBarColor(uptimePercent);
 
   return (
     <div
-      className="rounded-[14px] p-5"
+      className="rounded-lg p-5"
       style={{
         backgroundColor: "var(--card)",
         border: "1px solid var(--border)",
@@ -34,7 +35,7 @@ export default function UptimeBlock({ uptimePercent }: Props) {
         className="mb-2 text-[11px] font-bold uppercase tracking-widest"
         style={{ color: "var(--text-muted)" }}
       >
-        Global Uptime
+        Global Uptime {timeWindow ? `(${timeWindow})` : ""}
       </p>
       <p
         className="text-3xl font-bold mb-3"
