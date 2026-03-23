@@ -166,12 +166,12 @@ export default function SourceStatsPage() {
             ) : (
               <p className="text-xs text-[var(--text-muted)]">Commands require a linked server.</p>
             )}
-            <Link
+            {/* <Link
               href={`/dashboard/projects/${params.name}/logs/${encodeURIComponent(sourceName)}`}
               className="px-4 py-2 rounded-lg text-sm font-medium bg-[var(--secondary)] text-[var(--text-secondary)] hover:text-white transition-colors"
             >
               View Logs →
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

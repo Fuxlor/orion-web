@@ -14,7 +14,7 @@ export function Footer() {
           </div>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm font-medium">
             <Link href="/docs" className="hover:text-white transition-colors">Documentation</Link>
-            <a href="https://github.com/celyanmellinger/orion" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
+            <a href="https://github.com/orion-moniroting" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">GitHub</a>
             <Link href="/status" className="hover:text-white transition-colors flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[var(--primary)] shadow-[0_0_8px_var(--primary)]"></span> Status</Link>
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
