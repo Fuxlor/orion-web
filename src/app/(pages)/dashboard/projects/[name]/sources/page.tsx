@@ -19,8 +19,9 @@ function relativeTime(isoString: string | null): string {
 
 function SourceStatusBadge({ status }: { status: SourceStatus }) {
   const config: Record<SourceStatus, { label: string; bg: string; text: string }> = {
-    UP: { label: "UP", bg: "rgba(2,241,148,0.12)", text: "#02f194" },
-    DOWN: { label: "DOWN", bg: "rgba(248,113,113,0.12)", text: "#f87171" },
+    started: { label: "Started", bg: "rgba(2,241,148,0.12)", text: "#02f194" },
+    partial: { label: "Partial", bg: "rgba(250,204,21,0.12)", text: "#facc15" },
+    stopped: { label: "Stopped", bg: "rgba(248,113,113,0.12)", text: "#f87171" },
   };
   const c = config[status];
   if (!c) return null;
@@ -46,7 +47,7 @@ export default function ServersPage() {
       apiFetch(`/api/projects/${projectName}/sources/${source.name}/stats`)
         .then((res) => res.json())
         .then((data) => {
-          data.status = data.performance === null ? 'DOWN' : 'UP';
+          // status is computed server-side from heartbeat data
           setSourcesStats((prev) => ({ ...prev, [source.name]: data }));
         });
     }

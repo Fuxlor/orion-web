@@ -41,15 +41,18 @@ function ServerStatusBadge({ status }: { status: ServerStatus }) {
   );
 }
 
-function SourceStatusBadge({ status }: { status: 'UP' | 'DOWN' | null }) {
-  if (status === 'UP') return (
-    <span className="rounded-full bg-[rgba(2,241,148,0.12)] px-2 py-0.5 text-[11px] font-semibold text-[#02f194]">UP</span>
+function SourceStatusBadge({ status }: { status: 'started' | 'partial' | 'stopped' | null }) {
+  if (status === 'started') return (
+    <span className="rounded-full bg-[rgba(2,241,148,0.12)] px-2 py-0.5 text-[11px] font-semibold text-[#02f194]">Started</span>
   );
-  if (status === 'DOWN') return (
-    <span className="rounded-full bg-[rgba(248,113,113,0.12)] px-2 py-0.5 text-[11px] font-semibold text-red-400">DOWN</span>
+  if (status === 'partial') return (
+    <span className="rounded-full bg-[rgba(250,204,21,0.12)] px-2 py-0.5 text-[11px] font-semibold text-[#facc15]">Partial</span>
+  );
+  if (status === 'stopped') return (
+    <span className="rounded-full bg-[rgba(248,113,113,0.12)] px-2 py-0.5 text-[11px] font-semibold text-red-400">Stopped</span>
   );
   return (
-    <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[11px] font-semibold text-[var(--text-muted)]">UNKNOWN</span>
+    <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[11px] font-semibold text-[var(--text-muted)]">Unknown</span>
   );
 }
 

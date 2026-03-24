@@ -57,7 +57,7 @@ export type StatsWindow = '24h' | '7d' | '30d';
 
 export interface HeartbeatStatus {
   source: string;
-  status: 'UP' | 'DOWN' | null;
+  status: 'started' | 'partial' | 'stopped' | null;
   last_ping_at: string | null;
   interval_seconds: number;
 }
@@ -80,7 +80,7 @@ export interface ProjectStats {
 }
 
 export type ServerStatus = 'online' | 'partial' | 'offline' | 'archived';
-export type SourceStatus = 'UP' | 'DOWN';
+export type SourceStatus = 'started' | 'partial' | 'stopped';
 
 export interface ServerSummary {
   id: number;
@@ -95,7 +95,7 @@ export interface ServerSummary {
 export interface ServerSource {
   name: string;
   environment: string;
-  status: 'UP' | 'DOWN' | null;
+  status: 'started' | 'partial' | 'stopped' | null;
   last_ping_at: string | null;
 }
 
