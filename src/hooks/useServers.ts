@@ -3,11 +3,20 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api";
 import { ServerSummary } from "@/types";
+import { useOrionWs } from "@/contexts/orionWsContext";
+
+interface ServerStatusPayload {
+  serverId: number;
+  hostname: string;
+  status: string;
+  projectName: string;
+}
 
 export function useServers(projectName: string | null) {
   const [servers, setServers] = useState<ServerSummary[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { subscribe } = useOrionWs();
 
   useEffect(() => {
     if (!projectName) return;
@@ -38,6 +47,20 @@ export function useServers(projectName: string | null) {
       clearInterval(id);
     };
   }, [projectName]);
+
+  useEffect(() => {
+    if (!projectName) return;
+    return subscribe<ServerStatusPayload>("server_status", (envelope) => {
+      if (envelope.projectName !== projectName) return;
+      setServers((prev) =>
+        prev.map((s) =>
+          s.hostname === envelope.payload.hostname
+            ? { ...s, status: envelope.payload.status as ServerSummary["status"], last_seen_at: envelope.timestamp }
+            : s
+        )
+      );
+    });
+  }, [projectName, subscribe]);
 
   return { servers, loading, error };
 }

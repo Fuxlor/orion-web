@@ -85,7 +85,7 @@ export default function ServersPage() {
             </thead>
             <tbody className="divide-y divide-[var(--border)]">
               {sources.map((src) => (
-                <tr key={src.id} className="hover:bg-[var(--surface)] transition-colors hover:cursor-pointer" onClick={() => window.location.href = `/dashboard/projects/${projectName}/sources/${encodeURIComponent(src.name)}`}>
+                <tr key={src.name} className="hover:bg-[var(--surface)] transition-colors hover:cursor-pointer" onClick={() => window.location.href = `/dashboard/projects/${projectName}/sources/${encodeURIComponent(src.name)}`}>
                   <td className="px-4 py-3">{src.name}</td>
                   <td className="px-4 py-3">{src.environment}</td>
                   <td className="px-4 py-3">{src.description}</td>

@@ -4,6 +4,7 @@ import { LogsProvider } from "@/contexts/logsContext";
 import { ProjectsProvider } from "@/contexts/projectsContext";
 import { ErrorProvider } from "@/contexts/errorContext";
 import { ProjectProvider } from "@/contexts/projectContext";
+import { OrionWsProvider } from "@/contexts/orionWsContext";
 import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
@@ -20,10 +21,12 @@ export default function DashboardLayout({
     <ErrorProvider>
       <ProjectsProvider>
         <ProjectProvider>
-          <LogsProvider>
-            <DashboardOrStandalone>{children}</DashboardOrStandalone>
-            <Toaster />
-          </LogsProvider>
+          <OrionWsProvider>
+            <LogsProvider>
+              <DashboardOrStandalone>{children}</DashboardOrStandalone>
+              <Toaster />
+            </LogsProvider>
+          </OrionWsProvider>
         </ProjectProvider>
       </ProjectsProvider>
     </ErrorProvider>

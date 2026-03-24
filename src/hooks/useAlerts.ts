@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/lib/api";
 import { Alert, AlertRule } from "@/types";
+import { useOrionWs } from "@/contexts/orionWsContext";
 
 export interface AlertFilters {
   status?: string;
@@ -15,6 +16,7 @@ export function useAlerts(projectName: string, filters: AlertFilters = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
+  const { subscribe } = useOrionWs();
 
   const { status, level, source } = filters;
 
@@ -48,6 +50,22 @@ export function useAlerts(projectName: string, filters: AlertFilters = {}) {
     fetchAlerts();
     return () => { cancelled = true; };
   }, [projectName, tick, status, level, source]);
+
+  useEffect(() => {
+    if (!projectName) return;
+    return subscribe<{
+      id: number; rule_name: string | null; source_name: string | null;
+      server_hostname: string | null; level: string; message: string | null;
+      status: string; silenced_until: string | null; resolved_at: string | null;
+      resolved_by_pseudo: string | null; created_at: string;
+    }>("alert", (envelope) => {
+      if (envelope.projectName !== projectName) return;
+      if (status && status !== 'active') return;
+      if (level && level !== envelope.payload.level) return;
+      if (source && source !== envelope.payload.source_name) return;
+      setAlerts((prev) => [envelope.payload as Alert, ...prev]);
+    });
+  }, [projectName, subscribe, status, level, source]);
 
   return { alerts, loading, error, refresh: () => setTick((t) => t + 1) };
 }

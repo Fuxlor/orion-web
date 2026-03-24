@@ -30,8 +30,7 @@ function VerifyEmailContent() {
           setStatus("error");
         }
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
         setErrorMessage("Could not reach the server. Please try again.");
         setStatus("error");
       });

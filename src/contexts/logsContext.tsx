@@ -1,9 +1,21 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { LogSource, LogEntry } from "@/types";
 import { apiFetch } from "@/lib/api";
 import { useProject } from "./projectContext";
+import { useOrionWs } from "./orionWsContext";
+
+const WS_SOURCE_ALL = "all";
+
+interface LogEntryPayload {
+  id?: string;
+  timestamp: string;
+  message: string;
+  level: string;
+  source: string;
+  project?: string;
+}
 
 interface LogsContextValue {
   source: LogSource | null;
@@ -22,10 +34,9 @@ const LogsContext = createContext<LogsContextValue | null>(null);
 export function LogsProvider({ children }: { children: React.ReactNode }) {
   const [source, setSource] = useState<LogSource | null>(null);
   const [sourceName, setSourceName] = useState<string | null>(null);
-  const [socket, setSocket] = useState<WebSocket | null>(null);
   const [logs, setLogs] = useState<LogEntry[] | null>(null);
   const { projectName } = useProject();
-  const socketRef = useRef<WebSocket | null>(null);
+  const { subscribe } = useOrionWs();
 
   useEffect(() => {
     if (!source || !projectName) return;
@@ -44,56 +55,37 @@ export function LogsProvider({ children }: { children: React.ReactNode }) {
         setLogs([]);
       });
 
-    let cancelled = false;
-
-    apiFetch("/api/ws/create", {
-      method: "POST",
-      body: JSON.stringify({ sourceName: source.name }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to create WebSocket");
-        return res.json();
-      })
-      .then((data) => {
-        if (cancelled || !data.url) return;
-        const socket = new WebSocket(data.url);
-        socketRef.current = socket;
-        socket.onmessage = (event) => {
-          try {
-            const payload = JSON.parse(event.data);
-            const raw = Array.isArray(payload) ? payload : [payload];
-            const entries: LogEntry[] = raw.map((e: { id?: string; timestamp: string; message: string; level: string; source: string; project?: string }) => ({
-              id: e.id ?? crypto.randomUUID(),
-              timestamp: new Date(e.timestamp),
-              message: e.message,
-              level: e.level,
-              source: e.source,
-              project: e.project ?? ""
-            }));
-            setLogs((prev) => [...(prev ?? []), ...entries]);
-          } catch {
-            // ignore parse errors
-          }
-        };
-        queueMicrotask(() => setSocket(socket));
-      })
-      .catch(() => {
-        if (!cancelled) setLogs([]);
-      });
+    const unsubscribe = subscribe<LogEntryPayload>("log", (envelope) => {
+      if (source.name !== WS_SOURCE_ALL && envelope.payload.source !== source.name) return;
+      const entry: LogEntry = {
+        id: envelope.payload.id ?? crypto.randomUUID(),
+        timestamp: new Date(envelope.payload.timestamp),
+        message: envelope.payload.message,
+        level: envelope.payload.level,
+        source: envelope.payload.source,
+        project: envelope.payload.project ?? "",
+      };
+      setLogs((prev) => [...(prev ?? []), entry]);
+    });
 
     return () => {
-      cancelled = true;
-      if (socketRef.current) {
-        socketRef.current.close();
-        socketRef.current = null;
-      }
-      queueMicrotask(() => setSocket(null));
+      unsubscribe();
       setLogs(null);
     };
-  }, [source]);
+  }, [source, projectName, subscribe]);
 
   return (
-    <LogsContext.Provider value={{ source, sourceName, socket, logs, projectName, setSource, setSourceName, setSocket, setLogs }}>
+    <LogsContext.Provider value={{
+      source,
+      sourceName,
+      socket: null,
+      logs,
+      projectName,
+      setSource,
+      setSourceName,
+      setSocket: () => {},
+      setLogs,
+    }}>
       {children}
     </LogsContext.Provider>
   );
