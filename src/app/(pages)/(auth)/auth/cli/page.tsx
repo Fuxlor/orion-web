@@ -78,6 +78,7 @@ function CliAuthContent() {
     }, [state]);
 
     async function confirmCliAuth() {
+        setErrorMessage("");
         if (!state) return;
         setStatus("loading");
         try {

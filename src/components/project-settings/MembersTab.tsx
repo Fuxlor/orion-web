@@ -34,6 +34,7 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
   const [transferTarget, setTransferTarget] = useState<ProjectMember | null>(null);
 
   useEffect(() => {
+    setError(null);
     apiFetch(`/api/projects/${projectName}/members`)
       .then((r) => r.json())
       .then((d) => {
@@ -45,6 +46,7 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
   }, [projectName]);
 
   async function handleRemove() {
+    setError(null);
     if (!removeTarget?.id) return;
     try {
       const res = await apiFetch(`/api/projects/${projectName}/members/${removeTarget.id}`, {
@@ -150,8 +152,8 @@ export default function MembersTab({ projectName, can, currentUserId }: Props) {
             {member.role === "owner" || !can("members:manage") ? (
               <span
                 className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${member.role === "owner"
-                    ? "bg-[var(--primary-muted)] text-[var(--primary)]"
-                    : "bg-[var(--surface-input)] text-[var(--text-muted)] border border-[var(--border)]"
+                  ? "bg-[var(--primary-muted)] text-[var(--primary)]"
+                  : "bg-[var(--surface-input)] text-[var(--text-muted)] border border-[var(--border)]"
                   }`}
               >
                 {member.role}

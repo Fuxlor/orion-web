@@ -44,6 +44,7 @@ function LoginContent() {
   }
 
   function handleSubmit(e: React.FormEvent) {
+    setError("");
     e.preventDefault();
     apiFetch("/api/auth/login", {
       method: "POST",

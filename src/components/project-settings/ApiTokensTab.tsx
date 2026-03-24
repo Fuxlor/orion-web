@@ -25,6 +25,7 @@ export default function ApiTokensTab({ projectName, can, user }: Props) {
   const [copiedId, setCopiedId] = useState<number | null>(null);
 
   useEffect(() => {
+    setError(null);
     Promise.all([
       apiFetch(`/api/projects/${projectName}/tokens`).then((r) => r.json()),
       apiFetch(`/api/projects/${projectName}/sources`).then((r) => r.json()),
@@ -39,6 +40,7 @@ export default function ApiTokensTab({ projectName, can, user }: Props) {
   }, [projectName]);
 
   async function handleRevoke() {
+    setError(null);
     if (!revokeTarget) return;
     try {
       const res = await apiFetch(`/api/projects/${projectName}/tokens/${revokeTarget.id}`, {
@@ -56,7 +58,7 @@ export default function ApiTokensTab({ projectName, can, user }: Props) {
   }
 
   function handleCopy(token: ApiToken) {
-    navigator.clipboard.writeText(token.token_prefix).catch(() => {});
+    navigator.clipboard.writeText(token.token_prefix).catch(() => { });
     setCopiedId(token.id);
     setTimeout(() => setCopiedId(null), 1500);
   }

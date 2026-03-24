@@ -25,6 +25,7 @@ export default function SourcesTab({ projectName, can }: Props) {
   const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
+    setError(null);
     apiFetch(`/api/projects/${projectName}/settings/sources`)
       .then((r) => r.json())
       .then((d) => {
@@ -36,6 +37,7 @@ export default function SourcesTab({ projectName, can }: Props) {
   }, [projectName]);
 
   async function handleDelete() {
+    setError(null);
     if (!deleteTarget) return;
     setDeleting(true);
     try {

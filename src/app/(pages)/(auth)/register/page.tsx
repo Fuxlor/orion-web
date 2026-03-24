@@ -49,6 +49,7 @@ export default function RegisterPage() {
   }
 
   function handleStepNext(e: React.FormEvent) {
+    setError("");
     e.preventDefault();
     if (step === 1) {
       setStep(2);
