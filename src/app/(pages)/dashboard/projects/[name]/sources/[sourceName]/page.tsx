@@ -35,6 +35,17 @@ function formatUptime(seconds: number): string {
   return `${Math.floor(seconds / 86400)}d`;
 }
 
+function formatBytes(bytes: number | null | undefined): string {
+  if (bytes == null) return "-";
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(1)} KB`;
+  const mb = kb / 1024;
+  if (mb < 1024) return `${mb.toFixed(1)} MB`;
+  const gb = mb / 1024;
+  return `${gb.toFixed(1)} GB`;
+}
+
 function EnvironmentBadge({ env }: { env: string | null }) {
   if (!env) return null;
   const config: Record<string, { bg: string; text: string }> = {
@@ -54,12 +65,13 @@ function EnvironmentBadge({ env }: { env: string | null }) {
   );
 }
 
-function CommandButton({ projectName, serverName, sourceName, type, disabled }: {
+function CommandButton({ projectName, serverName, sourceName, type, disabled, unjoinable }: {
   projectName: string;
   serverName: string;
   sourceName: string;
-  type: 'restart' | 'stop';
+  type: 'restart' | 'stop' | 'start';
   disabled?: boolean;
+  unjoinable?: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -78,19 +90,38 @@ function CommandButton({ projectName, serverName, sourceName, type, disabled }: 
     }
   };
 
-  const isStop = type === 'stop';
-  return (
-    <button
-      onClick={handleClick}
-      disabled={loading || disabled}
-      className={`hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${isStop
-        ? "bg-[rgba(248,113,113,0.12)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]"
-        : "bg-[var(--primary-muted)] text-[var(--primary)] hover:opacity-80"
-        }`}
-    >
-      {sent ? "Sent!" : loading ? "…" : disabled ? "Pending…" : type === 'restart' ? "Restart" : "Stop"}
-    </button>
-  );
+  switch (type) {
+    case 'restart':
+      return (
+        <button
+          onClick={handleClick}
+          disabled={loading || disabled || sent || unjoinable}
+          className="hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 bg-[rgba(251,146,60,0.12)] text-orange-400 hover:bg-[rgba(251,146,60,0.2)]"
+        >
+          {unjoinable ? "Restart" : sent ? "Sent!" : loading ? "…" : disabled ? "Pending…" : 'Restart'}
+        </button>
+      );
+    case 'start':
+      return (
+        <button
+          onClick={handleClick}
+          disabled={loading || disabled || sent || unjoinable}
+          className="hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 bg-[var(--primary-muted)] text-[var(--primary)] hover:opacity-80"
+        >
+          {unjoinable ? "Start" : sent ? "Sent!" : loading ? "…" : disabled ? "Pending…" : 'Start'}
+        </button>
+      );
+    case 'stop':
+      return (
+        <button
+          onClick={handleClick}
+          disabled={loading || disabled || sent || unjoinable}
+          className={`hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 bg-[rgba(248,113,113,0.12)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]`}
+        >
+          {unjoinable ? "Stop" : sent ? "Sent!" : loading ? "…" : disabled ? "Pending…" : 'Stop'}
+        </button>
+      );
+  }
 }
 
 
@@ -109,7 +140,6 @@ function SourceStatusBadge({ status }: { status: 'UP' | 'DOWN' | null }) {
 export default function SourceStatsPage() {
   const params = useParams<{ name: string; sourceName: string }>();
   const sourceName = decodeURIComponent(params.sourceName);
-  const projectName = params.name;
   const [statsWindow, setStatsWindow] = useState<StatsWindow>("24h");
   const { stats, loading } = useSourceStats(params.name, sourceName, statsWindow);
   const serverHostname = stats?.server?.hostname ?? null;
@@ -158,8 +188,16 @@ export default function SourceStatsPage() {
                   projectName={params.name}
                   serverName={stats.server.hostname}
                   sourceName={sourceName}
+                  type="start"
+                  disabled={hasPendingCommand('start', sourceName)}
+                />
+                <CommandButton
+                  projectName={params.name}
+                  serverName={stats.server.hostname}
+                  sourceName={sourceName}
                   type="restart"
                   disabled={hasPendingCommand('restart', sourceName)}
+                  unjoinable={stats?.performance === null}
                 />
                 <CommandButton
                   projectName={params.name}
@@ -167,6 +205,7 @@ export default function SourceStatsPage() {
                   sourceName={sourceName}
                   type="stop"
                   disabled={hasPendingCommand('stop', sourceName)}
+                  unjoinable={stats?.performance === null}
                 />
               </>
             ) : (
@@ -240,9 +279,9 @@ export default function SourceStatsPage() {
           <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-3">
             <p className="text-xs text-[var(--text-muted)] mb-1">Avg Memory</p>
             <p className="text-xl font-bold text-white">
-              {stats?.performance?.avg_memory_used ?? "-"}
+              {formatBytes(stats?.performance?.avg_memory_used) ?? "-"}
               <span className="text-sm font-normal text-[var(--text-muted)]">
-                {' '}/ {stats?.performance?.avg_memory_total ?? "-"} MB
+                {' '}/ {formatBytes(stats?.performance?.avg_memory_total) ?? "-"}
               </span>
             </p>
           </div>

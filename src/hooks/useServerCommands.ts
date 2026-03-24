@@ -10,7 +10,7 @@ export function useServerCommands(
   serverName: string | null
 ): {
   commands: ServerCommand[];
-  hasPendingCommand: (type: 'restart' | 'stop', sourceName?: string) => boolean;
+  hasPendingCommand: (type: 'restart' | 'stop' | 'start', sourceName?: string) => boolean;
 } {
   const [commands, setCommands] = useState<ServerCommand[]>([]);
   const prevCommandsRef = useRef<ServerCommand[]>([]);
@@ -31,11 +31,11 @@ export function useServerCommands(
             const prevCmd = prev.find((p) => p.id === freshCmd.id);
             if (!prevCmd) continue;
             if (prevCmd.status === 'pending' && freshCmd.status === 'ack') {
-              const label = freshCmd.type === 'restart' ? 'Restart' : 'Stop';
+              const label = freshCmd.type === 'restart' ? 'Restart' : freshCmd.type === 'stop' ? 'Stop' : 'Start';
               const suffix = freshCmd.source_name ? ` (${freshCmd.source_name})` : '';
               toast.success(`${label} command acknowledged by the server${suffix}.`);
             } else if (prevCmd.status === 'pending' && freshCmd.status === 'failed') {
-              const label = freshCmd.type === 'restart' ? 'Restart' : 'Stop';
+              const label = freshCmd.type === 'restart' ? 'Restart' : freshCmd.type === 'stop' ? 'Stop' : 'Start';
               const suffix = freshCmd.source_name ? ` (${freshCmd.source_name})` : '';
               toast.error(`${label} command failed — no response from server${suffix}.`);
             }
@@ -57,7 +57,7 @@ export function useServerCommands(
     };
   }, [projectName, serverName]);
 
-  const hasPendingCommand = (type: 'restart' | 'stop', sourceName?: string): boolean => {
+  const hasPendingCommand = (type: 'restart' | 'stop' | 'start', sourceName?: string): boolean => {
     return commands.some(
       (c) =>
         c.status === 'pending' &&
