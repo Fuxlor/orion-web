@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useSourceStats } from "@/hooks/useSourceStats";
+import { useServerCommands } from "@/hooks/useServerCommands";
 import { apiFetch } from "@/lib/api";
 import UptimeBlock from "@/components/dashboard/UptimeBlock";
 import TimeWindowSelector from "@/components/dashboard/TimeWindowSelector";
@@ -53,11 +54,12 @@ function EnvironmentBadge({ env }: { env: string | null }) {
   );
 }
 
-function CommandButton({ projectName, serverName, sourceName, type }: {
+function CommandButton({ projectName, serverName, sourceName, type, disabled }: {
   projectName: string;
   serverName: string;
   sourceName: string;
   type: 'restart' | 'stop';
+  disabled?: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -80,13 +82,13 @@ function CommandButton({ projectName, serverName, sourceName, type }: {
   return (
     <button
       onClick={handleClick}
-      disabled={loading}
+      disabled={loading || disabled}
       className={`hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${isStop
         ? "bg-[rgba(248,113,113,0.12)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]"
         : "bg-[var(--primary-muted)] text-[var(--primary)] hover:opacity-80"
         }`}
     >
-      {sent ? "Sent!" : loading ? "…" : type === 'restart' ? "Restart" : "Stop"}
+      {sent ? "Sent!" : loading ? "…" : disabled ? "Pending…" : type === 'restart' ? "Restart" : "Stop"}
     </button>
   );
 }
@@ -110,6 +112,8 @@ export default function SourceStatsPage() {
   const projectName = params.name;
   const [statsWindow, setStatsWindow] = useState<StatsWindow>("24h");
   const { stats, loading } = useSourceStats(params.name, sourceName, statsWindow);
+  const serverHostname = stats?.server?.hostname ?? null;
+  const { hasPendingCommand } = useServerCommands(params.name, serverHostname);
   const { logs: liveLogs, setSource } = useLogs();
 
   // For real-time mode: subscribe to "all" source
@@ -133,7 +137,7 @@ export default function SourceStatsPage() {
               href={`/dashboard/projects/${params.name}/servers/${encodeURIComponent(stats.server.hostname)}`}
               className="text-xs text-[var(--text-muted)] hover:text-[var(--primary)] transition-colors"
             >
-              ↗ {stats.server.hostname}
+              ↗ {stats.server.name || stats.server.hostname}
             </Link>
           )}
         </div>
@@ -155,12 +159,14 @@ export default function SourceStatsPage() {
                   serverName={stats.server.hostname}
                   sourceName={sourceName}
                   type="restart"
+                  disabled={hasPendingCommand('restart', sourceName)}
                 />
                 <CommandButton
                   projectName={params.name}
                   serverName={stats.server.hostname}
                   sourceName={sourceName}
                   type="stop"
+                  disabled={hasPendingCommand('stop', sourceName)}
                 />
               </>
             ) : (

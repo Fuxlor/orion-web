@@ -28,6 +28,8 @@ export function useServerDetail(projectName: string | null, serverName: string |
 
   useEffect(() => {
     fetchServer();
+    const id = setInterval(fetchServer, 15_000);
+    return () => clearInterval(id);
   }, [fetchServer]);
 
   return { server, loading, error, refetch: fetchServer };

@@ -85,7 +85,7 @@ export type SourceStatus = 'UP' | 'DOWN';
 export interface ServerSummary {
   id: number;
   hostname: string;
-  name: string | null;
+  name?: string | null;
   ip: string | null;
   last_seen_at: string | null;
   status: ServerStatus;
@@ -125,7 +125,7 @@ export interface SourceStats {
   };
   error_rate: number;
   chart_data: ChartBucket[];
-  server: { hostname: string; ip: string | null; name: string | null } | null;
+  server: { hostname: string; ip: string | null; name?: string | null } | null;
   environment: string | null;
   recent_errors: { id: string; message: string | null; created_at: string }[];
   performance: {

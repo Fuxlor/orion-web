@@ -32,8 +32,10 @@ export function useSourceStats(projectName: string | null, sourceName: string | 
     };
 
     fetchStats();
+    const id = setInterval(fetchStats, 15_000);
     return () => {
       cancelled = true;
+      clearInterval(id);
     };
   }, [projectName, sourceName, window]);
 

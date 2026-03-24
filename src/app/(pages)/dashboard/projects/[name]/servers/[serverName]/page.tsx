@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useServerDetail } from "@/hooks/useServerDetail";
+import { useServerCommands } from "@/hooks/useServerCommands";
 import { apiFetch } from "@/lib/api";
 import UptimeBlock from "@/components/dashboard/UptimeBlock";
 import TimeWindowSelector from "@/components/dashboard/TimeWindowSelector";
@@ -52,11 +53,12 @@ function SourceStatusBadge({ status }: { status: 'UP' | 'DOWN' | null }) {
   );
 }
 
-function CommandButton({ projectName, serverName, type, onSuccess }: {
+function CommandButton({ projectName, serverName, type, onSuccess, disabled }: {
   projectName: string;
   serverName: string;
   type: 'restart' | 'stop';
   onSuccess?: () => void;
+  disabled?: boolean;
 }) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -80,13 +82,13 @@ function CommandButton({ projectName, serverName, type, onSuccess }: {
   return (
     <button
       onClick={handleClick}
-      disabled={loading}
+      disabled={loading || disabled}
       className={`hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${isStop
         ? "bg-[rgba(248,113,113,0.12)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]"
         : "bg-[var(--primary-muted)] text-[var(--primary)] hover:opacity-80"
         }`}
     >
-      {sent ? "Sent!" : loading ? "…" : type === 'restart' ? "Restart" : "Stop"}
+      {sent ? "Sent!" : loading ? "…" : disabled ? "Pending…" : type === 'restart' ? "Restart" : "Stop"}
     </button>
   );
 }
@@ -95,6 +97,7 @@ export default function ServerDetailPage() {
   const params = useParams<{ name: string; serverName: string }>();
   const [statsWindow, setStatsWindow] = useState<StatsWindow>("24h");
   const { server, loading, refetch } = useServerDetail(params.name, decodeURIComponent(params.serverName));
+  const { hasPendingCommand } = useServerCommands(params.name, decodeURIComponent(params.serverName));
 
   if (loading && !server) {
     return <div className="text-[var(--text-muted)]">Loading…</div>;
@@ -141,12 +144,14 @@ export default function ServerDetailPage() {
               serverName={server.hostname}
               type="restart"
               onSuccess={refetch}
+              disabled={hasPendingCommand('restart')}
             />
             <CommandButton
               projectName={params.name}
               serverName={server.hostname}
               type="stop"
               onSuccess={refetch}
+              disabled={hasPendingCommand('stop')}
             />
           </div>
         </div>
