@@ -5,6 +5,7 @@ import { User } from "@/types";
 import { apiFetch } from "@/lib/api";
 import { ProjectProvider } from "@/contexts/projectContext";
 import { Header, Navbar } from "./index";
+import AlertNotifier from "./AlertNotifier";
 
 export default function DashboardShell({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(() => {
@@ -89,6 +90,7 @@ export default function DashboardShell({ children }: { children: React.ReactNode
       <div className="flex h-screen overflow-hidden" style={{ backgroundColor: "var(--background)" }}>
         {/* Sidebar */}
         <Navbar />
+        <AlertNotifier />
 
         {/* Main column */}
         <div className="flex flex-col flex-1 min-w-0 overflow-hidden">

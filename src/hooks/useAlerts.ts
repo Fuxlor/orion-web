@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { Alert, AlertRule } from "@/types";
 import { useOrionWs } from "@/contexts/orionWsContext";
@@ -68,6 +69,30 @@ export function useAlerts(projectName: string, filters: AlertFilters = {}) {
   }, [projectName, subscribe, status, level, source]);
 
   return { alerts, loading, error, refresh: () => setTick((t) => t + 1) };
+}
+
+export function useActiveAlertCount(projectName: string) {
+  const [count, setCount] = useState(0);
+  const { subscribe } = useOrionWs();
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!projectName) return;
+    apiFetch(`/api/projects/${projectName}/alerts?status=active`)
+      .then((res) => res.json())
+      .then((data) => { if (Array.isArray(data)) setCount(data.length); })
+      .catch(() => {});
+  }, [projectName, pathname]);
+
+  useEffect(() => {
+    if (!projectName) return;
+    return subscribe<{ level: string }>("alert", (envelope) => {
+      if (envelope.projectName !== projectName) return;
+      setCount((c) => c + 1);
+    });
+  }, [projectName, subscribe]);
+
+  return count;
 }
 
 export function useAlertRules(projectName: string) {

@@ -15,17 +15,20 @@ import {
   SquareCode
 } from "lucide-react";
 import { useProject } from "@/contexts/projectContext";
+import { useActiveAlertCount } from "@/hooks/useAlerts";
 
 function NavItem({
   href,
   icon,
   label,
   active,
+  badge,
 }: {
   href: string;
   icon: React.ReactNode;
   label: string;
   active?: boolean;
+  badge?: number;
 }) {
   return (
     <Link href={href}>
@@ -44,7 +47,15 @@ function NavItem({
         >
           {icon}
         </span>
-        <span className="truncate">{label}</span>
+        <span className="truncate flex-1">{label}</span>
+        {badge != null && badge > 0 && (
+          <span
+            className="shrink-0 rounded-full px-1.5 py-px text-[10px] font-semibold leading-none"
+            style={{ backgroundColor: "var(--level-error)", color: "#fff" }}
+          >
+            {badge > 99 ? "99+" : badge}
+          </span>
+        )}
       </motion.div>
     </Link>
   );
@@ -151,6 +162,7 @@ export default function Navbar() {
   const serversOpen = pathname.includes("/servers") || serversManuallyOpen;
   const sourcesOpen = pathname.includes("/sources") || sourcesManuallyOpen;
   const { sources, servers, projectName } = useProject();
+  const activeAlertCount = useActiveAlertCount(projectName ?? "");
 
   return (
     <nav
@@ -321,6 +333,7 @@ export default function Navbar() {
                     active={
                       pathname === `/dashboard/projects/${projectName}/alerts`
                     }
+                    badge={activeAlertCount}
                   />
 
                   <NavItem
