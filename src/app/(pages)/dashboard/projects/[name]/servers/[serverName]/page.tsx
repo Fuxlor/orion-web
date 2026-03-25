@@ -2,12 +2,10 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import { useServerDetail } from "@/hooks/useServerDetail";
 import { useServerCommands } from "@/hooks/useServerCommands";
 import { apiFetch } from "@/lib/api";
 import UptimeBlock from "@/components/dashboard/UptimeBlock";
-import TimeWindowSelector from "@/components/dashboard/TimeWindowSelector";
 import AlertsSection from "@/components/dashboard/AlertsSection";
 import { ServerStatus, StatsWindow } from "@/types";
 
@@ -98,7 +96,6 @@ function CommandButton({ projectName, serverName, type, onSuccess, disabled }: {
 
 export default function ServerDetailPage() {
   const params = useParams<{ name: string; serverName: string }>();
-  const [statsWindow, setStatsWindow] = useState<StatsWindow>("24h");
   const { server, loading, refetch } = useServerDetail(params.name, decodeURIComponent(params.serverName));
   const { hasPendingCommand } = useServerCommands(params.name, decodeURIComponent(params.serverName));
 
@@ -128,7 +125,6 @@ export default function ServerDetailPage() {
             </span>
           )}
         </div>
-        <TimeWindowSelector value={statsWindow} onChange={setStatsWindow} />
       </div>
 
       {/* Uptime + Actions */}

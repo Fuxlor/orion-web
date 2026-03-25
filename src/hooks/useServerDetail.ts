@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { apiFetch } from "@/lib/api";
-import { ServerDetail } from "@/types";
+import { ServerDetail, SourceStatus } from "@/types";
 import { useOrionWs } from "@/contexts/orionWsContext";
 
 interface ServerStatusPayload {
@@ -39,21 +39,26 @@ export function useServerDetail(projectName: string | null, serverName: string |
 
   useEffect(() => {
     fetchServer();
-    const id = setInterval(fetchServer, 15_000);
-    return () => clearInterval(id);
+    // const id = setInterval(fetchServer, 15_000);
+    // return () => clearInterval(id);
   }, [fetchServer]);
 
   useEffect(() => {
     if (!projectName || !serverName) return;
     return subscribe<ServerStatusPayload>("server_status", (envelope) => {
       if (envelope.projectName !== projectName || envelope.payload.hostname !== serverName) return;
+      for (const source of envelope.payload.sources) {
+        if (source.status === 'running') {
+          source.status = 'started';
+        }
+      }
       setServer((prev) => prev ? {
         ...prev,
         status: envelope.payload.status as ServerDetail["status"],
         last_seen_at: envelope.timestamp,
         sources: envelope.payload.sources.map((s) => ({
           ...s,
-          status: s.status as "UP" | "DOWN" | null,
+          status: s.status as SourceStatus,
         })),
       } : prev);
     });

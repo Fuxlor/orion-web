@@ -106,9 +106,10 @@ export interface ServerDetail extends ServerSummary {
 
 export interface ServerCommand {
   id: number;
-  type: 'restart' | 'stop';
+  type: 'restart' | 'stop' | 'start';
   status: 'pending' | 'ack' | 'failed';
   created_at: string;
+  acked_at: string | null;
   source_name: string | null;
 }
 
@@ -134,7 +135,7 @@ export interface SourceStats {
     avg_memory_total: number;
     last_uptime_seconds: number;
   } | null;
-  status?: SourceStatus;
+  status: SourceStatus;
   last_seen_at: string | null;
 }
 

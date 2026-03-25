@@ -69,6 +69,7 @@ export function useSourceStats(projectName: string | null, sourceName: string | 
     if (!projectName || !sourceName) return;
     return subscribe<{ source: string; status: string | null; last_ping_at: string | null }>("heartbeat", (envelope) => {
       if (envelope.projectName !== projectName || envelope.payload.source !== sourceName) return;
+      if (envelope.payload.status === 'running') envelope.payload.status = 'started';
       setStats((prev) => prev ? {
         ...prev,
         status: envelope.payload.status as SourceStatus,

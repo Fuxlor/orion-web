@@ -10,7 +10,8 @@ export type WsMessageType =
   | "heartbeat"
   | "alert"
   | "stats_update"
-  | "server_status";
+  | "server_status"
+  | "command_status";
 
 export interface WsEnvelope<T = unknown> {
   type: WsMessageType;

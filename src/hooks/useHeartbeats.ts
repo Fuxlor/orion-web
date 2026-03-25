@@ -22,29 +22,24 @@ export function useHeartbeats(projectName: string | null) {
     if (!projectName) return;
     let cancelled = false;
 
-    const fetchHeartbeats = () => {
-      setLoading(true);
-      apiFetch(`/api/projects/${projectName}/heartbeats`)
-        .then((r) => r.json())
-        .then((data) => {
-          if (!cancelled) {
-            setHeartbeats(data.heartbeats ?? []);
-            setError(null);
-          }
-        })
-        .catch((err: Error) => {
-          if (!cancelled) setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message);
-        })
-        .finally(() => {
-          if (!cancelled) setLoading(false);
-        });
-    };
+    setLoading(true);
+    apiFetch(`/api/projects/${projectName}/heartbeats`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled) {
+          setHeartbeats(data.heartbeats ?? []);
+          setError(null);
+        }
+      })
+      .catch((err: Error) => {
+        if (!cancelled) setError(process.env.NODE_ENV === 'production' ? 'An unexpected error occurred' : err.message);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
-    fetchHeartbeats();
-    const id = setInterval(fetchHeartbeats, 30_000);
     return () => {
       cancelled = true;
-      clearInterval(id);
     };
   }, [projectName]);
 
@@ -52,13 +47,18 @@ export function useHeartbeats(projectName: string | null) {
     if (!projectName) return;
     return subscribe<HeartbeatPayload>("heartbeat", (envelope) => {
       if (envelope.projectName !== projectName) return;
-      setHeartbeats((prev) =>
-        prev.map((h) =>
-          h.source === envelope.payload.source
-            ? { ...h, status: envelope.payload.status as HeartbeatStatus["status"], last_ping_at: envelope.payload.last_ping_at }
-            : h
-        )
-      );
+      const status = envelope.payload.status === 'running' ? 'started' : envelope.payload.status as HeartbeatStatus["status"];
+      setHeartbeats((prev) => {
+        const exists = prev.some((h) => h.source === envelope.payload.source);
+        if (exists) {
+          return prev.map((h) =>
+            h.source === envelope.payload.source
+              ? { ...h, status, last_ping_at: envelope.payload.last_ping_at }
+              : h
+          );
+        }
+        return [...prev, { source: envelope.payload.source, status, last_ping_at: envelope.payload.last_ping_at, interval_seconds: 0 }];
+      });
     });
   }, [projectName, subscribe]);
 

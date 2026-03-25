@@ -154,6 +154,11 @@ export default function SourceStatsPage() {
     setSource({ name: sourceName, description: sourceName, environment: stats?.environment ?? "all" } as LogSource);
   }, [setSource]);
 
+  if (stats?.status === 'stopped') {
+    console.log(stats);
+    console.log(stats?.status);
+  }
+
   if (loading && !stats) {
     return <div className="text-[var(--text-muted)]">Loading…</div>;
   }

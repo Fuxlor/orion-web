@@ -64,7 +64,7 @@ export default function SourcesGrid({ heartbeats }: Props) {
               <span className="text-sm font-medium text-[var(--text-muted)]">
                 {hb.source}
               </span>
-              <StatusBadge status={hb.status} />
+              <StatusBadge status={hb.status === 'started' ? 'UP' : hb.status != null ? 'DOWN' : null} />
             </div>
             <p className="text-xs text-[var(--text-muted)]">
               Last ping: {relativeTime(hb.last_ping_at)} ago
