@@ -65,13 +65,14 @@ function EnvironmentBadge({ env }: { env: string | null }) {
   );
 }
 
-function CommandButton({ projectName, serverName, sourceName, type, disabled, unjoinable }: {
+function CommandButton({ projectName, serverName, sourceName, type, disabled, unjoinable, onSuccess }: {
   projectName: string;
   serverName: string;
   sourceName: string;
   type: 'restart' | 'stop' | 'start';
   disabled?: boolean;
   unjoinable?: boolean;
+  onSuccess?: () => void;
 }) {
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
@@ -85,6 +86,7 @@ function CommandButton({ projectName, serverName, sourceName, type, disabled, un
       });
       setSent(true);
       setTimeout(() => setSent(false), 3000);
+      onSuccess?.();
     } finally {
       setLoading(false);
     }
@@ -146,7 +148,7 @@ export default function SourceStatsPage() {
   const [statsWindow, setStatsWindow] = useState<StatsWindow>("24h");
   const { stats, loading } = useSourceStats(params.name, sourceName, statsWindow);
   const serverHostname = stats?.server?.hostname ?? null;
-  const { hasPendingCommand } = useServerCommands(params.name, serverHostname);
+  const { hasPendingCommand, refetch: refetchCommands } = useServerCommands(params.name, serverHostname);
   const { logs: liveLogs, setSource } = useLogs();
 
   // For real-time mode: subscribe to "all" source
@@ -198,6 +200,7 @@ export default function SourceStatsPage() {
                   sourceName={sourceName}
                   type="start"
                   disabled={hasPendingCommand('start', sourceName)}
+                  onSuccess={refetchCommands}
                 />
                 <CommandButton
                   projectName={params.name}
@@ -206,6 +209,7 @@ export default function SourceStatsPage() {
                   type="restart"
                   disabled={hasPendingCommand('restart', sourceName)}
                   unjoinable={stats?.status === 'stopped'}
+                  onSuccess={refetchCommands}
                 />
                 <CommandButton
                   projectName={params.name}
@@ -214,6 +218,7 @@ export default function SourceStatsPage() {
                   type="stop"
                   disabled={hasPendingCommand('stop', sourceName)}
                   unjoinable={stats?.status === 'stopped'}
+                  onSuccess={refetchCommands}
                 />
               </>
             ) : (

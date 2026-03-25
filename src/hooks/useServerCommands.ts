@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { apiFetch } from "@/lib/api";
 import { ServerCommand } from "@/types";
 import { toast } from "sonner";
@@ -21,12 +21,13 @@ export function useServerCommands(
 ): {
   commands: ServerCommand[];
   hasPendingCommand: (type: 'restart' | 'stop' | 'start', sourceName?: string) => boolean;
+  refetch: () => void;
 } {
   const [commands, setCommands] = useState<ServerCommand[]>([]);
   const prevCommandsRef = useRef<ServerCommand[]>([]);
   const { subscribe } = useOrionWs();
 
-  useEffect(() => {
+  const fetchCommands = async () => {
     if (!projectName || !serverName) return;
     let cancelled = false;
 
@@ -45,6 +46,14 @@ export function useServerCommands(
     return () => {
       cancelled = true;
     };
+  };
+
+  const refetch = useCallback(() => {
+    fetchCommands();
+  }, [projectName, serverName]);
+
+  useEffect(() => {
+    fetchCommands();
   }, [projectName, serverName]);
 
   useEffect(() => {
@@ -93,5 +102,5 @@ export function useServerCommands(
     );
   };
 
-  return { commands, hasPendingCommand };
+  return { commands, hasPendingCommand, refetch };
 }

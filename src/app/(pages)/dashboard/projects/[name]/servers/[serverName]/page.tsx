@@ -96,8 +96,8 @@ function CommandButton({ projectName, serverName, type, onSuccess, disabled }: {
 
 export default function ServerDetailPage() {
   const params = useParams<{ name: string; serverName: string }>();
-  const { server, loading, refetch } = useServerDetail(params.name, decodeURIComponent(params.serverName));
-  const { hasPendingCommand } = useServerCommands(params.name, decodeURIComponent(params.serverName));
+  const { server, loading } = useServerDetail(params.name, decodeURIComponent(params.serverName));
+  const { hasPendingCommand, refetch: refetchCommands } = useServerCommands(params.name, decodeURIComponent(params.serverName));
 
   if (loading && !server) {
     return <div className="text-[var(--text-muted)]">Loading…</div>;
@@ -142,14 +142,14 @@ export default function ServerDetailPage() {
               projectName={params.name}
               serverName={server.hostname}
               type="restart"
-              onSuccess={refetch}
+              onSuccess={refetchCommands}
               disabled={hasPendingCommand('restart')}
             />
             <CommandButton
               projectName={params.name}
               serverName={server.hostname}
               type="stop"
-              onSuccess={refetch}
+              onSuccess={refetchCommands}
               disabled={hasPendingCommand('stop')}
             />
           </div>
