@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { apiFetch } from "@/lib/api";
 import { Alert, AlertRule } from "@/types";
 import { useOrionWs } from "@/contexts/orionWsContext";
@@ -74,7 +73,6 @@ export function useAlerts(projectName: string, filters: AlertFilters = {}) {
 export function useActiveAlertCount(projectName: string) {
   const [count, setCount] = useState(0);
   const { subscribe } = useOrionWs();
-  const pathname = usePathname();
 
   useEffect(() => {
     if (!projectName) return;
@@ -82,7 +80,7 @@ export function useActiveAlertCount(projectName: string) {
       .then((res) => res.json())
       .then((data) => { if (Array.isArray(data)) setCount(data.length); })
       .catch(() => {});
-  }, [projectName, pathname]);
+  }, [projectName]);
 
   useEffect(() => {
     if (!projectName) return;
@@ -91,6 +89,18 @@ export function useActiveAlertCount(projectName: string) {
       setCount((c) => c + 1);
     });
   }, [projectName, subscribe]);
+
+  useEffect(() => {
+    if (!projectName) return;
+    const refetch = () => {
+      apiFetch(`/api/projects/${projectName}/alerts?status=active`)
+        .then((res) => res.json())
+        .then((data) => { if (Array.isArray(data)) setCount(data.length); })
+        .catch(() => {});
+    };
+    window.addEventListener("orion:alerts-mutated", refetch);
+    return () => window.removeEventListener("orion:alerts-mutated", refetch);
+  }, [projectName]);
 
   return count;
 }

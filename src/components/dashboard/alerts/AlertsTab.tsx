@@ -51,17 +51,20 @@ export default function AlertsTab({ projectName, alerts, loading, onRefresh }: A
       method: "POST",
       body: JSON.stringify({ duration }),
     });
+    window.dispatchEvent(new CustomEvent("orion:alerts-mutated"));
     onRefresh();
   }
 
   async function handleResolve(id: number) {
     await apiFetch(`/api/projects/${projectName}/alerts/${id}/resolve`, { method: "POST" }, true);
+    window.dispatchEvent(new CustomEvent("orion:alerts-mutated"));
     onRefresh();
   }
 
   async function handleDelete(id: number) {
     await apiFetch(`/api/projects/${projectName}/alerts/${id}`, { method: "DELETE" }, true);
     setDeleteTargetId(null);
+    window.dispatchEvent(new CustomEvent("orion:alerts-mutated"));
     onRefresh();
   }
 
