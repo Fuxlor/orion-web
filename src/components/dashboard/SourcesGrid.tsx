@@ -1,40 +1,9 @@
 import { HeartbeatStatus } from "@/types";
+import { relativeTimeShort } from "@/lib/format";
+import { HeartbeatStatusBadge } from "@/components/dashboard/StatusBadge";
 
 interface Props {
   heartbeats: HeartbeatStatus[];
-}
-
-function relativeTime(isoString: string | null): string {
-  if (!isoString) return "never";
-  const diffMs = Date.now() - new Date(isoString).getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  if (diffSec < 60) return `${diffSec}s`;
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin} min`;
-  const diffH = Math.floor(diffMin / 60);
-  return `${diffH}h`;
-}
-
-function StatusBadge({ status }: { status: 'UP' | 'DOWN' | null }) {
-  if (status === 'UP') {
-    return (
-      <span className="rounded-full bg-[var(--primary-muted)] px-2 py-0.5 text-[11px] font-semibold text-[var(--primary)]">
-        UP
-      </span>
-    );
-  }
-  if (status === 'DOWN') {
-    return (
-      <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-[11px] font-semibold text-destructive">
-        DOWN
-      </span>
-    );
-  }
-  return (
-    <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[11px] font-semibold text-[var(--text-muted)]">
-      UNKNOWN
-    </span>
-  );
 }
 
 export default function SourcesGrid({ heartbeats }: Props) {
@@ -64,10 +33,10 @@ export default function SourcesGrid({ heartbeats }: Props) {
               <span className="text-sm font-medium text-[var(--text-muted)]">
                 {hb.source}
               </span>
-              <StatusBadge status={hb.status === 'started' ? 'UP' : hb.status != null ? 'DOWN' : null} />
+              <HeartbeatStatusBadge status={hb.status === 'started' ? 'UP' : hb.status != null ? 'DOWN' : null} />
             </div>
             <p className="text-xs text-[var(--text-muted)]">
-              Last ping: {relativeTime(hb.last_ping_at)} ago
+              Last ping: {relativeTimeShort(hb.last_ping_at)} ago
             </p>
           </div>
         ))}

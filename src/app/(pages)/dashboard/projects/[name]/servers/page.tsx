@@ -3,37 +3,8 @@
 import Link from "next/link";
 import { useProject } from "@/contexts/projectContext";
 import { useServers } from "@/hooks/useServers";
-import { ServerStatus } from "@/types";
-
-function relativeTime(isoString: string | null): string {
-  if (!isoString) return "never";
-  const diffMs = Date.now() - new Date(isoString).getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  if (diffSec < 60) return `${diffSec}s ago`;
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const diffH = Math.floor(diffMin / 60);
-  if (diffH < 24) return `${diffH}h ago`;
-  return `${Math.floor(diffH / 24)}d ago`;
-}
-
-function ServerStatusBadge({ status }: { status: ServerStatus }) {
-  const config: Record<ServerStatus, { label: string; bg: string; text: string }> = {
-    online: { label: "Online", bg: "rgba(2,241,148,0.12)", text: "#02f194" },
-    partial: { label: "Partial", bg: "rgba(250,204,21,0.12)", text: "#facc15" },
-    offline: { label: "Offline", bg: "rgba(248,113,113,0.12)", text: "#f87171" },
-    archived: { label: "Archived", bg: "rgba(255,255,255,0.06)", text: "var(--text-muted)" },
-  };
-  const c = config[status];
-  return (
-    <span
-      className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
-      style={{ background: c.bg, color: c.text }}
-    >
-      {c.label}
-    </span>
-  );
-}
+import { relativeTime } from "@/lib/format";
+import { ServerStatusBadge } from "@/components/dashboard/StatusBadge";
 
 export default function ServersPage() {
   const { projectName } = useProject();

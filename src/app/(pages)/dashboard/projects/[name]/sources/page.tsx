@@ -2,38 +2,10 @@
 
 import { useProject } from "@/contexts/projectContext";
 import { apiFetch } from "@/lib/api";
-import { SourceStatus, SourceStats } from "@/types";
+import { SourceStats } from "@/types";
 import { useEffect, useState } from "react";
-
-function relativeTime(isoString: string | null): string {
-  if (!isoString) return "never";
-  const diffMs = Date.now() - new Date(isoString).getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  if (diffSec < 60) return `${diffSec}s ago`;
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const diffH = Math.floor(diffMin / 60);
-  if (diffH < 24) return `${diffH}h ago`;
-  return `${Math.floor(diffH / 24)}d ago`;
-}
-
-function SourceStatusBadge({ status }: { status: SourceStatus }) {
-  const config: Record<SourceStatus, { label: string; bg: string; text: string }> = {
-    started: { label: "Started", bg: "rgba(2,241,148,0.12)", text: "#02f194" },
-    partial: { label: "Partial", bg: "rgba(250,204,21,0.12)", text: "#facc15" },
-    stopped: { label: "Stopped", bg: "rgba(248,113,113,0.12)", text: "#f87171" },
-  };
-  const c = config[status];
-  if (!c) return null;
-  return (
-    <span
-      className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
-      style={{ background: c.bg, color: c.text }}
-    >
-      {c.label}
-    </span>
-  );
-}
+import { relativeTime } from "@/lib/format";
+import { SourceStatusBadge } from "@/components/dashboard/StatusBadge";
 
 export default function ServersPage() {
   const { sources, projectName, settingsLoading } = useProject();
@@ -92,7 +64,7 @@ export default function ServersPage() {
                   <td className="px-4 py-3">{src.description}</td>
                   <td className="px-4 py-3">{sourcesStats[src.name]?.server?.name}</td>
                   <td className="px-4 py-3">{sourcesStats[src.name]?.uptime_percent}%</td>
-                  <td className="px-4 py-3"><SourceStatusBadge status={sourcesStats[src.name]?.status || 'DOWN'} /></td>
+                  <td className="px-4 py-3"><SourceStatusBadge status={sourcesStats[src.name]?.status ?? null} /></td>
                   <td className="px-4 py-3 text-[var(--text-muted)]">{relativeTime(sourcesStats[src.name]?.last_seen_at || null)}</td>
                 </tr>
               ))}

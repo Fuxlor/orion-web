@@ -6,20 +6,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { apiFetch } from "@/lib/api";
 
-const BULLET = "•";
-
-function maskPassword(password: string): string {
-  if (password.length === 0) return "";
-  return BULLET.repeat(password.length - 1) + password.slice(-1);
-}
-
-function passwordFromDisplay(prevPassword: string, display: string): string {
-  const prevLen = prevPassword.length;
-  const newLen = display.length;
-  if (newLen > prevLen) return prevPassword + display.slice(prevLen);
-  if (newLen < prevLen) return prevPassword.slice(0, newLen);
-  return prevPassword.slice(0, -1) + display.slice(-1);
-}
+import { maskPassword, passwordFromDisplay } from "@/lib/format";
 
 export default function RegisterPage() {
   const [step, setStep] = useState(1);

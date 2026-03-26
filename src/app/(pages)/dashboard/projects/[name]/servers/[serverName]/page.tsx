@@ -1,98 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useServerDetail } from "@/hooks/useServerDetail";
 import { useServerCommands } from "@/hooks/useServerCommands";
-import { apiFetch } from "@/lib/api";
 import UptimeBlock from "@/components/dashboard/UptimeBlock";
 import AlertsSection from "@/components/dashboard/AlertsSection";
-import { ServerStatus, StatsWindow } from "@/types";
-
-function relativeTime(isoString: string | null): string {
-  if (!isoString) return "never";
-  const diffMs = Date.now() - new Date(isoString).getTime();
-  const diffSec = Math.floor(diffMs / 1000);
-  if (diffSec < 60) return `${diffSec}s ago`;
-  const diffMin = Math.floor(diffSec / 60);
-  if (diffMin < 60) return `${diffMin}m ago`;
-  const diffH = Math.floor(diffMin / 60);
-  if (diffH < 24) return `${diffH}h ago`;
-  return `${Math.floor(diffH / 24)}d ago`;
-}
-
-function ServerStatusBadge({ status }: { status: ServerStatus }) {
-  const config: Record<ServerStatus, { label: string; bg: string; text: string }> = {
-    online: { label: "Online", bg: "rgba(2,241,148,0.12)", text: "#02f194" },
-    partial: { label: "Partial", bg: "rgba(250,204,21,0.12)", text: "#facc15" },
-    offline: { label: "Offline", bg: "rgba(248,113,113,0.12)", text: "#f87171" },
-    archived: { label: "Archived", bg: "rgba(255,255,255,0.06)", text: "var(--text-muted)" },
-  };
-  const c = config[status];
-  return (
-    <span
-      className="rounded-full px-2 py-0.5 text-[11px] font-semibold"
-      style={{ background: c.bg, color: c.text }}
-    >
-      {c.label}
-    </span>
-  );
-}
-
-function SourceStatusBadge({ status }: { status: 'started' | 'partial' | 'stopped' | null }) {
-  if (status === 'started') return (
-    <span className="rounded-full bg-[rgba(2,241,148,0.12)] px-2 py-0.5 text-[11px] font-semibold text-[#02f194]">Started</span>
-  );
-  if (status === 'partial') return (
-    <span className="rounded-full bg-[rgba(250,204,21,0.12)] px-2 py-0.5 text-[11px] font-semibold text-[#facc15]">Partial</span>
-  );
-  if (status === 'stopped') return (
-    <span className="rounded-full bg-[rgba(248,113,113,0.12)] px-2 py-0.5 text-[11px] font-semibold text-red-400">Stopped</span>
-  );
-  return (
-    <span className="rounded-full bg-[var(--surface)] px-2 py-0.5 text-[11px] font-semibold text-[var(--text-muted)]">Unknown</span>
-  );
-}
-
-function CommandButton({ projectName, serverName, type, onSuccess, disabled }: {
-  projectName: string;
-  serverName: string;
-  type: 'restart' | 'stop';
-  onSuccess?: () => void;
-  disabled?: boolean;
-}) {
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  const handleClick = async () => {
-    setLoading(true);
-    try {
-      await apiFetch(`/api/projects/${projectName}/servers/${encodeURIComponent(serverName)}/commands`, {
-        method: 'POST',
-        body: JSON.stringify({ type }),
-      });
-      setSent(true);
-      setTimeout(() => setSent(false), 3000);
-      onSuccess?.();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const isStop = type === 'stop';
-  return (
-    <button
-      onClick={handleClick}
-      disabled={loading || disabled}
-      className={`hover:cursor-pointer px-4 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 ${isStop
-        ? "bg-[rgba(248,113,113,0.12)] text-red-400 hover:bg-[rgba(248,113,113,0.2)]"
-        : "bg-[var(--primary-muted)] text-[var(--primary)] hover:opacity-80"
-        }`}
-    >
-      {sent ? "Sent!" : loading ? "…" : disabled ? "Pending…" : type === 'restart' ? "Restart" : "Stop"}
-    </button>
-  );
-}
+import { relativeTime } from "@/lib/format";
+import { ServerStatusBadge, SourceStatusBadge } from "@/components/dashboard/StatusBadge";
+import { CommandButton } from "@/components/dashboard/CommandButton";
 
 export default function ServerDetailPage() {
   const params = useParams<{ name: string; serverName: string }>();
